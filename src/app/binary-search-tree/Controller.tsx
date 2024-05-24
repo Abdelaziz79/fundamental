@@ -4,13 +4,17 @@ import { BinarySearchTree } from "@/classes/BinarySearchTree";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { wait } from "@/utils/helpers";
+import { useToast } from "@/components/ui/use-toast";
+import { getRandomNumber, wait } from "@/utils/helpers";
+import { PopoverContent } from "@radix-ui/react-popover";
 import { useState } from "react";
+import { LuSlidersHorizontal } from "react-icons/lu";
 import { Node, useReactFlow } from "reactflow";
+import RandomCreation from "./RandomCreation";
 import { Item } from "./Types";
 import { createGraphElements } from "./utilsFunctions";
-import { useToast } from "@/components/ui/use-toast";
 
 const Controller = ({
   bst,
@@ -24,6 +28,10 @@ const Controller = ({
   const [randomSize, setRandomSize] = useState<number | null>(null);
   const [watingTime, setWatingTime] = useState(1);
   const [search, setSearch] = useState<number | null>(null);
+  const [min, setMin] = useState<number>(0);
+  const [max, setMax] = useState<number>(100);
+  const [running, setRunning] = useState(false);
+  const [open, setOpen] = useState(true);
   const { getNodes, setNodes, setEdges } = useReactFlow();
   const { toast } = useToast();
   function setNode(node: Node) {
@@ -32,6 +40,7 @@ const Controller = ({
 
   async function handleSearch() {
     if (search === null) return;
+    setRunning(true);
     setShowingItems([]);
     let newNodes: Node[] = getNodes();
     let newNodesId: string[] = [];
@@ -69,6 +78,7 @@ const Controller = ({
       });
     updateGraphElements();
     setSearch(null);
+    setRunning(false);
   }
 
   function updateGraphElements() {
@@ -86,7 +96,7 @@ const Controller = ({
   function handleSubmitRandomSize() {
     if (randomSize === null) return;
     for (let i = 0; i < randomSize; i++) {
-      bst.insert(Math.round(Math.random() * 100));
+      bst.insert(getRandomNumber(min, max));
     }
     updateGraphElements();
     setRandomSize(null);
@@ -108,6 +118,7 @@ const Controller = ({
   }
 
   async function handleInOrder() {
+    setRunning(true);
     setShowingItems([]);
     let newNodes: Node[] = getNodes();
     let newNodesId: string[] = [];
@@ -130,9 +141,11 @@ const Controller = ({
       await wait(watingTime);
     }
     updateGraphElements();
+    setRunning(false);
   }
 
   async function handlePreOrder() {
+    setRunning(true);
     setShowingItems([]);
     let newNodes: Node[] = getNodes();
     let newNodesId: string[] = [];
@@ -155,9 +168,11 @@ const Controller = ({
       await wait(watingTime);
     }
     updateGraphElements();
+    setRunning(false);
   }
 
   async function handlePostOrder() {
+    setRunning(true);
     setShowingItems([]);
     let newNodes: Node[] = getNodes();
     let newNodesId: string[] = [];
@@ -180,84 +195,156 @@ const Controller = ({
       await wait(watingTime);
     }
     updateGraphElements();
+    setRunning(false);
+  }
+
+  function handleReset() {
+    setElements({ nodes: [], edges: [] });
+    bst = new BinarySearchTree<number>();
+    setNodes([]);
+    setEdges([]);
+    setShowingItems([]);
+    setValue(null);
+    setRandomSize(null);
+    setWatingTime(1);
+    setSearch(null);
+    setMin(0);
+    setMax(100);
   }
 
   return (
-    <div className="absolute top-5 left-5 bg-white text-black text-sm p-2 shadow w-72 z-50">
-      <div className="flex gap-2 my-2 items-center w-full  ">
-        <Label htmlFor="random" className="w-16">
-          Random
-        </Label>
-        <Input
-          type="text"
-          value={randomSize ? randomSize : ""}
-          onChange={handleRandomSize}
-          placeholder="Enter a value"
-          id="random"
-          className="w-1/2"
-        />
-        <Button onClick={handleSubmitRandomSize} size="sm" className="w-16">
-          create
+    <>
+      <div className="z-50 absolute top-4 right-4">
+        <Button
+          size={"icon"}
+          variant={"outline"}
+          onClick={() => setOpen(!open)}
+        >
+          <LuSlidersHorizontal size={24} />
         </Button>
       </div>
-      <div className="flex gap-2 my-2 items-center w-full ">
-        <Label htmlFor="value" className="w-16">
-          Value
-        </Label>
-        <Input
-          type="text"
-          value={value ?? ""}
-          onChange={handleAddNode}
-          placeholder="Enter a value"
-          id="value"
-          className="w-1/2"
-        />
-        <Button onClick={handleSubmit} size="sm" className="w-16">
-          insert
-        </Button>
-      </div>
-      <div className="flex gap-2 my-2 items-center w-full ">
-        <Label htmlFor="search" className="w-16">
-          Search
-        </Label>
-        <Input
-          type="text"
-          value={search ?? ""}
-          onChange={(event) => setSearch(Number(event.target.value))}
-          placeholder="Enter a value"
-          id="search"
-          className="w-1/2"
-        />
-        <Button onClick={handleSearch} size="sm" className="w-16">
-          search
-        </Button>
-      </div>
-      <div className="flex flex-col gap-2 my-2  w-full ">
-        <Label>Animation Time {watingTime}(s)</Label>
-        <Slider
-          min={0.1}
-          max={2}
-          step={0.1}
-          value={[watingTime]}
-          className="my-2 bg-green-100"
-          onValueChange={(value) => {
-            setWatingTime(value[0]);
-          }}
-        />
-      </div>
+      {open && (
+        <div className="absolute opacity-90 top-4 left-4 bg-white text-black text-sm p-2 shadow w-72 z-50">
+          <div className="flex gap-2 my-2 items-center w-full">
+            <Label className="w-1/2">Random creation</Label>
 
-      <div className="flex gap-2 my-2 items-center w-full flex-wrap ">
-        <Button onClick={handlePreOrder} size={"sm"} className="w-1/2">
-          Pre Order Traverse
-        </Button>
-        <Button onClick={handleInOrder} size={"sm"} className="w-1/2">
-          In Order Traverse
-        </Button>
-        <Button onClick={handlePostOrder} size={"sm"} className="w-1/2">
-          Post Order Traverse
-        </Button>
-      </div>
-    </div>
+            <Popover>
+              <PopoverTrigger asChild className="w-1/2">
+                <Button disabled={running} size={"sm"}>
+                  Random{" "}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <RandomCreation
+                  treeSize={randomSize}
+                  handleTreeSize={handleRandomSize}
+                  min={min}
+                  max={max}
+                  setMin={setMin}
+                  setMax={setMax}
+                  handleSubmit={handleSubmitRandomSize}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          <div className="flex gap-2 my-2 items-center w-full ">
+            <Label htmlFor="value" className="w-16">
+              Value
+            </Label>
+            <Input
+              type="text"
+              value={value ?? ""}
+              onChange={handleAddNode}
+              placeholder="Enter a value"
+              id="value"
+              className="w-1/2"
+            />
+            <Button
+              disabled={running}
+              onClick={handleSubmit}
+              size="sm"
+              className="w-16"
+            >
+              insert
+            </Button>
+          </div>
+          <div className="flex gap-2 my-2 items-center w-full ">
+            <Label htmlFor="find" className="w-16">
+              Find
+            </Label>
+            <Input
+              type="text"
+              value={search ?? ""}
+              onChange={(event) => setSearch(Number(event.target.value))}
+              placeholder="Enter a value"
+              id="find"
+              className="w-1/2"
+            />
+            <Button
+              disabled={running}
+              onClick={handleSearch}
+              size="sm"
+              className="w-16"
+            >
+              find
+            </Button>
+          </div>
+          <div className="flex flex-col gap-2 my-2  w-full ">
+            <Label>Animation Time {watingTime}(s)</Label>
+            <Slider
+              min={0.1}
+              max={2}
+              step={0.1}
+              value={[watingTime]}
+              className="my-2 bg-green-100 "
+              onValueChange={(value) => {
+                setWatingTime(value[0]);
+              }}
+            />
+          </div>
+
+          <div className="flex gap-2 my-2 items-center w-full flex-wrap ">
+            <Button
+              disabled={running}
+              onClick={handlePreOrder}
+              size={"sm"}
+              className="w-1/2"
+              variant={"outline"}
+            >
+              Pre Order Traverse
+            </Button>
+            <Button
+              disabled={running}
+              onClick={handleInOrder}
+              size={"sm"}
+              className="w-1/2"
+              variant={"outline"}
+            >
+              In Order Traverse
+            </Button>
+            <Button
+              disabled={running}
+              onClick={handlePostOrder}
+              size={"sm"}
+              className="w-1/2"
+              variant={"outline"}
+            >
+              Post Order Traverse
+            </Button>
+            <Button
+              disabled={running}
+              onClick={handleReset}
+              size={"sm"}
+              className="w-1/2"
+              variant={"destructive"}
+            >
+              Reset
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
