@@ -25,6 +25,8 @@ This project is a web application that visualizes binary search trees. It allows
 
 [![Binary Search Tree Visualizer Demo](http://img.youtube.com/vi/q7TmcuxUdls/0.jpg)](http://www.youtube.com/watch?v=q7TmcuxUdls)
 
+**[Click here to see the live demo](https://fundamental-ten.vercel.app/binary-search-tree)**
+
 ## Features
 
 - Interactive visualization of binary search trees.
