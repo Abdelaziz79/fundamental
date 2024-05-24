@@ -1,11 +1,14 @@
 # Binary Search Tree Visualizer
 
+![image](https://github.com/Abdelaziz79/fundamental/assets/77078975/df758ba5-c619-44b8-8965-3dc0eb6ff444)
+
 A web application to visualize binary search trees, built with Next.js, TypeScript, React components, and React Flow.
+
 
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Demonstration Video](#demonstration)
+2. [Demonstration Video](#demonstration-video)
 3. [Features](#features)
 4. [Installation](#installation)
 5. [Usage](#usage)
@@ -21,9 +24,11 @@ This project is a web application that visualizes binary search trees. It allows
 - **React**: A JavaScript library for building user interfaces.
 - **React Flow**: A library for building node-based graphs.
 
-## Demonstration
+## Demonstration Video
 
 [![Binary Search Tree Visualizer Demo](http://img.youtube.com/vi/q7TmcuxUdls/0.jpg)](http://www.youtube.com/watch?v=q7TmcuxUdls)
+
+**[youtube video](http://www.youtube.com/watch?v=q7TmcuxUdls)**
 
 **[Click here to see the live demo](https://fundamental-ten.vercel.app/binary-search-tree)**
 
