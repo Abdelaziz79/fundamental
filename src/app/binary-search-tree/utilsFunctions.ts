@@ -5,7 +5,7 @@ import { Item } from "./Types";
 
 const calculateGap = (depth: number, TreeDepth: number) => {
   const numberOfNodesInCurrentLevel = 2 ** depth;
-  const basGap = (TreeDepth - depth + 1) * 150;
+  const basGap = (TreeDepth - depth + 1) * 100 + depth * 50;
   return basGap / numberOfNodesInCurrentLevel;
 };
 
@@ -24,7 +24,7 @@ export const createGraphElements = (
     id: nodeId,
     data: { label: node.value.toString() },
     position: { x, y },
-    type: depth > 7 ? (depth >= 10 ? "small" : "mid") : "custom",
+    type: depth > 7 ? "mid" : "custom",
   });
 
   const gap = calculateGap(depth, TreeDepth);
