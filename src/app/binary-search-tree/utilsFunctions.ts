@@ -1,5 +1,7 @@
-import { TreeNode } from "@/classes/BinarySearchTree";
+import { BinarySearchTree, TreeNode } from "@/classes/BinarySearchTree";
+import { toast } from "@/components/ui/use-toast";
 import { Edge, Node } from "reactflow";
+import { Item } from "./Types";
 
 const calculateGap = (depth: number, TreeDepth: number) => {
   const numberOfNodesInCurrentLevel = 2 ** depth;
@@ -67,3 +69,182 @@ export const createGraphElements = (
     );
   }
 };
+
+async function animate({
+  newNodesId,
+  newNodes,
+  setShowingItems,
+  watingTime,
+  handleSetNodes,
+  wait,
+}: {
+  setShowingItems: React.Dispatch<React.SetStateAction<Item[]>>;
+  newNodesId: string[];
+  newNodes: Node[];
+  watingTime: number;
+  handleSetNodes: (nodes: Node[]) => void;
+  wait: (time: number) => Promise<void>;
+}) {
+  for (let i = 0; i < newNodesId.length; i++) {
+    newNodes = newNodes.map((node) => {
+      if (node.id === newNodesId[i]) {
+        setShowingItems((items) => [
+          ...items,
+          { label: node.data["label"], id: node.id },
+        ]);
+        return { ...node, type: "red" };
+      }
+      return node;
+    });
+    handleSetNodes(newNodes);
+    await wait(watingTime);
+  }
+}
+
+export async function processNode({
+  actionType,
+  value,
+  setRunning,
+  setShowingItems,
+  binarySearchTree,
+  getNodes,
+  updateGraphElements,
+  setValue,
+  watingTime,
+  handleSetNodes,
+  wait,
+}: {
+  actionType:
+    | "insert"
+    | "delete"
+    | "search"
+    | "inOrder"
+    | "preOrder"
+    | "postOrder";
+  binarySearchTree: BinarySearchTree<number>;
+  value?: number | null;
+  setValue?: React.Dispatch<React.SetStateAction<number | null>>;
+  setRunning: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowingItems: React.Dispatch<React.SetStateAction<Item[]>>;
+  watingTime: number;
+  getNodes: () => Node[];
+  updateGraphElements: () => void;
+  handleSetNodes: (nodes: Node[]) => void;
+  wait: (time: number) => Promise<void>;
+}) {
+  setRunning(true);
+  setShowingItems([]);
+  let newNodes: Node[] = getNodes();
+  let newNodesId: string[] = [];
+
+  switch (actionType) {
+    case "insert": {
+      if (value === null) return;
+      binarySearchTree.insert(value || 0, (node) => {
+        newNodesId.push(node.id);
+      });
+
+      await animate({
+        newNodesId,
+        newNodes,
+        setShowingItems,
+        watingTime,
+        handleSetNodes,
+        wait,
+      });
+
+      toast({
+        title: "inserted",
+        description: "Item inserted",
+        variant: "default",
+        className: "bg-green-200 border-green-500 border-2 ",
+      });
+
+      break;
+    }
+    case "delete": {
+      if (value === null) return;
+      break;
+    }
+    case "search": {
+      if (value === null) return;
+      const res = binarySearchTree.search(value || 0, (node) => {
+        newNodesId.push(node.id);
+      });
+      await animate({
+        newNodesId,
+        newNodes,
+        setShowingItems,
+        watingTime,
+        handleSetNodes,
+        wait,
+      });
+      if (res) {
+        toast({
+          title: "found",
+          description: "Item found",
+          variant: "default",
+          className: "bg-green-200 border-green-500 border-2 ",
+        });
+      } else {
+        toast({
+          title: "not found",
+          description: "Item not found",
+          variant: "destructive",
+        });
+      }
+      break;
+    }
+    case "inOrder": {
+      binarySearchTree.inOrderTraverse((node) => {
+        newNodesId.push(node.id);
+      });
+
+      await animate({
+        newNodesId,
+        newNodes,
+        setShowingItems,
+        watingTime,
+        handleSetNodes,
+        wait,
+      });
+
+      break;
+    }
+    case "preOrder": {
+      binarySearchTree.preOrderTraverse((node) => {
+        newNodesId.push(node.id);
+      });
+
+      await animate({
+        newNodesId,
+        newNodes,
+        setShowingItems,
+        watingTime,
+        handleSetNodes,
+        wait,
+      });
+
+      break;
+    }
+    case "postOrder": {
+      binarySearchTree.postOrderTraverse((node) => {
+        newNodesId.push(node.id);
+      });
+      await animate({
+        newNodesId,
+        newNodes,
+        setShowingItems,
+        watingTime,
+        handleSetNodes,
+        wait,
+      });
+      break;
+    }
+    default:
+      break;
+  }
+  updateGraphElements();
+  setRunning(false);
+  setValue?.(null);
+}

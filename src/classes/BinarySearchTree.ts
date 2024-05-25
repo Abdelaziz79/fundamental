@@ -12,18 +12,23 @@ export class TreeNode<T> {
 export class BinarySearchTree<T> {
   private root: TreeNode<T> | null = null;
 
-  private insertNode(node: TreeNode<T>, newNode: TreeNode<T>): void {
+  private insertNode(
+    node: TreeNode<T>,
+    newNode: TreeNode<T>,
+    callback?: (node: TreeNode<T>) => void
+  ): void {
+    callback?.(node);
     if (newNode.value < node.value) {
       if (node.left === null) {
         node.left = newNode;
       } else {
-        this.insertNode(node.left, newNode);
+        this.insertNode(node.left, newNode, callback);
       }
     } else {
       if (node.right === null) {
         node.right = newNode;
       } else {
-        this.insertNode(node.right, newNode);
+        this.insertNode(node.right, newNode, callback);
       }
     }
   }
@@ -64,10 +69,10 @@ export class BinarySearchTree<T> {
   private searchNode(
     node: TreeNode<T> | null,
     value: T,
-    callback: (node: TreeNode<T>) => void
+    callback?: (node: TreeNode<T>) => void
   ): boolean {
     if (node === null) return false;
-    callback(node);
+    callback?.(node);
     if (node.value > value) {
       return this.searchNode(node.left, value, callback);
     } else if (node.value < value) {
@@ -82,16 +87,16 @@ export class BinarySearchTree<T> {
     );
   }
 
-  insert(value: T) {
+  insert(value: T, callback?: (node: TreeNode<T>) => void) {
     const newNode = new TreeNode<T>(value);
     if (this.root === null) {
       this.root = newNode;
     } else {
-      this.insertNode(this.root, newNode);
+      this.insertNode(this.root, newNode, callback);
     }
   }
 
-  search(value: T, callback: (node: TreeNode<T>) => void): boolean {
+  search(value: T, callback?: (node: TreeNode<T>) => void): boolean {
     return this.searchNode(this.root, value, callback);
   }
 
@@ -99,12 +104,10 @@ export class BinarySearchTree<T> {
     this.inOrderTraverseNode(this.root, callback);
   }
 
-  // Pre-order traversal of the BST
   preOrderTraverse(callback: (node: TreeNode<T>) => void): void {
     this.preOrderTraverseNode(this.root, callback);
   }
 
-  // Post-order traversal of the BST
   postOrderTraverse(callback: (node: TreeNode<T>) => void): void {
     this.postOrderTraverseNode(this.root, callback);
   }
@@ -115,5 +118,23 @@ export class BinarySearchTree<T> {
 
   getDepth(): number {
     return this.getDepthNode(this.root);
+  }
+
+  getMaxItem(): T | null {
+    if (this.root === null) return null;
+    let node = this.root;
+    while (node.right !== null) {
+      node = node.right;
+    }
+    return node.value;
+  }
+
+  getMinItem(): T | null {
+    if (this.root === null) return null;
+    let node = this.root;
+    while (node.left !== null) {
+      node = node.left;
+    }
+    return node.value;
   }
 }

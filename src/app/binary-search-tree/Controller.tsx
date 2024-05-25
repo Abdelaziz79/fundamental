@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { useToast } from "@/components/ui/use-toast";
 import { getRandomNumber, wait } from "@/utils/helpers";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { useState } from "react";
@@ -14,14 +13,18 @@ import { LuSlidersHorizontal } from "react-icons/lu";
 import { Node, useReactFlow } from "reactflow";
 import RandomCreation from "./RandomCreation";
 import { Item } from "./Types";
-import { createGraphElements } from "./utilsFunctions";
+import { createGraphElements, processNode } from "./utilsFunctions";
 
 const Controller = ({
   bst,
   setShowingItems,
+  open,
+  setOpen,
 }: {
   bst: BinarySearchTree<number>;
   setShowingItems: React.Dispatch<React.SetStateAction<Item[]>>;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [elements, setElements] = useState({ nodes: [], edges: [] });
   const [value, setValue] = useState<number | null>(null);
@@ -31,54 +34,10 @@ const Controller = ({
   const [min, setMin] = useState<number>(0);
   const [max, setMax] = useState<number>(100);
   const [running, setRunning] = useState(false);
-  const [open, setOpen] = useState(true);
   const { getNodes, setNodes, setEdges } = useReactFlow();
-  const { toast } = useToast();
+
   function setNode(node: Node) {
     setNodes((nds) => nds.map((n) => (n.id === node.id ? node : n)));
-  }
-
-  async function handleSearch() {
-    if (search === null) return;
-    setRunning(true);
-    setShowingItems([]);
-    let newNodes: Node[] = getNodes();
-    let newNodesId: string[] = [];
-
-    const res = bst.search(search, (node) => {
-      newNodesId.push(node.id);
-    });
-
-    for (let i = 0; i < newNodesId.length; i++) {
-      newNodes = newNodes.map((node) => {
-        if (node.id === newNodesId[i]) {
-          setShowingItems((items) => [
-            ...items,
-            { label: node.data["label"], id: node.id },
-          ]);
-          return { ...node, type: "red" };
-        }
-        return node;
-      });
-      handleSetNodes(newNodes);
-      await wait(watingTime);
-    }
-    if (res)
-      toast({
-        title: "found",
-        description: "Item found",
-        variant: "default",
-        className: "bg-green-200 border-green-500 border-2  ",
-      });
-    else
-      toast({
-        title: "not found",
-        description: "Item not found",
-        variant: "destructive",
-      });
-    updateGraphElements();
-    setSearch(null);
-    setRunning(false);
   }
 
   function updateGraphElements() {
@@ -106,96 +65,85 @@ const Controller = ({
     setValue(Number(event.target.value));
   }
 
-  function handleSubmit() {
-    if (value === null) return;
-    bst.insert(value);
-    updateGraphElements();
-    setValue(null);
-  }
-
   function handleSetNodes(nodes: Node[]) {
     setNodes(nodes);
   }
 
-  async function handleInOrder() {
-    setRunning(true);
-    setShowingItems([]);
-    let newNodes: Node[] = getNodes();
-    let newNodesId: string[] = [];
-    bst.inOrderTraverse((node) => {
-      newNodesId.push(node.id);
+  async function handleSearch() {
+    await processNode({
+      actionType: "search",
+      value: search,
+      setRunning,
+      setShowingItems,
+      binarySearchTree: bst,
+      getNodes,
+      updateGraphElements,
+      setValue: setSearch,
+      watingTime,
+      handleSetNodes,
+      wait,
     });
+  }
 
-    for (let i = 0; i < newNodesId.length; i++) {
-      newNodes = newNodes.map((node) => {
-        if (node.id === newNodesId[i]) {
-          setShowingItems((items) => [
-            ...items,
-            { label: node.data["label"], id: node.id },
-          ]);
-          return { ...node, type: "red" };
-        }
-        return node;
-      });
-      handleSetNodes(newNodes);
-      await wait(watingTime);
-    }
-    updateGraphElements();
-    setRunning(false);
+  async function handleInsert() {
+    await processNode({
+      actionType: "insert",
+      value,
+      setRunning,
+      setShowingItems,
+      binarySearchTree: bst,
+      getNodes,
+      updateGraphElements,
+      setValue,
+      watingTime,
+      handleSetNodes,
+      wait,
+    });
+  }
+
+  async function handleInOrder() {
+    await processNode({
+      actionType: "inOrder",
+      setRunning,
+      setShowingItems,
+      binarySearchTree: bst,
+      getNodes,
+      updateGraphElements,
+      setValue,
+      watingTime,
+      handleSetNodes,
+      wait,
+    });
   }
 
   async function handlePreOrder() {
-    setRunning(true);
-    setShowingItems([]);
-    let newNodes: Node[] = getNodes();
-    let newNodesId: string[] = [];
-    bst.preOrderTraverse((node) => {
-      newNodesId.push(node.id);
+    await processNode({
+      actionType: "preOrder",
+      setRunning,
+      setShowingItems,
+      binarySearchTree: bst,
+      getNodes,
+      updateGraphElements,
+      setValue,
+      watingTime,
+      handleSetNodes,
+      wait,
     });
-
-    for (let i = 0; i < newNodesId.length; i++) {
-      newNodes = newNodes.map((node) => {
-        if (node.id === newNodesId[i]) {
-          setShowingItems((items) => [
-            ...items,
-            { label: node.data["label"], id: node.id },
-          ]);
-          return { ...node, type: "red" };
-        }
-        return node;
-      });
-      handleSetNodes(newNodes);
-      await wait(watingTime);
-    }
-    updateGraphElements();
-    setRunning(false);
   }
 
   async function handlePostOrder() {
-    setRunning(true);
-    setShowingItems([]);
-    let newNodes: Node[] = getNodes();
-    let newNodesId: string[] = [];
-    bst.postOrderTraverse((node) => {
-      newNodesId.push(node.id);
+    await processNode({
+      actionType: "postOrder",
+      setRunning,
+      setShowingItems,
+      binarySearchTree: bst,
+      getNodes,
+      updateGraphElements,
+      setValue,
+      watingTime,
+      handleSetNodes,
+      wait,
     });
-
-    for (let i = 0; i < newNodesId.length; i++) {
-      newNodes = newNodes.map((node) => {
-        if (node.id === newNodesId[i]) {
-          setShowingItems((items) => [
-            ...items,
-            { label: node.data["label"], id: node.id },
-          ]);
-          return { ...node, type: "red" };
-        }
-        return node;
-      });
-      handleSetNodes(newNodes);
-      await wait(watingTime);
-    }
-    updateGraphElements();
-    setRunning(false);
   }
 
   function handleReset() {
@@ -224,14 +172,14 @@ const Controller = ({
         </Button>
       </div>
       {open && (
-        <div className="absolute opacity-90 top-4 left-4 bg-white text-black text-sm p-2 shadow w-72 z-50">
+        <div className="absolute top-4 left-4 bg-white text-black text-sm p-2 shadow w-72 z-50">
           <div className="flex gap-2 my-2 items-center w-full">
             <Label className="w-1/2">Random creation</Label>
 
             <Popover>
               <PopoverTrigger asChild className="w-1/2">
                 <Button disabled={running} size={"sm"}>
-                  Random{" "}
+                  Random
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
@@ -262,7 +210,7 @@ const Controller = ({
             />
             <Button
               disabled={running}
-              onClick={handleSubmit}
+              onClick={handleInsert}
               size="sm"
               className="w-16"
             >
@@ -303,44 +251,59 @@ const Controller = ({
               }}
             />
           </div>
-
-          <div className="flex gap-2 my-2 items-center w-full flex-wrap ">
-            <Button
-              disabled={running}
-              onClick={handlePreOrder}
-              size={"sm"}
-              className="w-1/2"
-              variant={"outline"}
-            >
-              Pre Order Traverse
-            </Button>
-            <Button
-              disabled={running}
-              onClick={handleInOrder}
-              size={"sm"}
-              className="w-1/2"
-              variant={"outline"}
-            >
-              In Order Traverse
-            </Button>
-            <Button
-              disabled={running}
-              onClick={handlePostOrder}
-              size={"sm"}
-              className="w-1/2"
-              variant={"outline"}
-            >
-              Post Order Traverse
-            </Button>
-            <Button
-              disabled={running}
-              onClick={handleReset}
-              size={"sm"}
-              className="w-1/2"
-              variant={"destructive"}
-            >
-              Reset
-            </Button>
+          <div className="flex gap-2 my-2  w-full">
+            <div className="flex gap-2 my-2 items-center w-1/2 flex-wrap ">
+              <Button
+                disabled={running}
+                onClick={handlePreOrder}
+                size={"sm"}
+                className="w-full"
+                variant={"outline"}
+              >
+                Pre Order
+              </Button>
+              <Button
+                disabled={running}
+                onClick={handleInOrder}
+                size={"sm"}
+                className="w-full"
+                variant={"outline"}
+              >
+                In Order
+              </Button>
+              <Button
+                className="w-full"
+                disabled={running}
+                onClick={handlePostOrder}
+                size={"sm"}
+                variant={"outline"}
+              >
+                Post Order
+              </Button>
+              <Button
+                className="w-full"
+                disabled={running}
+                onClick={handleReset}
+                size={"sm"}
+                variant={"destructive"}
+              >
+                Reset
+              </Button>
+            </div>
+            <div className="flex  my-2 p-2 rounded items-center w-1/2 flex-wrap border border-gray-200">
+              <div className="flex gap-2 my-2 items-center w-full  ">
+                <Label className="">Tree Depth:</Label>
+                <Label className="">{bst.getDepth()}</Label>
+              </div>
+              <div className="flex gap-2 my-2 items-center w-full ">
+                <Label className="">Min Node:</Label>
+                <Label className="">{bst.getMinItem()}</Label>
+              </div>
+              <div className="flex gap-2 my-2 items-center w-full ">
+                <Label className="">Max Node:</Label>
+                <Label className="">{bst.getMaxItem()}</Label>
+              </div>
+            </div>
           </div>
         </div>
       )}
