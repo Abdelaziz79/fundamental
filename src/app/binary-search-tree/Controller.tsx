@@ -28,9 +28,10 @@ const Controller = ({
 }) => {
   const [elements, setElements] = useState({ nodes: [], edges: [] });
   const [value, setValue] = useState<number | null>(null);
+  const [deleteVal, setDeleteVal] = useState<number | null>(null);
+  const [search, setSearch] = useState<number | null>(null);
   const [randomSize, setRandomSize] = useState<number | null>(null);
   const [watingTime, setWatingTime] = useState(1);
-  const [search, setSearch] = useState<number | null>(null);
   const [min, setMin] = useState<number>(0);
   const [max, setMax] = useState<number>(100);
   const [running, setRunning] = useState(false);
@@ -146,6 +147,22 @@ const Controller = ({
     });
   }
 
+  async function handleDelete() {
+    await processNode({
+      actionType: "delete",
+      value: deleteVal,
+      setRunning,
+      setShowingItems,
+      binarySearchTree: bst,
+      getNodes,
+      updateGraphElements,
+      setValue: setDeleteVal,
+      watingTime,
+      handleSetNodes,
+      wait,
+    });
+  }
+
   function handleReset() {
     setElements({ nodes: [], edges: [] });
     bst = new BinarySearchTree<number>();
@@ -154,8 +171,8 @@ const Controller = ({
     setShowingItems([]);
     setValue(null);
     setRandomSize(null);
-    setWatingTime(1);
     setSearch(null);
+    setWatingTime(1);
     setMin(0);
     setMax(100);
   }
@@ -198,7 +215,7 @@ const Controller = ({
 
           <div className="flex gap-2 my-2 items-center w-full ">
             <Label htmlFor="value" className="w-16">
-              Value
+              Insert
             </Label>
             <Input
               type="text"
@@ -217,6 +234,7 @@ const Controller = ({
               insert
             </Button>
           </div>
+
           <div className="flex gap-2 my-2 items-center w-full ">
             <Label htmlFor="find" className="w-16">
               Find
@@ -236,6 +254,28 @@ const Controller = ({
               className="w-16"
             >
               find
+            </Button>
+          </div>
+          <div className="flex gap-2 my-2 items-center w-full ">
+            <Label htmlFor="delete" className="w-16">
+              Delete
+            </Label>
+            <Input
+              type="text"
+              value={deleteVal ?? ""}
+              onChange={(event) => setDeleteVal(Number(event.target.value))}
+              placeholder="Enter a value"
+              id="delete"
+              className="w-1/2"
+            />
+            <Button
+              disabled={running}
+              onClick={handleDelete}
+              size="sm"
+              variant={"destructive"}
+              className="w-16"
+            >
+              delete
             </Button>
           </div>
           <div className="flex flex-col gap-2 my-2  w-full ">

@@ -164,6 +164,35 @@ export async function processNode({
     }
     case "delete": {
       if (value === null) return;
+      const res = binarySearchTree.search(value || 0);
+      if (!res) {
+        toast({
+          title: "not found",
+          description: "Item not found",
+          variant: "destructive",
+        });
+        break;
+      }
+
+      binarySearchTree.delete(value || 0, (node) => {
+        newNodesId.push(node.id);
+      });
+
+      await animate({
+        newNodesId,
+        newNodes,
+        setShowingItems,
+        watingTime,
+        handleSetNodes,
+        wait,
+      });
+
+      toast({
+        title: "deleted",
+        description: "Item deleted",
+        variant: "destructive",
+      });
+
       break;
     }
     case "search": {
@@ -208,7 +237,12 @@ export async function processNode({
         handleSetNodes,
         wait,
       });
-
+      toast({
+        title: "done",
+        description: "All items processed",
+        variant: "default",
+        className: "bg-green-200 border-green-500 border-2 ",
+      });
       break;
     }
     case "preOrder": {
@@ -224,7 +258,12 @@ export async function processNode({
         handleSetNodes,
         wait,
       });
-
+      toast({
+        title: "done",
+        description: "All items processed",
+        variant: "default",
+        className: "bg-green-200 border-green-500 border-2 ",
+      });
       break;
     }
     case "postOrder": {
@@ -239,6 +278,14 @@ export async function processNode({
         handleSetNodes,
         wait,
       });
+
+      toast({
+        title: "done",
+        description: "All items processed",
+        variant: "default",
+        className: "bg-green-200 border-green-500 border-2 ",
+      });
+
       break;
     }
     default:

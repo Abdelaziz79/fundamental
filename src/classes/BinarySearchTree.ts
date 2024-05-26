@@ -87,6 +87,46 @@ export class BinarySearchTree<T> {
     );
   }
 
+  private deleteNode(
+    node: TreeNode<T> | null,
+    value: T,
+    callback?: (node: TreeNode<T>) => void
+  ): TreeNode<T> | null {
+    if (node === null) return null;
+    callback?.(node);
+    if (value < node.value) {
+      node.left = this.deleteNode(node.left, value, callback);
+      return node;
+    } else if (value > node.value) {
+      node.right = this.deleteNode(node.right, value, callback);
+      return node;
+    } else {
+      // Node with only one child or no child
+      if (node.left === null) {
+        const temp = node.right;
+
+        return temp;
+      } else if (node.right === null) {
+        const temp = node.left;
+
+        return temp;
+      }
+
+      // Node with two children: Get the in order successor (smallest in the right subtree)
+      const temp = this.findMinNode(node.right);
+      node.value = temp.value;
+      node.right = this.deleteNode(node.right, temp.value, callback);
+      return node;
+    }
+  }
+
+  private findMinNode(node: TreeNode<T> | null): TreeNode<T> {
+    while (node!.left !== null) {
+      node = node!.left;
+    }
+    return node!;
+  }
+
   insert(value: T, callback?: (node: TreeNode<T>) => void) {
     const newNode = new TreeNode<T>(value);
     if (this.root === null) {
@@ -94,6 +134,10 @@ export class BinarySearchTree<T> {
     } else {
       this.insertNode(this.root, newNode, callback);
     }
+  }
+
+  delete(value: T, callback?: (node: TreeNode<T>) => void): void {
+    this.root = this.deleteNode(this.root, value, callback);
   }
 
   search(value: T, callback?: (node: TreeNode<T>) => void): boolean {
