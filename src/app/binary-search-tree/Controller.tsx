@@ -37,6 +37,10 @@ const Controller = ({
   const [running, setRunning] = useState(false);
   const { getNodes, setNodes, setEdges } = useReactFlow();
 
+  const [depth, setDepth] = useState(bst.getDepth());
+  const [minimum, setMinimum] = useState(bst.getMinItem());
+  const [maximum, setMaximum] = useState(bst.getMaxItem());
+
   function setNode(node: Node) {
     setNodes((nds) => nds.map((n) => (n.id === node.id ? node : n)));
   }
@@ -60,6 +64,9 @@ const Controller = ({
     }
     updateGraphElements();
     setRandomSize(null);
+    setDepth(bst.getDepth());
+    setMinimum(bst.getMinItem());
+    setMaximum(bst.getMaxItem());
   }
 
   function handleAddNode(event: React.ChangeEvent<HTMLInputElement>) {
@@ -71,6 +78,7 @@ const Controller = ({
   }
 
   async function handleSearch() {
+    if (search === null) return;
     await processNode({
       actionType: "search",
       value: search,
@@ -87,6 +95,7 @@ const Controller = ({
   }
 
   async function handleInsert() {
+    if (value === null) return;
     await processNode({
       actionType: "insert",
       value,
@@ -100,6 +109,9 @@ const Controller = ({
       handleSetNodes,
       wait,
     });
+    setDepth(bst.getDepth());
+    setMinimum(bst.getMinItem());
+    setMaximum(bst.getMaxItem());
   }
 
   async function handleInOrder() {
@@ -148,6 +160,7 @@ const Controller = ({
   }
 
   async function handleDelete() {
+    if (deleteVal === null) return;
     await processNode({
       actionType: "delete",
       value: deleteVal,
@@ -161,6 +174,9 @@ const Controller = ({
       handleSetNodes,
       wait,
     });
+    setDepth(bst.getDepth());
+    setMinimum(bst.getMinItem());
+    setMaximum(bst.getMaxItem());
   }
 
   function handleReset() {
@@ -175,6 +191,10 @@ const Controller = ({
     setWatingTime(1);
     setMin(0);
     setMax(100);
+    setRunning(false);
+    setDepth(bst.getDepth());
+    setMinimum(bst.getMinItem());
+    setMaximum(bst.getMaxItem());
   }
 
   return (
@@ -333,15 +353,15 @@ const Controller = ({
             <div className="flex  my-2 p-2 rounded items-center w-1/2 flex-wrap border border-gray-200">
               <div className="flex gap-2 my-2 items-center w-full  ">
                 <Label className="">Tree Depth:</Label>
-                <Label className="">{bst.getDepth()}</Label>
+                <Label className="">{depth}</Label>
               </div>
               <div className="flex gap-2 my-2 items-center w-full ">
                 <Label className="">Min Node:</Label>
-                <Label className="">{bst.getMinItem()}</Label>
+                <Label className="">{minimum}</Label>
               </div>
               <div className="flex gap-2 my-2 items-center w-full ">
                 <Label className="">Max Node:</Label>
-                <Label className="">{bst.getMaxItem()}</Label>
+                <Label className="">{maximum}</Label>
               </div>
             </div>
           </div>
