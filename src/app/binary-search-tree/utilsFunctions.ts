@@ -1,4 +1,4 @@
-import { BinarySearchTree, TreeNode } from "@/classes/BinarySearchTree";
+import BinarySearchTree, { TreeNode } from "@/classes/BinarySearchTree";
 import { toast } from "@/components/ui/use-toast";
 import { Edge, Node } from "reactflow";
 import { Item } from "./Types";

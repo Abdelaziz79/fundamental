@@ -1,6 +1,6 @@
 "use client";
 
-import { BinarySearchTree } from "@/classes/BinarySearchTree";
+import BinarySearchTree from "@/classes/BinarySearchTree";
 import ReactFlow, {
   Background,
   BackgroundVariant,

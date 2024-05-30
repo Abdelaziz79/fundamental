@@ -9,7 +9,7 @@ export class TreeNode<T> {
   }
 }
 
-export class BinarySearchTree<T> {
+export default class BinarySearchTree<T> {
   private root: TreeNode<T> | null = null;
 
   private insertNode(
