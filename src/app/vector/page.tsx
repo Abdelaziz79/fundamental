@@ -20,7 +20,7 @@ function VectorRFComp({ vec }: { vec: VectorRF<number> }) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [elements, setElements] = useState({ nodes: [], edges: [] });
   useEffect(() => {
-    createVector({ vec, elements });
+    createVector({ vec, elements, posX: 100, posY: 100 });
     setNodes(elements.nodes);
     setEdges(elements.edges);
   }, [vec, elements, setNodes, setEdges]);

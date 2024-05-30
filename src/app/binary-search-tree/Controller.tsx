@@ -10,7 +10,6 @@ import { Slider } from "@/components/ui/slider";
 import { getRandomNumber, wait } from "@/utils/helpers";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { useEffect, useState } from "react";
-import { LuSlidersHorizontal } from "react-icons/lu";
 import { Node, useReactFlow } from "reactflow";
 import RandomCreation from "./RandomCreation";
 import { Item } from "./Types";

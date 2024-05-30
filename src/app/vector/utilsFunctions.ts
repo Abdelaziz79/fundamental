@@ -4,16 +4,20 @@ import { Edge, Node } from "reactflow";
 export function createVector({
   vec,
   elements,
+  posX,
+  posY,
 }: {
   vec: VectorRF<number>;
   elements: { nodes: Node[]; edges: Edge[] };
+  posX: number;
+  posY: number;
 }) {
   if (vec === null || vec === undefined || vec.size() === 0) return;
   elements.nodes.push({
     id: "A",
     type: "group",
     data: { label: null },
-    position: { x: 0, y: 0 },
+    position: { x: posX, y: posY },
     style: {
       border: "1px solid black",
       padding: "2rem",
