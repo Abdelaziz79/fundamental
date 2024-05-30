@@ -28,3 +28,7 @@ export default function Controller({ children }: Props) {
     </>
   );
 }
+
+export function ControlElement({ children }: Props) {
+  return <div className="flex gap-2 my-2 items-center w-full ">{children}</div>;
+}

@@ -7,7 +7,7 @@ export function createVector({
   posX,
   posY,
 }: {
-  vec: VectorRF<number>;
+  vec: VectorRF<string>;
   elements: { nodes: Node[]; edges: Edge[] };
   posX: number;
   posY: number;

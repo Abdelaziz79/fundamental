@@ -15,7 +15,7 @@ import { createVector } from "./utilsFunctions";
 import Controller from "./Controller";
 type Props = {};
 
-function VectorRFComp({ vec }: { vec: VectorRF<number> }) {
+function VectorRFComp({ vec }: { vec: VectorRF<string> }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [elements, setElements] = useState({ nodes: [], edges: [] });
@@ -34,19 +34,18 @@ function VectorRFComp({ vec }: { vec: VectorRF<number> }) {
     >
       <MiniMap />
       <Controls />
-      <Controller />
+      <Controller vec={vec} elements={elements} setElements={setElements} />
       <Background variant={BackgroundVariant.Dots} />
     </ReactFlow>
   );
 }
 
 export default function VectorComp({}: Props) {
-  const vec = new VectorRF<number>();
-  vec.push_back(1);
-  vec.push_back(23);
-
-  vec.push_back(2);
-  vec.push_back(3);
+  const vec = new VectorRF<string>();
+  vec.push_back("I");
+  vec.push_back("am");
+  vec.push_back("too");
+  vec.push_back("good");
 
   return (
     <div className="bg-gray-100 h-screen w-screen">

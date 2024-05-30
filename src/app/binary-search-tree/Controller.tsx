@@ -291,7 +291,7 @@ const Controller = ({
             delete
           </Button>
         </div>
-        <div className="flex flex-col gap-2 my-2  w-full ">
+        <div className="flex flex-col gap-2 my-2 w-full ">
           <Label>Animation Time {watingTime}(s)</Label>
           <Slider
             min={0.1}
