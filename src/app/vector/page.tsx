@@ -12,6 +12,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { VectorNodeType } from "./utilsComponents";
 import { createVector } from "./utilsFunctions";
+import Controller from "./Controller";
 type Props = {};
 
 function VectorRFComp({ vec }: { vec: VectorRF<number> }) {
@@ -29,11 +30,11 @@ function VectorRFComp({ vec }: { vec: VectorRF<number> }) {
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
       nodeTypes={VectorNodeType}
     >
       <MiniMap />
       <Controls />
+      <Controller />
       <Background variant={BackgroundVariant.Dots} />
     </ReactFlow>
   );
@@ -42,17 +43,11 @@ function VectorRFComp({ vec }: { vec: VectorRF<number> }) {
 export default function VectorComp({}: Props) {
   const vec = new VectorRF<number>();
   vec.push_back(1);
+  vec.push_back(23);
+
   vec.push_back(2);
   vec.push_back(3);
-  vec.push_back(1);
-  vec.push_back(2);
-  vec.push_back(3);
-  vec.push_back(1);
-  vec.push_back(2);
-  vec.push_back(3);
-  vec.push_back(1);
-  vec.push_back(2);
-  vec.push_back(3);
+
   return (
     <div className="bg-gray-100 h-screen w-screen">
       <VectorRFComp vec={vec} />

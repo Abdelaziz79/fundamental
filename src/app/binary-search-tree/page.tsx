@@ -23,6 +23,7 @@ const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
   const [edges, _setEdges, onEdgesChange] = useEdgesState([]);
   const [showingItems, setShowingItems] = useState<Item[]>([]);
   const [open, setOpen] = useState(true);
+
   return (
     <>
       <ReactFlow
@@ -34,13 +35,14 @@ const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
       >
         <MiniMap />
         <Controls />
-        <Background variant={BackgroundVariant.Dots} />
         <Controller
           bst={bst}
           setShowingItems={setShowingItems}
           open={open}
           setOpen={setOpen}
         />
+
+        <Background variant={BackgroundVariant.Dots} />
         <DisplayItems showingItems={showingItems} open={open} />
       </ReactFlow>
     </>
@@ -49,6 +51,7 @@ const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
 
 export default function BinarySearchTreeComponent() {
   const bst = new BinarySearchTree<number>();
+
   return (
     <div className="bg-gray-100 h-screen w-screen">
       <BSTFlow bst={bst} />

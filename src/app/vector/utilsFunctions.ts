@@ -9,12 +9,38 @@ export function createVector({
   elements: { nodes: Node[]; edges: Edge[] };
 }) {
   if (vec === null || vec === undefined || vec.size() === 0) return;
+  elements.nodes.push({
+    id: "A",
+    type: "group",
+    data: { label: null },
+    position: { x: 0, y: 0 },
+    style: {
+      border: "1px solid black",
+      padding: "2rem",
+      width: vec.size() * 80,
+      backgroundColor: "white",
+      boxShadow: "3px 3px 15px #888888",
+    },
+  });
   for (let i = 0; i < vec.size(); i++) {
     elements.nodes.push({
       id: `node-${i}`,
       data: { label: vec.get(i)?.toString() },
-      position: { x: i * 79, y: 0 },
+      position: { x: i * 80, y: 0 },
       type: "VectorNode",
+      parentId: "A",
+      extent: "parent",
+      draggable: false,
+    });
+    elements.nodes.push({
+      id: `index-${i}`,
+      data: { label: i.toString() },
+      position: { x: i * 80 + 20, y: 30 },
+      type: "IndexNode",
+      parentId: "A",
+      extent: "parent",
+      draggable: false,
+      connectable: false,
     });
   }
 }
