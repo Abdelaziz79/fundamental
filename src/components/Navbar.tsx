@@ -25,6 +25,14 @@ export default function Navbar({}: Props) {
                 BST
               </Badge>
             </Link>
+            <Link
+              href="/vector"
+              className="mr-2 text-gray-800 font-mono font-semibold text-sm hover:text-gray-900"
+            >
+              <Badge className="bg-gray-200 hover:bg-gray-300 text-black">
+                Vector
+              </Badge>
+            </Link>
           </div>
         </div>
       </Container>

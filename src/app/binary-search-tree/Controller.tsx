@@ -197,9 +197,7 @@ const Controller = ({
     setMinimum(bst.getMinItem());
     setMaximum(bst.getMaxItem());
   }
-  useEffect(() => {
-    create(10);
-  }, []);
+
   return (
     <>
       <Control>

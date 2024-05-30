@@ -1,18 +1,16 @@
 "use client";
 
-import { initialNodes, initialEdges } from "./nodes-edges";
 import ELK, { ElkExtendedEdge, ElkNode } from "elkjs/lib/elk.bundled.js";
-import React, { useCallback, useLayoutEffect } from "react";
+import { useCallback, useLayoutEffect } from "react";
 import ReactFlow, {
+  Panel,
   ReactFlowProvider,
   addEdge,
-  Panel,
-  useNodesState,
   useEdgesState,
+  useNodesState,
   useReactFlow,
-  Node,
-  Edge,
 } from "reactflow";
+import { initialEdges, initialNodes } from "./nodes-edges";
 
 import "reactflow/dist/style.css";
 

@@ -1,9 +1,9 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import VectorRF from "@/classes/VectorRF";
 import Control, { ControlElement } from "@/components/Controller";
-import { Label } from "@radix-ui/react-label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import VectorRF from "@/classes/VectorRF";
+import { Label } from "@radix-ui/react-label";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useReactFlow } from "reactflow";
 import { createVector } from "./utilsFunctions";
 type Props = {

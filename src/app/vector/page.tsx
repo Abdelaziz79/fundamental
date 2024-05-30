@@ -10,9 +10,9 @@ import ReactFlow, {
   useNodesState,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import Controller from "./Controller";
 import { VectorNodeType } from "./utilsComponents";
 import { createVector } from "./utilsFunctions";
-import Controller from "./Controller";
 type Props = {};
 
 function VectorRFComp({ vec }: { vec: VectorRF<string> }) {
