@@ -1,16 +1,17 @@
 "use client";
 
-import ELK, { ElkExtendedEdge, ElkNode } from "elkjs/lib/elk.bundled.js";
-import { useCallback, useLayoutEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { initialNodes, initialEdges } from "./nodes-edges";
+import ELK from "elkjs/lib/elk.bundled.js";
+import React, { useCallback, useLayoutEffect } from "react";
 import ReactFlow, {
-  Panel,
   ReactFlowProvider,
   addEdge,
-  useEdgesState,
+  Panel,
   useNodesState,
+  useEdgesState,
   useReactFlow,
 } from "reactflow";
-import { initialEdges, initialNodes } from "./nodes-edges";
 
 import "reactflow/dist/style.css";
 
@@ -21,18 +22,13 @@ const elk = new ELK();
 //
 // - https://www.eclipse.org/elk/reference/algorithms.html
 // - https://www.eclipse.org/elk/reference/options.html
-
 const elkOptions = {
   "elk.algorithm": "layered",
   "elk.layered.spacing.nodeNodeBetweenLayers": "100",
   "elk.spacing.nodeNode": "80",
 };
 
-const getLayoutedElements = (
-  nodes: ElkNode[],
-  edges: ElkExtendedEdge[],
-  options = {}
-) => {
+const getLayoutedElements = (nodes, edges, options = {}) => {
   const isHorizontal = options?.["elk.direction"] === "RIGHT";
   const graph = {
     id: "root",
@@ -50,11 +46,10 @@ const getLayoutedElements = (
     })),
     edges: edges,
   };
-
   return elk
     .layout(graph)
     .then((layoutedGraph) => ({
-      nodes: layoutedGraph.children?.map((node) => ({
+      nodes: layoutedGraph.children.map((node) => ({
         ...node,
         // React Flow expects a position property on the node instead of `x`
         // and `y` fields.
@@ -66,23 +61,51 @@ const getLayoutedElements = (
     .catch(console.error);
 };
 
+const createRandomNodesAndEdges = () => {
+  const nodes = [];
+  const edges = [];
+  nodes.push({ id: "root", data: { label: "root" } });
+  for (let i = 0; i < 100; i++) {
+    nodes.push({ id: `node_${i}`, data: { label: `node_${i}` } });
+    nodes.push({ id: `node_${i + 1}`, data: { label: `node_${i + 1}` } });
+    if (i > 0) {
+      edges.push({
+        id: `edge_${i}`,
+        source: `node_${i - 1}`,
+        target: `node_${i}`,
+      });
+    }
+  }
+  return { nodes, edges };
+};
+
+const { nodes: randomNodes, edges: randomEdges } = createRandomNodesAndEdges();
 function LayoutFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { fitView } = useReactFlow();
 
-  const onConnect = useCallback(
-    (params: any) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
+  // const onConnect = useCallback(
+  //   (params) => setEdges((eds) => addEdge(params, eds)),
+  //   []
+  // );
+
   const onLayout = useCallback(
-    ({ direction = "DOWN", useInitialNodes = false }) => {
+    ({
+      direction,
+      useInitialNodes = false,
+    }: {
+      direction: string;
+      useInitialNodes?: boolean;
+    }) => {
       const opts = { "elk.direction": direction, ...elkOptions };
-      const ns = useInitialNodes ? initialNodes : nodes;
-      const es = useInitialNodes ? initialEdges : edges;
+      const ns = useInitialNodes ? initialNodes : randomNodes;
+      const es = useInitialNodes ? initialEdges : randomEdges;
 
       getLayoutedElements(ns, es, opts).then(
         ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+          console.log("nodes", nodes);
+          console.log("edges", edges);
           setNodes(layoutedNodes);
           setEdges(layoutedEdges);
 
@@ -102,24 +125,25 @@ function LayoutFlow() {
     <ReactFlow
       nodes={nodes}
       edges={edges}
-      onConnect={onConnect}
+      // onConnect={onConnect}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       fitView
     >
-      <Panel position="top-right">
-        <button onClick={() => onLayout({ direction: "DOWN" })}>
+      <Panel position="top-right" className="flex gap-2">
+        <Button onClick={() => onLayout({ direction: "DOWN" })}>
           vertical layout
-        </button>
+        </Button>
 
-        <button onClick={() => onLayout({ direction: "RIGHT" })}>
+        <Button onClick={() => onLayout({ direction: "RIGHT" })}>
           horizontal layout
-        </button>
+        </Button>
       </Panel>
     </ReactFlow>
   );
 }
-export default function Page() {
+
+export default function TestPage() {
   return (
     <ReactFlowProvider>
       <LayoutFlow />
