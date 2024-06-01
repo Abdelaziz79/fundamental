@@ -11,7 +11,6 @@ import ReactFlow, {
 } from "reactflow";
 
 import Controller from "./Controller";
-import DisplayItems from "./DisplayItems";
 
 import { useState } from "react";
 import "reactflow/dist/style.css";
@@ -22,7 +21,6 @@ const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
   const [nodes, _setNodes, onNodesChange] = useNodesState([]);
   const [edges, _setEdges, onEdgesChange] = useEdgesState([]);
   const [showingItems, setShowingItems] = useState<Item[]>([]);
-  const [open, setOpen] = useState(true);
 
   return (
     <>
@@ -38,12 +36,10 @@ const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
         <Controller
           bst={bst}
           setShowingItems={setShowingItems}
-          open={open}
-          setOpen={setOpen}
+          showingItems={showingItems}
         />
 
         <Background variant={BackgroundVariant.Dots} />
-        <DisplayItems showingItems={showingItems} open={open} />
       </ReactFlow>
     </>
   );

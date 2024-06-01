@@ -7,23 +7,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { getRandomNumber, wait } from "@/utils/helpers";
+import { getLayoutElements, getRandomNumber, wait } from "@/utils/helpers";
 import { PopoverContent } from "@radix-ui/react-popover";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { Node, useReactFlow } from "reactflow";
 import RandomCreation from "./RandomCreation";
 import { Item } from "./Types";
 import { createGraphElements, processNode } from "./utilsFunctions";
+
+const elkOptions = {
+  "elk.algorithm": "mrtree",
+  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
+  "elk.spacing.nodeNode": "80",
+  "elk.direction": "DOWN",
+};
+
 const Controller = ({
   bst,
   setShowingItems,
-  open,
-  setOpen,
+
+  showingItems,
 }: {
   bst: BinarySearchTree<number>;
   setShowingItems: React.Dispatch<React.SetStateAction<Item[]>>;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
+  showingItems: Item[];
 }) => {
   const [elements, setElements] = useState({ nodes: [], edges: [] });
   const [value, setValue] = useState<number | null>(null);
@@ -34,7 +42,7 @@ const Controller = ({
   const [min, setMin] = useState<number>(0);
   const [max, setMax] = useState<number>(100);
   const [running, setRunning] = useState(false);
-  const { getNodes, setNodes, setEdges } = useReactFlow();
+  const { getNodes, setNodes, setEdges, fitView } = useReactFlow();
 
   const [depth, setDepth] = useState(bst.getDepth());
   const [minimum, setMinimum] = useState(bst.getMinItem());
@@ -47,9 +55,14 @@ const Controller = ({
   function updateGraphElements() {
     setElements({ nodes: [], edges: [] });
     const TreeDepth = bst.getDepth();
-    createGraphElements(bst.getRoot(), 300, 40, 0, elements, TreeDepth);
-    setNodes(elements.nodes);
-    setEdges(elements.edges);
+    createGraphElements(bst.getRoot(), 0, elements, TreeDepth);
+    const ns = elements.nodes;
+    const es = elements.edges;
+    getLayoutElements(ns, es, elkOptions).then((res) => {
+      setNodes((res as any).nodes);
+      setEdges((res as any).edges);
+      window.requestAnimationFrame(() => fitView());
+    });
   }
 
   function handleRandomSize(e: React.ChangeEvent<HTMLInputElement>) {
@@ -200,7 +213,7 @@ const Controller = ({
 
   return (
     <>
-      <Control>
+      <Control showingItems={showingItems}>
         <div className="flex gap-2 my-2 items-center w-full">
           <Label className="w-1/2">Random creation</Label>
 

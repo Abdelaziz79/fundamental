@@ -11,8 +11,6 @@ const calculateGap = (depth: number, TreeDepth: number) => {
 
 export const createGraphElements = (
   node: TreeNode<number> | null,
-  x: number,
-  y: number,
   depth: number,
   elements: { nodes: Node[]; edges: Edge[] },
   TreeDepth: number
@@ -23,50 +21,32 @@ export const createGraphElements = (
   elements.nodes.push({
     id: nodeId,
     data: { label: node.value.toString() },
-    position: { x, y },
-    type: depth > 7 ? "mid" : "custom",
+    position: { x: 0, y: 0 },
+    type: "custom",
   });
 
   const gap = calculateGap(depth, TreeDepth);
 
   if (node.left) {
-    const leftX = x - gap;
-    const leftY = y + Math.max(230 - depth * 8, 70); // Adjust vertical gap if needed
     const leftNodeId = node.left.id;
     elements.edges.push({
       id: `e-${nodeId}-${leftNodeId}`,
       source: nodeId,
       target: leftNodeId,
-      type: "default",
+      type: "step",
     });
-    createGraphElements(
-      node.left,
-      leftX,
-      leftY,
-      depth + 1,
-      elements,
-      TreeDepth
-    );
+    createGraphElements(node.left, depth + 1, elements, TreeDepth);
   }
 
   if (node.right) {
-    const rightX = x + gap;
-    const rightY = y + Math.max(230 - depth * 8, 70); // Adjust vertical gap if needed
     const rightNodeId = node.right.id;
     elements.edges.push({
       id: `e-${nodeId}-${rightNodeId}`,
       source: nodeId,
       target: rightNodeId,
-      type: "default",
+      type: "step",
     });
-    createGraphElements(
-      node.right,
-      rightX,
-      rightY,
-      depth + 1,
-      elements,
-      TreeDepth
-    );
+    createGraphElements(node.right, depth + 1, elements, TreeDepth);
   }
 };
 
