@@ -22,11 +22,12 @@ type Props = {
 
 export default function Controller({ vec, elements, setElements }: Props) {
   const [value, setValue] = useState<string | null>(null);
-  const { setNodes } = useReactFlow();
+  const { setNodes, fitView } = useReactFlow();
   function updateGraphElements() {
     setElements({ nodes: [], edges: [] });
     createVector({ vec, elements, posX: 100, posY: 100 });
     setNodes(elements.nodes);
+    window.requestAnimationFrame(() => fitView());
   }
   function handlePush() {
     if (!value) return;

@@ -8,6 +8,7 @@ import ReactFlow, {
   MiniMap,
   useEdgesState,
   useNodesState,
+  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import Controller from "./Controller";
@@ -23,13 +24,14 @@ function VectorRFComp({ vec }: { vec: VectorRF<string> }) {
     createVector({ vec, elements, posX: 100, posY: 100 });
     setNodes(elements.nodes);
     setEdges(elements.edges);
-  }, [vec, elements, setNodes, setEdges]);
+  }, [vec, elements, setNodes, setEdges, setElements]);
 
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
       nodeTypes={VectorNodeType}
     >
       <MiniMap />
