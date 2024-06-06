@@ -1,5 +1,5 @@
 "use client";
-import { Item } from "@/app/binary-search-tree/Types";
+import { Item } from "@/Types/Item";
 import React, { useState } from "react";
 import { LuSlidersHorizontal } from "react-icons/lu";
 import { Badge } from "./ui/badge";

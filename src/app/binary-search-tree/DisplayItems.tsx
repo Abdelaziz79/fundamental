@@ -1,6 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { Item } from "./Types";
+import { Item } from "@/Types/Item";
 
 export default function DisplayItems({
   showingItems,

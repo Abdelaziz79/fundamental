@@ -1,68 +1,21 @@
-import BinarySearchTree, { TreeNode } from "@/classes/BinarySearchTree";
+import { Item } from "@/Types/Item";
+import BinarySearchTree from "@/classes/BinarySearchTree/BinarySearchTree";
 import { toast } from "@/components/ui/use-toast";
-import { Edge, Node } from "reactflow";
-import { Item } from "./Types";
-
-const calculateGap = (depth: number, TreeDepth: number) => {
-  const numberOfNodesInCurrentLevel = 2 ** depth;
-  const basGap = (TreeDepth - depth + 1) * 100 + depth * 50;
-  return basGap / numberOfNodesInCurrentLevel;
-};
-
-export const createGraphElements = (
-  node: TreeNode<number> | null,
-  depth: number,
-  elements: { nodes: Node[]; edges: Edge[] },
-  TreeDepth: number
-) => {
-  if (node === null) return;
-
-  const nodeId = node.id;
-  elements.nodes.push({
-    id: nodeId,
-    data: { label: node.value.toString() },
-    position: { x: 0, y: 0 },
-    type: "custom",
-  });
-
-  const gap = calculateGap(depth, TreeDepth);
-
-  if (node.left) {
-    const leftNodeId = node.left.id;
-    elements.edges.push({
-      id: `e-${nodeId}-${leftNodeId}`,
-      source: nodeId,
-      target: leftNodeId,
-      type: "step",
-    });
-    createGraphElements(node.left, depth + 1, elements, TreeDepth);
-  }
-
-  if (node.right) {
-    const rightNodeId = node.right.id;
-    elements.edges.push({
-      id: `e-${nodeId}-${rightNodeId}`,
-      source: nodeId,
-      target: rightNodeId,
-      type: "step",
-    });
-    createGraphElements(node.right, depth + 1, elements, TreeDepth);
-  }
-};
+import { Node } from "reactflow";
 
 async function animate({
   newNodesId,
   newNodes,
   setShowingItems,
   watingTime,
-  handleSetNodes,
+  setNodes,
   wait,
 }: {
   setShowingItems: React.Dispatch<React.SetStateAction<Item[]>>;
   newNodesId: string[];
   newNodes: Node[];
   watingTime: number;
-  handleSetNodes: (nodes: Node[]) => void;
+  setNodes: (nodes: Node[]) => void;
   wait: (time: number) => Promise<void>;
 }) {
   for (let i = 0; i < newNodesId.length; i++) {
@@ -76,7 +29,7 @@ async function animate({
       }
       return node;
     });
-    handleSetNodes(newNodes);
+    setNodes(newNodes);
     await wait(watingTime);
   }
 }
@@ -91,7 +44,7 @@ export async function processNode({
   updateGraphElements,
   setValue,
   watingTime,
-  handleSetNodes,
+  setNodes,
   wait,
 }: {
   actionType:
@@ -109,7 +62,7 @@ export async function processNode({
   watingTime: number;
   getNodes: () => Node[];
   updateGraphElements: () => void;
-  handleSetNodes: (nodes: Node[]) => void;
+  setNodes: (nodes: Node[]) => void;
   wait: (time: number) => Promise<void>;
 }) {
   setRunning(true);
@@ -129,7 +82,7 @@ export async function processNode({
         newNodes,
         setShowingItems,
         watingTime,
-        handleSetNodes,
+        setNodes,
         wait,
       });
 
@@ -163,7 +116,7 @@ export async function processNode({
         newNodes,
         setShowingItems,
         watingTime,
-        handleSetNodes,
+        setNodes,
         wait,
       });
 
@@ -185,7 +138,7 @@ export async function processNode({
         newNodes,
         setShowingItems,
         watingTime,
-        handleSetNodes,
+        setNodes,
         wait,
       });
       if (res) {
@@ -214,7 +167,7 @@ export async function processNode({
         newNodes,
         setShowingItems,
         watingTime,
-        handleSetNodes,
+        setNodes,
         wait,
       });
       toast({
@@ -235,7 +188,7 @@ export async function processNode({
         newNodes,
         setShowingItems,
         watingTime,
-        handleSetNodes,
+        setNodes,
         wait,
       });
       toast({
@@ -255,7 +208,7 @@ export async function processNode({
         newNodes,
         setShowingItems,
         watingTime,
-        handleSetNodes,
+        setNodes,
         wait,
       });
 

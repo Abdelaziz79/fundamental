@@ -1,6 +1,6 @@
 "use client";
 
-import BinarySearchTree from "@/classes/BinarySearchTree";
+import BinarySearchTree from "@/classes/BinarySearchTree/BinarySearchTree";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -12,10 +12,10 @@ import ReactFlow, {
 
 import Controller from "./Controller";
 
+import { Item } from "@/Types/Item";
 import { useState } from "react";
 import "reactflow/dist/style.css";
-import { Item } from "./Types";
-import { NodeType } from "./utilsComponents";
+import { NodeType } from "../../classes/BinarySearchTree/BSTNodeType";
 
 const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
   const [nodes, _setNodes, onNodesChange] = useNodesState([]);

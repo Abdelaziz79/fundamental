@@ -1,39 +1,31 @@
 "use client";
 
-import BinarySearchTree from "@/classes/BinarySearchTree";
+import { defaultElkLayoutOptionsBST } from "@/Types/elkTypes";
+import { getBSTElements } from "@/classes/BinarySearchTree/BSTFunctions";
+import BinarySearchTree from "@/classes/BinarySearchTree/BinarySearchTree";
 import Control from "@/components/Controller";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { getLayoutElements, getRandomNumber, wait } from "@/utils/helpers";
+import { getRandomNumber, wait } from "@/utils/helpers";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { useState } from "react";
-import { Node, useReactFlow } from "reactflow";
+import { useReactFlow } from "reactflow";
+import { Item } from "../../Types/Item";
 import RandomCreation from "./RandomCreation";
-import { Item } from "./Types";
-import { createGraphElements, processNode } from "./utilsFunctions";
-
-const elkOptions = {
-  "elk.algorithm": "mrtree",
-  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
-  "elk.spacing.nodeNode": "80",
-  "elk.direction": "DOWN",
-};
+import { processNode } from "./utilsFunctions";
 
 const Controller = ({
   bst,
   setShowingItems,
-
   showingItems,
 }: {
   bst: BinarySearchTree<number>;
   setShowingItems: React.Dispatch<React.SetStateAction<Item[]>>;
-
   showingItems: Item[];
 }) => {
-  const [elements, setElements] = useState({ nodes: [], edges: [] });
   const [value, setValue] = useState<number | null>(null);
   const [deleteVal, setDeleteVal] = useState<number | null>(null);
   const [search, setSearch] = useState<number | null>(null);
@@ -48,31 +40,23 @@ const Controller = ({
   const [minimum, setMinimum] = useState(bst.getMinItem());
   const [maximum, setMaximum] = useState(bst.getMaxItem());
 
-  function setNode(node: Node) {
-    setNodes((nds) => nds.map((n) => (n.id === node.id ? node : n)));
-  }
-
   function updateGraphElements() {
-    setElements({ nodes: [], edges: [] });
-    const TreeDepth = bst.getDepth();
-    createGraphElements(bst.getRoot(), 0, elements, TreeDepth);
-    const ns = elements.nodes;
-    const es = elements.edges;
-    getLayoutElements(ns, es, elkOptions).then((res) => {
-      setNodes((res as any).nodes);
-      setEdges((res as any).edges);
-      window.requestAnimationFrame(() => fitView());
+    getBSTElements({
+      BinarySearchTree: bst,
+      nodeType: "custom",
+      edgeType: "default",
+      elkOptions: defaultElkLayoutOptionsBST,
+    }).then((res) => {
+      setNodes(res.nodes);
+      setEdges(res.edges);
     });
-  }
-
-  function handleRandomSize(e: React.ChangeEvent<HTMLInputElement>) {
-    setRandomSize(Number(e.target.value));
   }
 
   function handleSubmitRandomSize() {
     if (randomSize === null) return;
     create(randomSize);
   }
+
   function create(sz: number) {
     for (let i = 0; i < sz; i++) {
       bst.insert(getRandomNumber(min, max));
@@ -82,13 +66,6 @@ const Controller = ({
     setDepth(bst.getDepth());
     setMinimum(bst.getMinItem());
     setMaximum(bst.getMaxItem());
-  }
-  function handleAddNode(event: React.ChangeEvent<HTMLInputElement>) {
-    setValue(Number(event.target.value));
-  }
-
-  function handleSetNodes(nodes: Node[]) {
-    setNodes(nodes);
   }
 
   async function handleSearch() {
@@ -103,7 +80,7 @@ const Controller = ({
       updateGraphElements,
       setValue: setSearch,
       watingTime,
-      handleSetNodes,
+      setNodes,
       wait,
     });
   }
@@ -120,7 +97,7 @@ const Controller = ({
       updateGraphElements,
       setValue,
       watingTime,
-      handleSetNodes,
+      setNodes,
       wait,
     });
     setDepth(bst.getDepth());
@@ -138,7 +115,7 @@ const Controller = ({
       updateGraphElements,
       setValue,
       watingTime,
-      handleSetNodes,
+      setNodes,
       wait,
     });
   }
@@ -153,7 +130,7 @@ const Controller = ({
       updateGraphElements,
       setValue,
       watingTime,
-      handleSetNodes,
+      setNodes,
       wait,
     });
   }
@@ -168,7 +145,7 @@ const Controller = ({
       updateGraphElements,
       setValue,
       watingTime,
-      handleSetNodes,
+      setNodes,
       wait,
     });
   }
@@ -185,7 +162,7 @@ const Controller = ({
       updateGraphElements,
       setValue: setDeleteVal,
       watingTime,
-      handleSetNodes,
+      setNodes,
       wait,
     });
     setDepth(bst.getDepth());
@@ -194,7 +171,6 @@ const Controller = ({
   }
 
   function handleReset() {
-    setElements({ nodes: [], edges: [] });
     bst = new BinarySearchTree<number>();
     setNodes([]);
     setEdges([]);
@@ -226,7 +202,7 @@ const Controller = ({
             <PopoverContent>
               <RandomCreation
                 treeSize={randomSize}
-                handleTreeSize={handleRandomSize}
+                handleTreeSize={(e) => setRandomSize(Number(e.target.value))}
                 min={min}
                 max={max}
                 setMin={setMin}
@@ -244,7 +220,7 @@ const Controller = ({
           <Input
             type="text"
             value={value ?? ""}
-            onChange={handleAddNode}
+            onChange={(e) => setValue(Number(e.target.value))}
             placeholder="Enter a value"
             id="value"
             className="w-1/2"

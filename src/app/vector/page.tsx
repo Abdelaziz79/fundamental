@@ -8,7 +8,6 @@ import ReactFlow, {
   MiniMap,
   useEdgesState,
   useNodesState,
-  useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import Controller from "./Controller";

@@ -1,3 +1,5 @@
+import { ReactFlowGraph } from "@/Types/ReactFlowGraph";
+import { Edge, Node } from "reactflow";
 export class TreeNode<T> {
   value: T;
   left: TreeNode<T> | null = null;
@@ -127,6 +129,45 @@ export default class BinarySearchTree<T> {
     return node!;
   }
 
+  private createGraphElements = (
+    node: TreeNode<T> | null,
+    elements: { nodes: Node[]; edges: Edge[] },
+    nodeType: string,
+    edgeType: string
+  ) => {
+    if (node === null) return;
+
+    const nodeId = node.id;
+    elements.nodes.push({
+      id: nodeId,
+      data: { label: node.value },
+      position: { x: 0, y: 0 },
+      type: nodeType,
+    });
+
+    if (node.left) {
+      const leftNodeId = node.left.id;
+      elements.edges.push({
+        id: `e-${nodeId}-${leftNodeId}`,
+        source: nodeId,
+        target: leftNodeId,
+        type: edgeType,
+      });
+      this.createGraphElements(node.left, elements, nodeType, edgeType);
+    }
+
+    if (node.right) {
+      const rightNodeId = node.right.id;
+      elements.edges.push({
+        id: `e-${nodeId}-${rightNodeId}`,
+        source: nodeId,
+        target: rightNodeId,
+        type: edgeType,
+      });
+      this.createGraphElements(node.right, elements, nodeType, edgeType);
+    }
+  };
+
   insert(value: T, callback?: (node: TreeNode<T>) => void) {
     const newNode = new TreeNode<T>(value);
     if (this.root === null) {
@@ -180,5 +221,26 @@ export default class BinarySearchTree<T> {
       node = node.left;
     }
     return node.value;
+  }
+
+  getItems(): T[] {
+    const items: T[] = [];
+    this.inOrderTraverse((node) => items.push(node.value));
+    return items;
+  }
+
+  getReactFlowGraphElements({
+    nodeType = "custom",
+    edgeType = "step",
+  }: {
+    nodeType?: string;
+    edgeType?: string;
+  } = {}): ReactFlowGraph {
+    const elements: ReactFlowGraph = {
+      nodes: [],
+      edges: [],
+    };
+    this.createGraphElements(this.root, elements, nodeType, edgeType);
+    return elements;
   }
 }

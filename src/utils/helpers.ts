@@ -1,4 +1,5 @@
-import ELK, { ElkExtendedEdge, ElkNode } from "elkjs/lib/elk.bundled.js";
+import { ElkLayoutOptions } from "@/Types/elkTypes";
+import ELK, { ElkNode } from "elkjs/lib/elk.bundled.js";
 
 export const wait = async (seconds: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
@@ -8,32 +9,10 @@ export function getRandomNumber(min: number, max: number) {
 }
 const elk = new ELK();
 
-// algorithm options
-
-// sporeOverlap
-// layered
-// random
-// box
-// mrtree
-// disco
-// fixed
-// force
-// radial
-// rectpacking
-// sporeCompaction
-// stress
-
-const elkOptions = {
-  "elk.algorithm": "stress",
-  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
-  "elk.spacing.nodeNode": "80",
-  "elk.direction": "DOWN",
-};
-
 export const getLayoutElements = async (
   nodes: any,
   edges: any,
-  options = elkOptions
+  options: any
 ) => {
   // const isHorizontal = options?.["elk.direction"] === "RIGHT";
   const isHorizontal = false;
@@ -68,12 +47,4 @@ export const getLayoutElements = async (
   } catch (message) {
     return console.error(message);
   }
-};
-export const convertToReactFlowElements = (nodes: any, edges: any) => {
-  return nodes.map((node: any) => ({
-    ...node,
-    // React Flow expects a position property on the node instead of `x`
-    // and `y` fields.
-    position: { x: node.x, y: node.y },
-  }));
 };

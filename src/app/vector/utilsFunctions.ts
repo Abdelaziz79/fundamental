@@ -19,11 +19,11 @@ export function createVector({
     data: { label: null },
     position: { x: posX, y: posY },
     style: {
-      border: "1px solid black",
+      border: "1px solid rgb(22,163,74)",
       padding: "2rem",
       width: vec.size() * 80,
       backgroundColor: "white",
-      boxShadow: "3px 3px 15px #888888",
+      boxShadow: "2px 2px 5px #888888",
     },
   });
   for (let i = 0; i < vec.size(); i++) {
