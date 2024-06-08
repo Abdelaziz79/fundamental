@@ -12,9 +12,9 @@ import ReactFlow, {
 
 import Controller from "./Controller";
 
-import { Item } from "@/Types/Item";
 import { useState } from "react";
 import "reactflow/dist/style.css";
+import { Item } from "../../Types/Item";
 import { NodeType } from "../../classes/BinarySearchTree/BSTNodeType";
 
 const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {

@@ -1,7 +1,5 @@
 "use client";
 
-import { defaultElkLayoutOptionsBST } from "@/Types/elkTypes";
-import { getBSTElements } from "@/classes/BinarySearchTree/BSTFunctions";
 import BinarySearchTree from "@/classes/BinarySearchTree/BinarySearchTree";
 import Control from "@/components/Controller";
 import { Button } from "@/components/ui/button";
@@ -9,11 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { getRandomNumber, wait } from "@/utils/helpers";
+import { getRandomNumber } from "@/utils/helpers";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { useReactFlow } from "reactflow";
 import { Item } from "../../Types/Item";
+import { defaultElkLayoutOptionsBST } from "../../Types/elkTypes";
 import RandomCreation from "./RandomCreation";
 import { processNode } from "./utilsFunctions";
 
@@ -41,15 +40,17 @@ const Controller = ({
   const [maximum, setMaximum] = useState(bst.getMaxItem());
 
   function updateGraphElements() {
-    getBSTElements({
-      BinarySearchTree: bst,
-      nodeType: "custom",
-      edgeType: "default",
-      elkOptions: defaultElkLayoutOptionsBST,
-    }).then((res) => {
-      setNodes(res.nodes);
-      setEdges(res.edges);
-    });
+    bst
+      .getReactFlowGraphElements({
+        nodeType: "custom",
+        edgeType: "default",
+        elkOptions: defaultElkLayoutOptionsBST,
+      })
+      .then((res) => {
+        setNodes(res.nodes);
+        setEdges(res.edges);
+        window.requestAnimationFrame(() => fitView());
+      });
   }
 
   function handleSubmitRandomSize() {
@@ -81,7 +82,6 @@ const Controller = ({
       setValue: setSearch,
       watingTime,
       setNodes,
-      wait,
     });
   }
 
@@ -98,7 +98,6 @@ const Controller = ({
       setValue,
       watingTime,
       setNodes,
-      wait,
     });
     setDepth(bst.getDepth());
     setMinimum(bst.getMinItem());
@@ -116,7 +115,6 @@ const Controller = ({
       setValue,
       watingTime,
       setNodes,
-      wait,
     });
   }
 
@@ -131,7 +129,6 @@ const Controller = ({
       setValue,
       watingTime,
       setNodes,
-      wait,
     });
   }
 
@@ -146,7 +143,6 @@ const Controller = ({
       setValue,
       watingTime,
       setNodes,
-      wait,
     });
   }
 
@@ -163,7 +159,6 @@ const Controller = ({
       setValue: setDeleteVal,
       watingTime,
       setNodes,
-      wait,
     });
     setDepth(bst.getDepth());
     setMinimum(bst.getMinItem());

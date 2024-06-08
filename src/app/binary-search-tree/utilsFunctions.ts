@@ -1,31 +1,32 @@
-import { Item } from "@/Types/Item";
 import BinarySearchTree from "@/classes/BinarySearchTree/BinarySearchTree";
 import { toast } from "@/components/ui/use-toast";
+import { wait } from "@/utils/helpers";
 import { Node } from "reactflow";
+import { Item } from "../../Types/Item";
 
 async function animate({
-  newNodesId,
+  NodesId,
   newNodes,
   setShowingItems,
   watingTime,
   setNodes,
-  wait,
+  newNodeType,
 }: {
-  setShowingItems: React.Dispatch<React.SetStateAction<Item[]>>;
-  newNodesId: string[];
+  NodesId: string[];
   newNodes: Node[];
+  setShowingItems?: React.Dispatch<React.SetStateAction<Item[]>>;
   watingTime: number;
   setNodes: (nodes: Node[]) => void;
-  wait: (time: number) => Promise<void>;
+  newNodeType: string;
 }) {
-  for (let i = 0; i < newNodesId.length; i++) {
+  for (let i = 0; i < NodesId.length; i++) {
     newNodes = newNodes.map((node) => {
-      if (node.id === newNodesId[i]) {
-        setShowingItems((items) => [
+      if (node.id === NodesId[i]) {
+        setShowingItems?.((items) => [
           ...items,
           { label: node.data["label"], id: node.id },
         ]);
-        return { ...node, type: "red" };
+        return { ...node, type: newNodeType };
       }
       return node;
     });
@@ -45,7 +46,6 @@ export async function processNode({
   setValue,
   watingTime,
   setNodes,
-  wait,
 }: {
   actionType:
     | "insert"
@@ -63,7 +63,6 @@ export async function processNode({
   getNodes: () => Node[];
   updateGraphElements: () => void;
   setNodes: (nodes: Node[]) => void;
-  wait: (time: number) => Promise<void>;
 }) {
   setRunning(true);
   setShowingItems([]);
@@ -78,12 +77,12 @@ export async function processNode({
       });
 
       await animate({
-        newNodesId,
+        NodesId: newNodesId,
         newNodes,
         setShowingItems,
         watingTime,
         setNodes,
-        wait,
+        newNodeType: "red",
       });
 
       toast({
@@ -112,12 +111,13 @@ export async function processNode({
       });
 
       await animate({
-        newNodesId,
+        NodesId: newNodesId,
+
         newNodes,
         setShowingItems,
         watingTime,
         setNodes,
-        wait,
+        newNodeType: "red",
       });
 
       toast({
@@ -134,12 +134,13 @@ export async function processNode({
         newNodesId.push(node.id);
       });
       await animate({
-        newNodesId,
+        NodesId: newNodesId,
+
         newNodes,
         setShowingItems,
         watingTime,
         setNodes,
-        wait,
+        newNodeType: "red",
       });
       if (res) {
         toast({
@@ -163,12 +164,13 @@ export async function processNode({
       });
 
       await animate({
-        newNodesId,
+        NodesId: newNodesId,
+
         newNodes,
         setShowingItems,
         watingTime,
         setNodes,
-        wait,
+        newNodeType: "red",
       });
       toast({
         title: "done",
@@ -184,12 +186,13 @@ export async function processNode({
       });
 
       await animate({
-        newNodesId,
+        NodesId: newNodesId,
+
         newNodes,
         setShowingItems,
         watingTime,
         setNodes,
-        wait,
+        newNodeType: "red",
       });
       toast({
         title: "done",
@@ -204,12 +207,13 @@ export async function processNode({
         newNodesId.push(node.id);
       });
       await animate({
-        newNodesId,
+        NodesId: newNodesId,
+
         newNodes,
         setShowingItems,
         watingTime,
         setNodes,
-        wait,
+        newNodeType: "red",
       });
 
       toast({

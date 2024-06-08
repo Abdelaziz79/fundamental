@@ -1,5 +1,4 @@
-import { ElkLayoutOptions } from "@/Types/elkTypes";
-import ELK, { ElkNode } from "elkjs/lib/elk.bundled.js";
+import ELK from "elkjs/lib/elk.bundled.js";
 
 export const wait = async (seconds: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));

@@ -1,11 +1,8 @@
+import { ReactFlowGraph } from "./ReactFlowGraph";
+import { ElkLayoutOptions, defaultElkLayoutOptionsBST } from "./elkTypes";
 import { getLayoutElements } from "@/utils/helpers";
 import { Edge, Node } from "reactflow";
-import { ReactFlowGraph } from "../../Types/ReactFlowGraph";
-import {
-  ElkLayoutOptions,
-  defaultElkLayoutOptionsBST,
-} from "../../Types/elkTypes";
-export class TreeNode<T> {
+class TreeNode<T> {
   value: T;
   left: TreeNode<T> | null = null;
   right: TreeNode<T> | null = null;

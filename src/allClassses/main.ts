@@ -1,10 +1,9 @@
+import { ReactFlowGraph } from "@/Types/ReactFlowGraph";
+import { ElkLayoutOptions, defaultElkLayoutOptionsBST } from "@/Types/elkTypes";
 import { getLayoutElements } from "@/utils/helpers";
+import { Monaco } from "@monaco-editor/react";
 import { Edge, Node } from "reactflow";
-import { ReactFlowGraph } from "../../Types/ReactFlowGraph";
-import {
-  ElkLayoutOptions,
-  defaultElkLayoutOptionsBST,
-} from "../../Types/elkTypes";
+
 export class TreeNode<T> {
   value: T;
   left: TreeNode<T> | null = null;
@@ -16,7 +15,7 @@ export class TreeNode<T> {
   }
 }
 
-export default class BinarySearchTree<T> {
+export class BinarySearchTree<T> {
   private root: TreeNode<T> | null = null;
 
   private insertNode(
@@ -302,4 +301,176 @@ export default class BinarySearchTree<T> {
     this.createGraphElements(this.root, elements, nodeType, edgeType, rootId);
     return this.getBSTPositionedElements({ elements, elkOptions });
   }
+}
+
+export class VectorRF<T> {
+  private items: T[];
+
+  constructor() {
+    this.items = [];
+  }
+
+  // Add an item to the vector
+  push_back(item: T): void {
+    this.items.push(item);
+  }
+
+  pop_back(): T | undefined {
+    if (this.items.length > 0) {
+      return this.items.pop();
+    }
+    return undefined;
+  }
+
+  // Get an item at a specific index
+  get(index: number): T | undefined {
+    if (index >= 0 && index < this.items.length) {
+      return this.items[index];
+    }
+    return undefined;
+  }
+
+  // Get the size of the vector
+  size(): number {
+    return this.items.length;
+  }
+
+  // Check if the vector is empty
+  isEmpty(): boolean {
+    return this.items.length === 0;
+  }
+
+  // Clear all items in the vector
+  clear(): void {
+    this.items = [];
+  }
+
+  // Convert vector to an array
+  toArray(): T[] {
+    return this.items.slice();
+  }
+}
+
+export function addLibs(monaco: Monaco) {
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    `declare class TreeNode<T> {
+    value: T;
+    left: TreeNode<T> | null;
+    right: TreeNode<T> | null;
+    id: string;
+    constructor(value: T);
+  }
+  `,
+    "file:///node_modules/@types/TreeNode/index.d.ts"
+  );
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    `declare class BinarySearchTree<T> {
+    private root: TreeNode<T> | null;
+  
+    constructor();
+  
+    private insertNode(
+      node: TreeNode<T>,
+      newNode: TreeNode<T>,
+      callback?: (node: TreeNode<T>) => void
+    ): void;
+  
+    private preOrderTraverseNode(
+      node: TreeNode<T> | null,
+      callback: (node: TreeNode<T>) => void
+    ): void;
+  
+    private inOrderTraverseNode(
+      node: TreeNode<T> | null,
+      callback: (node: TreeNode<T>) => void
+    ): void;
+  
+    private postOrderTraverseNode(
+      node: TreeNode<T> | null,
+      callback: (node: TreeNode<T>) => void
+    ): void;
+  
+    private searchNode(
+      node: TreeNode<T> | null,
+      value: T,
+      callback?: (node: TreeNode<T>) => void
+    ): boolean;
+  
+    private getDepthNode(node: TreeNode<T> | null): number;
+  
+    private deleteNode(
+      node: TreeNode<T> | null,
+      value: T,
+      callback?: (node: TreeNode<T>) => void
+    ): TreeNode<T> | null;
+  
+    private findMinNode(node: TreeNode<T> | null): TreeNode<T>;
+  
+    private createGraphElements(
+      node: TreeNode<T> | null,
+      elements: { nodes: any[]; edges: any[] },
+      nodeType: string,
+      edgeType: string,
+      rootId: string
+    ): void;
+  
+    private getBSTPositionedElements({
+      elements,
+      elkOptions,
+    }: {
+      elements: { nodes: any[]; edges: any[] };
+      elkOptions: any; // you might want to replace 'any' with correct types
+    }): Promise<{ nodes: any[]; edges: any[] }>;
+  
+    insert(value: T, callback?: (node: TreeNode<T>) => void): void;
+  
+    delete(value: T, callback?: (node: TreeNode<T>) => void): void;
+  
+    search(value: T, callback?: (node: TreeNode<T>) => void): boolean;
+  
+    inOrderTraverse(callback: (node: TreeNode<T>) => void): void;
+  
+    preOrderTraverse(callback: (node: TreeNode<T>) => void): void;
+  
+    postOrderTraverse(callback: (node: TreeNode<T>) => void): void;
+  
+    getRoot(): TreeNode<T> | null;
+  
+    getDepth(): number;
+  
+    getMaxItem(): T | null;
+  
+    getMinItem(): T | null;
+  
+    getItems(): T[];
+  
+    getReactFlowGraphElements({
+      nodeType,
+      edgeType,
+      elkOptions,
+    }: {
+      nodeType?: string;
+      edgeType?: string;
+      elkOptions?: any; 
+    }): Promise<{ nodes: any[]; edges: any[] }>;
+  }`,
+    "file:///node_modules/@types/BinarySearchTree/index.d.ts"
+  );
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    `declare class VectorRF<T> {
+    private items: T[];
+    constructor();
+    push_back(item: T): void;
+    pop_back(): T | undefined;
+    get(index: number): T | undefined;
+    size(): number;
+    isEmpty(): boolean;
+    clear(): void;
+    toArray(): T[];
+}  }`,
+    "file:///node_modules/@types/VectorRF/index.d.ts"
+  );
+}
+export default function compile(code: string) {
+  return eval(code);
 }

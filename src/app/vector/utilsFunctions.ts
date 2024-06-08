@@ -33,6 +33,7 @@ export function createVector({
       position: { x: i * 80, y: 0 },
       type: "VectorNode",
       parentId: "A",
+      expandParent: true,
       extent: "parent",
       draggable: false,
     });
