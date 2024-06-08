@@ -24,8 +24,8 @@ export enum ElkDirection {
 }
 
 export interface ElkLayoutOptions {
-  "elk.algorithm"?: ElkAlgorithm;
-  "elk.direction"?: ElkDirection;
+  "elk.algorithm"?: ElkAlgorithm | string;
+  "elk.direction"?: ElkDirection | string;
   "elk.spacing.nodeNode"?: string;
   "elk.layered.spacing.nodeNodeBetweenLayers"?: string;
   "elk.spacing.nodeNodeBetweenLayers"?: string;

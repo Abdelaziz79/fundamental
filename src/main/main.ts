@@ -185,9 +185,13 @@ export class BinarySearchTree<T> {
   private async getBSTPositionedElements({
     elements,
     elkOptions,
+    posX,
+    posY,
   }: {
     elements: { nodes: any[]; edges: any[] };
     elkOptions: ElkLayoutOptions;
+    posX: number;
+    posY: number;
   }): Promise<{ nodes: any[]; edges: any[] }> {
     const ns = elements.nodes;
     const es = elements.edges;
@@ -198,8 +202,8 @@ export class BinarySearchTree<T> {
         return {
           ...node,
           position: {
-            x: 0,
-            y: 0,
+            x: posX,
+            y: posY,
           },
         };
       } else {
@@ -277,10 +281,14 @@ export class BinarySearchTree<T> {
     nodeType = "custom",
     edgeType = "step",
     elkOptions = defaultElkLayoutOptionsBST,
+    posX = 0,
+    posY = 0,
   }: {
     nodeType?: string;
     edgeType?: string;
     elkOptions?: ElkLayoutOptions;
+    posX?: number;
+    posY?: number;
   } = {}): Promise<{ nodes: any[]; edges: any[] }> {
     const elements: ReactFlowGraph = {
       nodes: [],
@@ -289,7 +297,7 @@ export class BinarySearchTree<T> {
     const rootId = "parent-" + this.root?.id;
     elements.nodes.push({
       id: rootId,
-      position: { x: 10, y: 10 },
+      position: { x: posX, y: posY },
       data: { label: null },
       type: "group",
       style: {
@@ -299,7 +307,7 @@ export class BinarySearchTree<T> {
       },
     });
     this.createGraphElements(this.root, elements, nodeType, edgeType, rootId);
-    return this.getBSTPositionedElements({ elements, elkOptions });
+    return this.getBSTPositionedElements({ elements, elkOptions, posX, posY });
   }
 }
 
@@ -365,95 +373,97 @@ export function addLibs(monaco: Monaco) {
   );
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     `declare class BinarySearchTree<T> {
-    private root: TreeNode<T> | null;
-  
-    constructor();
-  
-    private insertNode(
-      node: TreeNode<T>,
-      newNode: TreeNode<T>,
-      callback?: (node: TreeNode<T>) => void
-    ): void;
-  
-    private preOrderTraverseNode(
-      node: TreeNode<T> | null,
-      callback: (node: TreeNode<T>) => void
-    ): void;
-  
-    private inOrderTraverseNode(
-      node: TreeNode<T> | null,
-      callback: (node: TreeNode<T>) => void
-    ): void;
-  
-    private postOrderTraverseNode(
-      node: TreeNode<T> | null,
-      callback: (node: TreeNode<T>) => void
-    ): void;
-  
-    private searchNode(
-      node: TreeNode<T> | null,
-      value: T,
-      callback?: (node: TreeNode<T>) => void
-    ): boolean;
-  
-    private getDepthNode(node: TreeNode<T> | null): number;
-  
-    private deleteNode(
-      node: TreeNode<T> | null,
-      value: T,
-      callback?: (node: TreeNode<T>) => void
-    ): TreeNode<T> | null;
-  
-    private findMinNode(node: TreeNode<T> | null): TreeNode<T>;
-  
-    private createGraphElements(
-      node: TreeNode<T> | null,
-      elements: { nodes: any[]; edges: any[] },
-      nodeType: string,
-      edgeType: string,
-      rootId: string
-    ): void;
-  
-    private getBSTPositionedElements({
-      elements,
-      elkOptions,
-    }: {
-      elements: { nodes: any[]; edges: any[] };
-      elkOptions: any; // you might want to replace 'any' with correct types
-    }): Promise<{ nodes: any[]; edges: any[] }>;
-  
-    insert(value: T, callback?: (node: TreeNode<T>) => void): void;
-  
-    delete(value: T, callback?: (node: TreeNode<T>) => void): void;
-  
-    search(value: T, callback?: (node: TreeNode<T>) => void): boolean;
-  
-    inOrderTraverse(callback: (node: TreeNode<T>) => void): void;
-  
-    preOrderTraverse(callback: (node: TreeNode<T>) => void): void;
-  
-    postOrderTraverse(callback: (node: TreeNode<T>) => void): void;
-  
-    getRoot(): TreeNode<T> | null;
-  
-    getDepth(): number;
-  
-    getMaxItem(): T | null;
-  
-    getMinItem(): T | null;
-  
-    getItems(): T[];
-  
-    getReactFlowGraphElements({
-      nodeType,
-      edgeType,
-      elkOptions,
-    }: {
-      nodeType?: string;
-      edgeType?: string;
-      elkOptions?: any; 
-    }): Promise<{ nodes: any[]; edges: any[] }>;
-  }`,
+  private root: TreeNode<T> | null;
+
+  private insertNode(
+    node: TreeNode<T>,
+    newNode: TreeNode<T>,
+    callback?: (node: TreeNode<T>) => void
+  ): void;
+
+  private preOrderTraverseNode(
+    node: TreeNode<T> | null,
+    callback: (node: TreeNode<T>) => void
+  ): void;
+
+  private inOrderTraverseNode(
+    node: TreeNode<T> | null,
+    callback: (node: TreeNode<T>) => void
+  ): void;
+
+  private postOrderTraverseNode(
+    node: TreeNode<T> | null,
+    callback: (node: TreeNode<T>) => void
+  ): void;
+
+  private searchNode(
+    node: TreeNode<T> | null,
+    value: T,
+    callback?: (node: TreeNode<T>) => void
+  ): boolean;
+
+  private getDepthNode(node: TreeNode<T> | null): number;
+
+  private deleteNode(
+    node: TreeNode<T> | null,
+    value: T,
+    callback?: (node: TreeNode<T>) => void
+  ): TreeNode<T> | null;
+
+  private findMinNode(node: TreeNode<T> | null): TreeNode<T>;
+
+  private createGraphElements(
+    node: TreeNode<T> | null,
+    elements: { nodes: Node[]; edges: Edge[] },
+    nodeType: string,
+    edgeType: string,
+    rootId: string
+  ): void;
+
+  private getBSTPositionedElements({
+    elements,
+    elkOptions,
+  }: {
+    elements: { nodes: any[]; edges: any[] };
+    elkOptions: ElkLayoutOptions;
+  }): Promise<{ nodes: any[]; edges: any[] }>;
+
+  insert(value: T, callback?: (node: TreeNode<T>) => void): void;
+
+  delete(value: T, callback?: (node: TreeNode<T>) => void): void;
+
+  search(value: T, callback?: (node: TreeNode<T>) => void): boolean;
+
+  inOrderTraverse(callback: (node: TreeNode<T>) => void): void;
+
+  preOrderTraverse(callback: (node: TreeNode<T>) => void): void;
+
+  postOrderTraverse(callback: (node: TreeNode<T>) => void): void;
+
+  getRoot(): TreeNode<T> | null;
+
+  getDepth(): number;
+
+  getMaxItem(): T | null;
+
+  getMinItem(): T | null;
+
+  getItems(): T[];
+
+  getReactFlowGraphElements({
+    nodeType,
+    edgeType,
+    elkOptions,
+    posX,
+    posY,
+  }?: {
+    nodeType?: string;
+    edgeType?: string;
+    elkOptions?: ElkLayoutOptions;
+    posX?: number;
+    posY?: number;
+  }): Promise<{ nodes: any[]; edges: any[] }>;
+}`,
     "file:///node_modules/@types/BinarySearchTree/index.d.ts"
   );
   monaco.languages.typescript.typescriptDefaults.addExtraLib(

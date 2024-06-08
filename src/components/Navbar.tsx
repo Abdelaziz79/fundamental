@@ -10,10 +10,8 @@ export default function Navbar({}: Props) {
       <Container>
         <div className="flex justify-between">
           <Link href="/">
-            <Badge className="bg-gray-200 hover:bg-gray-300">
-              <h1 className="text-lg font-mono font-bold text-gray-800">
-                Fundamental
-              </h1>
+            <Badge className="">
+              <h1 className="text-lg font-sans font-bold ">Fun & Mental</h1>
             </Badge>
           </Link>
           <div>
@@ -32,6 +30,12 @@ export default function Navbar({}: Props) {
               <Badge className="bg-gray-200 hover:bg-gray-300 text-black">
                 Vector
               </Badge>
+            </Link>
+            <Link
+              href="/playground"
+              className="mr-2 text-gray-800 font-mono font-semibold text-sm hover:text-gray-900"
+            >
+              <Badge className="">Playground</Badge>
             </Link>
           </div>
         </div>

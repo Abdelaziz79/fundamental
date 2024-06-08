@@ -15,8 +15,14 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 
-import compile, { addLibs } from "@/allClassses/main";
+import compile, { addLibs } from "@/main/main";
 import { NodeType } from "@/classes/BinarySearchTree/BSTNodeType";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import { animate } from "../binary-search-tree/utilsFunctions";
 type Props = {};
 
 export default function Playground({}: Props) {
@@ -41,6 +47,7 @@ export default function Playground({}: Props) {
   }
 
   const fullCode = `${code}`;
+
   async function handleRun() {
     const result = typescript.transpileModule(fullCode, {
       compilerOptions: {
@@ -51,15 +58,46 @@ export default function Playground({}: Props) {
     try {
       // Run the compiled JavaScript code
       const res = await compile(result.outputText);
-      setNodes(res.nodes);
-      setEdges(res.edges);
+      setNodes(res?.nodes || []);
+      setEdges(res?.edges || []);
+      if (res?.animatedNodesIds) {
+        await animate({
+          NodesId: res?.animatedNodesIds,
+          newNodes: res?.nodes,
+          watingTime: 0.5,
+          setNodes,
+          newNodeType: "red",
+        });
+      }
     } catch (error) {
       console.log(error);
     }
   }
+
+  function handleFormate() {
+    editorRef.current?.getAction("editor.action.formatDocument")?.run();
+  }
+
   return (
-    <div className="h-screen w-screen flex">
-      <div className="w-1/2 h-full flex-col items-center ">
+    <ResizablePanelGroup
+      direction="horizontal"
+      className="h-screen w-screen flex"
+    >
+      <ResizablePanel className="w-1/2 h-full flex-col items-center ">
+        <div className="w-full flex items-center h-5 bg-zinc-800">
+          <Button
+            onClick={handleRun}
+            className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
+          >
+            Run
+          </Button>
+          <Button
+            onClick={handleFormate}
+            className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
+          >
+            formate
+          </Button>
+        </div>
         <Editor
           className="w-full h-full"
           height={"100%"}
@@ -68,22 +106,21 @@ export default function Playground({}: Props) {
           onChange={handleEditorChange}
           theme="vs-dark"
         />
-        <Button onClick={handleRun} className="absolute bottom-0">
-          Run
-        </Button>
-      </div>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={NodeType}
-      >
-        <MiniMap />
-        <Controls />
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          nodeTypes={NodeType}
+        >
+          <Controls />
 
-        <Background variant={BackgroundVariant.Dots} />
-      </ReactFlow>
-    </div>
+          <Background variant={BackgroundVariant.Dots} />
+        </ReactFlow>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

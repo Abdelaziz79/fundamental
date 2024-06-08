@@ -278,10 +278,14 @@ export default class BinarySearchTree<T> {
     nodeType = "custom",
     edgeType = "step",
     elkOptions = defaultElkLayoutOptionsBST,
+    x = 0,
+    y = 0,
   }: {
     nodeType?: string;
     edgeType?: string;
     elkOptions?: ElkLayoutOptions;
+    x?: number;
+    y?: number;
   } = {}): Promise<{ nodes: any[]; edges: any[] }> {
     const elements: ReactFlowGraph = {
       nodes: [],
@@ -290,7 +294,7 @@ export default class BinarySearchTree<T> {
     const rootId = "parent-" + this.root?.id;
     elements.nodes.push({
       id: rootId,
-      position: { x: 10, y: 10 },
+      position: { x: x, y: y },
       data: { label: null },
       type: "group",
       style: {

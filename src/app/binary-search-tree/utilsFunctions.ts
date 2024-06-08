@@ -4,7 +4,7 @@ import { wait } from "@/utils/helpers";
 import { Node } from "reactflow";
 import { Item } from "../../Types/Item";
 
-async function animate({
+export async function animate({
   NodesId,
   newNodes,
   setShowingItems,
