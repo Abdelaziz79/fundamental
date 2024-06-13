@@ -11,8 +11,8 @@ import { getRandomNumber } from "@/utils/helpers";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { useReactFlow } from "reactflow";
-import { Item } from "../../Types/Item";
-import { defaultElkLayoutOptionsBST } from "../../Types/elkTypes";
+import { Item } from "../../types/Item";
+import { defaultElkLayoutOptionsBST } from "../../types/elkTypes";
 import RandomCreation from "./RandomCreation";
 import { processNode } from "./utilsFunctions";
 
@@ -41,7 +41,7 @@ const Controller = ({
 
   function updateGraphElements() {
     bst
-      .getReactFlowGraphElements({
+      .getReactFlowElements({
         nodeType: "custom",
         edgeType: "default",
         elkOptions: defaultElkLayoutOptionsBST,

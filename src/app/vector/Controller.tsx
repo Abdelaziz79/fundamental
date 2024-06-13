@@ -1,11 +1,10 @@
-import VectorRF from "@/classes/VectorRF";
+import VectorRF from "@/classes/VectorRF/VectorRF";
 import Control, { ControlElement } from "@/components/Controller";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useReactFlow } from "reactflow";
-import { createVector } from "./utilsFunctions";
 type Props = {
   vec: VectorRF<string>;
   elements: {
@@ -25,9 +24,10 @@ export default function Controller({ vec, elements, setElements }: Props) {
   const { setNodes, fitView } = useReactFlow();
   function updateGraphElements() {
     setElements({ nodes: [], edges: [] });
-    createVector({ vec, elements, posX: 100, posY: 100 });
-    setNodes(elements.nodes);
-    window.requestAnimationFrame(() => fitView());
+    vec.getReactFlowElements({}).then((res) => {
+      setNodes(res.nodes);
+      window.requestAnimationFrame(() => fitView());
+    });
   }
   function handlePush() {
     if (!value) return;

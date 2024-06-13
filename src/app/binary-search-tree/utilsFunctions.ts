@@ -2,7 +2,7 @@ import BinarySearchTree from "@/classes/BinarySearchTree/BinarySearchTree";
 import { toast } from "@/components/ui/use-toast";
 import { wait } from "@/utils/helpers";
 import { Node } from "reactflow";
-import { Item } from "../../Types/Item";
+import { Item } from "../../types/Item";
 
 export async function animate({
   NodesId,

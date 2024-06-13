@@ -14,8 +14,8 @@ import Controller from "./Controller";
 
 import { useState } from "react";
 import "reactflow/dist/style.css";
-import { Item } from "../../Types/Item";
-import { NodeType } from "../../classes/BinarySearchTree/BSTNodeType";
+import { Item } from "../../types/Item";
+import { BSTNodeType } from "../../classes/BinarySearchTree/BSTNodeType";
 
 const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
   const [nodes, _setNodes, onNodesChange] = useNodesState([]);
@@ -29,7 +29,7 @@ const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        nodeTypes={NodeType}
+        nodeTypes={BSTNodeType}
       >
         <MiniMap />
         <Controls />

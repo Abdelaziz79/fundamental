@@ -1,31 +1,45 @@
 "use client";
 
+import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
+import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 import { Button } from "@/components/ui/button";
-import Editor, { Monaco } from "@monaco-editor/react";
-import * as monaco from "monaco-editor";
-import { useRef, useState } from "react";
-import ReactFlow, {
-  Background,
-  BackgroundVariant,
-  Controls,
-  MiniMap,
-  useEdgesState,
-  useNodesState,
-} from "reactflow";
-import "reactflow/dist/style.css";
-import * as typescript from "typescript";
-
-import compile, { addLibs } from "@/main/main";
-import { NodeType } from "@/classes/BinarySearchTree/BSTNodeType";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import compile, { addLibs } from "@/main/main";
+import { wait } from "@/utils/helpers";
+import Editor, { Monaco } from "@monaco-editor/react";
+import * as monaco from "monaco-editor";
+import { useEffect, useRef, useState } from "react";
+import ReactFlow, {
+  Background,
+  BackgroundVariant,
+  Controls,
+  useEdgesState,
+  useNodesState,
+} from "reactflow";
+import "reactflow/dist/style.css";
+import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
 type Props = {};
 
+const allNodesTypes = {
+  ...BSTNodeType,
+  ...VectorNodeType,
+};
+
 export default function Playground({}: Props) {
+  // TODO: some algorithm don't need parent nodes
+  // TODO: check if need parent node in the getReactflowGraphElements
+  // TODO: add custom node
+  // TODO: add waiting time
+  // TODO: create draw frames array
+  // TODO: make interface have getReactFlowElements method ✅
+  // TODO: edit vector can highlight the index
+  // TODO: make vector support two highlight for two pointer and sliding window
+
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [code, setCode] = useState("");
@@ -46,10 +60,27 @@ export default function Playground({}: Props) {
     setCode(value || "");
   }
 
-  const fullCode = `${code}`;
+  function setElements(nodes: any[], edges: any[]) {
+    setNodes(nodes);
+    setEdges(edges);
+  }
+
+  async function getFrameElements({ frame }: { frame: any[] }) {
+    await wait(0.2);
+    let nodes: any[] = [];
+    let edges: any[] = [];
+    frame?.map(async (ele: any, i) => {
+      await ele.getReactFlowElements({ posY: i * -200 }).then((res: any) => {
+        nodes = nodes.concat(res.nodes);
+        edges = edges.concat(res.edges);
+      });
+      setElements(nodes, edges);
+    });
+  }
 
   async function handleRun() {
-    const result = typescript.transpileModule(fullCode, {
+    // Convert typescript code to JavaScript
+    const result = typescript.transpileModule(code, {
       compilerOptions: {
         module: typescript.ModuleKind.ESNext,
         target: typescript.ScriptTarget.ESNext,
@@ -58,32 +89,105 @@ export default function Playground({}: Props) {
     try {
       // Run the compiled JavaScript code
       const res = await compile(result.outputText);
-      setNodes(res?.nodes || []);
-      setEdges(res?.edges || []);
+
+      await wait(0.3);
+
+      setElements([], []);
+      if (res?.frame) {
+        for (let i = 0; i < res?.frame.length; i++) {
+          await getFrameElements({ frame: res?.frame[i] });
+        }
+      }
+
+      if (res?.nodes && res?.edges) {
+        setElements(res?.nodes, res?.edges);
+      }
       if (res?.animatedNodesIds) {
         await animate({
           NodesId: res?.animatedNodesIds,
           newNodes: res?.nodes,
-          watingTime: 0.5,
+          watingTime: res?.watingTime ?? 0.1,
           setNodes,
           newNodeType: "red",
         });
+      }
+      await wait(0.5);
+      if (res?.nodes && res?.edges) {
+        setElements(res?.nodes, res?.edges);
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  function handleFormate() {
+  function handleFormat() {
     editorRef.current?.getAction("editor.action.formatDocument")?.run();
   }
+  useEffect(() => {
+    setCode(`
 
+enum ElkAlgorithm {
+  SporeOverlap = "sporeOverlap",
+  Layered = "layered",
+  Random = "random",
+  Box = "box",
+  MrTree = "mrtree",
+  Disco = "disco",
+  Fixed = "fixed",
+  Force = "force",
+  Radial = "radial",
+  RectPacking = "rectpacking",
+  SporeCompaction = "sporeCompaction",
+  Stress = "stress",
+}
+
+const defaultElkLayoutOptionsBS = {
+  "elk.algorithm": ElkAlgorithm.MrTree,
+  "elk.direction": "DOWN",
+  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
+  "elk.spacing.nodeNode": "80",
+  // Add default values for other options as needed
+};
+
+let nodes = [];
+let edges = [];
+let animatedNodesIds = [];
+
+
+let frame = [];
+
+function main() {
+
+  const vec = new VectorRF<number>();
+
+  const bst = new BinarySearchTree<number>();
+
+  for (let i = 0; i < 30; i++) {
+    const num = Math.round(Math.random() * 100);
+    bst.insert(num);
+    vec.push_back(num)
+    let newBst = Util.deepCopy<BinarySearchTree<number>>(bst);
+    let newVec = Util.deepCopy<VectorRF<number>>(vec);
+
+    frame.push([newBst, newVec]);
+  }
+
+  return { frame };
+}
+
+
+      
+      `);
+  }, []);
   return (
     <ResizablePanelGroup
       direction="horizontal"
       className="h-screen w-screen flex"
     >
-      <ResizablePanel className="w-1/2 h-full flex-col items-center ">
+      <ResizablePanel
+        defaultSize={30}
+        className="w-1/2 h-full flex-col items-center "
+      >
         <div className="w-full flex items-center h-5 bg-zinc-800">
           <Button
             onClick={handleRun}
@@ -92,10 +196,10 @@ export default function Playground({}: Props) {
             Run
           </Button>
           <Button
-            onClick={handleFormate}
+            onClick={handleFormat}
             className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
           >
-            formate
+            format
           </Button>
         </div>
         <Editor
@@ -104,6 +208,7 @@ export default function Playground({}: Props) {
           defaultLanguage="typescript"
           onMount={handleEditorDidMount}
           onChange={handleEditorChange}
+          value={code}
           theme="vs-dark"
         />
       </ResizablePanel>
@@ -114,7 +219,7 @@ export default function Playground({}: Props) {
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
-          nodeTypes={NodeType}
+          nodeTypes={allNodesTypes}
         >
           <Controls />
 

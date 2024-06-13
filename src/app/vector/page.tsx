@@ -1,5 +1,5 @@
 "use client";
-import VectorRF from "@/classes/VectorRF";
+import VectorRF from "@/classes/VectorRF/VectorRF";
 import { useEffect, useState } from "react";
 import ReactFlow, {
   Background,
@@ -11,8 +11,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import Controller from "./Controller";
-import { VectorNodeType } from "./utilsComponents";
-import { createVector } from "./utilsFunctions";
+import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 type Props = {};
 
 function VectorRFComp({ vec }: { vec: VectorRF<string> }) {
@@ -20,9 +19,10 @@ function VectorRFComp({ vec }: { vec: VectorRF<string> }) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [elements, setElements] = useState({ nodes: [], edges: [] });
   useEffect(() => {
-    createVector({ vec, elements, posX: 100, posY: 100 });
-    setNodes(elements.nodes);
-    setEdges(elements.edges);
+    vec.getReactFlowElements({}).then((res) => {
+      setNodes(res.nodes);
+      setEdges(res.edges);
+    });
   }, [vec, elements, setNodes, setEdges, setElements]);
 
   return (

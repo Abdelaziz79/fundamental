@@ -1,8 +1,9 @@
-import { ReactFlowGraph } from "./ReactFlowGraph";
-import { ElkLayoutOptions, defaultElkLayoutOptionsBST } from "./elkTypes";
 import { getLayoutElements } from "@/utils/helpers";
 import { Edge, Node } from "reactflow";
-class TreeNode<T> {
+import { ReactFlowGraph } from "@/types/ReactFlowGraph";
+import { ElkLayoutOptions, defaultElkLayoutOptionsBST } from "@/types/elkTypes";
+import IReactFlow from "@/interfaces/IReactFlow";
+export class TreeNode<T> {
   value: T;
   left: TreeNode<T> | null = null;
   right: TreeNode<T> | null = null;
@@ -13,7 +14,7 @@ class TreeNode<T> {
   }
 }
 
-export default class BinarySearchTree<T> {
+export default class BinarySearchTree<T> implements IReactFlow {
   private root: TreeNode<T> | null = null;
 
   private insertNode(
@@ -183,9 +184,13 @@ export default class BinarySearchTree<T> {
   private async getBSTPositionedElements({
     elements,
     elkOptions,
+    posX,
+    posY,
   }: {
     elements: { nodes: any[]; edges: any[] };
     elkOptions: ElkLayoutOptions;
+    posX: number;
+    posY: number;
   }): Promise<{ nodes: any[]; edges: any[] }> {
     const ns = elements.nodes;
     const es = elements.edges;
@@ -196,8 +201,8 @@ export default class BinarySearchTree<T> {
         return {
           ...node,
           position: {
-            x: 0,
-            y: 0,
+            x: posX,
+            y: posY,
           },
         };
       } else {
@@ -271,14 +276,18 @@ export default class BinarySearchTree<T> {
     return items;
   }
 
-  async getReactFlowGraphElements({
+  getReactFlowElements({
     nodeType = "custom",
     edgeType = "step",
     elkOptions = defaultElkLayoutOptionsBST,
+    posX = 0,
+    posY = 0,
   }: {
     nodeType?: string;
     edgeType?: string;
     elkOptions?: ElkLayoutOptions;
+    posX?: number;
+    posY?: number;
   } = {}): Promise<{ nodes: any[]; edges: any[] }> {
     const elements: ReactFlowGraph = {
       nodes: [],
@@ -287,7 +296,7 @@ export default class BinarySearchTree<T> {
     const rootId = "parent-" + this.root?.id;
     elements.nodes.push({
       id: rootId,
-      position: { x: 10, y: 10 },
+      position: { x: posX, y: posY },
       data: { label: null },
       type: "group",
       style: {
@@ -297,6 +306,6 @@ export default class BinarySearchTree<T> {
       },
     });
     this.createGraphElements(this.root, elements, nodeType, edgeType, rootId);
-    return this.getBSTPositionedElements({ elements, elkOptions });
+    return this.getBSTPositionedElements({ elements, elkOptions, posX, posY });
   }
 }

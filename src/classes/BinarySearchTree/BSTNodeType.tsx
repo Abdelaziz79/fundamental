@@ -90,7 +90,7 @@ export const SmallCustomNode: React.FC<{ data: { label: string } }> = ({
   );
 };
 
-export const NodeType = {
+export const BSTNodeType = {
   custom: CustomNode,
   mid: MidCustomNode,
   red: RedNode,
