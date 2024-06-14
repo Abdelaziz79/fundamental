@@ -38,7 +38,8 @@ export default function Playground({}: Props) {
   // TODO: edit vector can highlight the index ✅
   // TODO: make vector support two highlight for two pointer and sliding window ✅
   // TODO: edit vector that can take all items in constructor ✅
-  // TODO: make item for vector have unique id
+  // TODO: make item for vector have unique id ✅
+  // TODO: crete alert function
   // TODO: set value name options in the IReactFlow interface
   // TODO: add hash map
   // TODO: create table

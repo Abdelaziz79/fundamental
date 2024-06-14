@@ -76,6 +76,13 @@ export default class VectorRF<T> implements IReactFlow {
     return undefined;
   }
 
+  // Set an item at a specific index
+  set(index: number, item: T): void {
+    if (index >= 0 && index < this.items.length) {
+      this.items[index].value = item;
+    }
+  }
+
   // Get the size of the vector
   size(): number {
     return this.items.length;

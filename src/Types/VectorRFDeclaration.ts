@@ -28,6 +28,7 @@ declare class VectorRF<T> {
   pop_back(): T | undefined;
   
   get(index: number): T | undefined;
+  set(index: number, item: T): void;
   size(): number;
   isEmpty(): boolean;
   clear(): void;
