@@ -31,14 +31,21 @@ const allNodesTypes = {
 };
 
 export default function Playground({}: Props) {
-  // TODO: some algorithm don't need parent nodes
-  // TODO: check if need parent node in the getReactflowGraphElements
-  // TODO: add custom node
-  // TODO: add waiting time
-  // TODO: create draw frames array
+  // TODO: check if need parent node in the getReactflowGraphElements ✅
+  // TODO: add waiting time ✅
+  // TODO: create draw frames array ✅
   // TODO: make interface have getReactFlowElements method ✅
-  // TODO: edit vector can highlight the index
-  // TODO: make vector support two highlight for two pointer and sliding window
+  // TODO: edit vector can highlight the index ✅
+  // TODO: make vector support two highlight for two pointer and sliding window ✅
+  // TODO: edit vector that can take all items in constructor ✅
+  // TODO: make item for vector have unique id
+  // TODO: set value name options in the IReactFlow interface
+  // TODO: add hash map
+  // TODO: create table
+  // TODO: add console panel
+  // TODO: enhance animation
+  // TODO: add custom node
+  // TODO: add custom edge
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -65,8 +72,14 @@ export default function Playground({}: Props) {
     setEdges(edges);
   }
 
-  async function getFrameElements({ frame }: { frame: any[] }) {
-    await wait(0.2);
+  async function getFrameElements({
+    frame,
+    watingTime,
+  }: {
+    frame: any[];
+    watingTime: number;
+  }) {
+    await wait(watingTime);
     let nodes: any[] = [];
     let edges: any[] = [];
     frame?.map(async (ele: any, i) => {
@@ -74,7 +87,9 @@ export default function Playground({}: Props) {
         nodes = nodes.concat(res.nodes);
         edges = edges.concat(res.edges);
       });
-      setElements(nodes, edges);
+      window.requestAnimationFrame(() => {
+        setElements(nodes, edges);
+      });
     });
   }
 
@@ -89,13 +104,15 @@ export default function Playground({}: Props) {
     try {
       // Run the compiled JavaScript code
       const res = await compile(result.outputText);
-
       await wait(0.3);
 
       setElements([], []);
       if (res?.frame) {
         for (let i = 0; i < res?.frame.length; i++) {
-          await getFrameElements({ frame: res?.frame[i] });
+          await getFrameElements({
+            frame: res?.frame[i],
+            watingTime: res?.wait ?? 0.2,
+          });
         }
       }
 
@@ -105,13 +122,12 @@ export default function Playground({}: Props) {
       if (res?.animatedNodesIds) {
         await animate({
           NodesId: res?.animatedNodesIds,
-          newNodes: res?.nodes,
-          watingTime: res?.watingTime ?? 0.1,
+          newNodes: res?.nodes ?? [],
+          watingTime: res?.wait ?? 0.2,
           setNodes,
           newNodeType: "red",
         });
       }
-      await wait(0.5);
       if (res?.nodes && res?.edges) {
         setElements(res?.nodes, res?.edges);
       }
@@ -123,6 +139,7 @@ export default function Playground({}: Props) {
   function handleFormat() {
     editorRef.current?.getAction("editor.action.formatDocument")?.run();
   }
+
   useEffect(() => {
     setCode(`
 

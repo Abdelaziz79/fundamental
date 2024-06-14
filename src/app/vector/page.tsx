@@ -1,4 +1,5 @@
 "use client";
+import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 import VectorRF from "@/classes/VectorRF/VectorRF";
 import { useEffect, useState } from "react";
 import ReactFlow, {
@@ -11,7 +12,6 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import Controller from "./Controller";
-import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 type Props = {};
 
 function VectorRFComp({ vec }: { vec: VectorRF<string> }) {

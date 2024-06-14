@@ -87,12 +87,14 @@ declare class BinarySearchTree<T> {
     elkOptions = defaultElkLayoutOptionsBST,
     posX = 0,
     posY = 0,
+    parentNode = true,
   }: {
     nodeType?: string;
     edgeType?: string;
     elkOptions?: ElkLayoutOptions;
     posX?: number;
     posY?: number;
+    parentNode?: boolean;
   } = {}): Promise<{ nodes: any[]; edges: any[] }> { /* Implementation omitted for brevity */ }
 }
   `;

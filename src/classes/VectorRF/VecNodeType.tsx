@@ -2,7 +2,7 @@ import { Handle, Position } from "reactflow";
 
 function VectorNode({ data }: { data: { label: string } }) {
   return (
-    <div className="overflow-hidden border border-green-600  bg-gray-50  h-10 w-20 font-semibold flex items-center justify-center">
+    <div className="overflow-hidden border border-green-600   h-10 w-20 font-semibold flex items-center justify-center">
       {data.label}
       <Handle type="target" position={Position.Top} className="opacity-0" />
       <Handle type="source" position={Position.Bottom} className="opacity-0" />

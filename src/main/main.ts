@@ -2,6 +2,8 @@ import BinarySearchTree from "@/types/BinarySearchTree";
 import BinarySearchTreeDeclaration from "@/types/BinarySearchTreeDeclaration";
 import TreeNode from "@/types/TreeNode";
 import TreeNodeDeclaration from "@/types/TreeNodeDeclaration";
+import VectorNodeType from "@/types/VectorNodeType";
+import VectorNodeTypeDeclaration from "@/types/VectorNodeTypeDeclarations";
 import VectorRF from "@/types/VectorRF";
 import VectorRFDeclaration from "@/types/VectorRFDeclaration";
 import { Monaco } from "@monaco-editor/react";
@@ -36,6 +38,10 @@ export function addLibs(monaco: Monaco) {
     "file:///node_modules/@types/BinarySearchTree/index.d.ts"
   );
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    VectorNodeTypeDeclaration,
+    "file:///node_modules/@types/VectorNodeType/index.d.ts"
+  );
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
     VectorRFDeclaration,
     "file:///node_modules/@types/VectorRF/index.d.ts"
   );
@@ -50,10 +56,17 @@ export default function compile(code: string) {
   const executeCode = new Function(
     "TreeNode",
     "BinarySearchTree",
+    "VectorNodeType",
     "VectorRF",
     "Util",
     code + "\nreturn main();"
   );
 
-  return executeCode(TreeNode, BinarySearchTree, VectorRF, Util);
+  return executeCode(
+    TreeNode,
+    BinarySearchTree,
+    VectorNodeType,
+    VectorRF,
+    Util
+  );
 }

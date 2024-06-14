@@ -14,8 +14,8 @@ import Controller from "./Controller";
 
 import { useState } from "react";
 import "reactflow/dist/style.css";
-import { Item } from "../../types/Item";
 import { BSTNodeType } from "../../classes/BinarySearchTree/BSTNodeType";
+import { Item } from "../../types/Item";
 
 const BSTFlow = ({ bst }: { bst: BinarySearchTree<number> }) => {
   const [nodes, _setNodes, onNodesChange] = useNodesState([]);

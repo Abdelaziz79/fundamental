@@ -1,29 +1,77 @@
 import IReactFlow from "@/interfaces/IReactFlow";
 import { Edge, Node } from "reactflow";
 
-export default class VectorRF<T> implements IReactFlow {
-  private items: T[];
+class VectorNodeType<T> {
+  value: T | null = null;
+  id: string | null = null;
 
-  constructor() {
-    this.items = [];
+  constructor(value: T) {
+    this.value = value;
+    this.id = crypto.randomUUID();
+  }
+}
+
+export default class VectorRF<T> implements IReactFlow {
+  private items: VectorNodeType<T>[] = [];
+
+  private h1: number | null = null;
+  private h2: number | null = null;
+  private h3: number | null = null;
+  private setSlidingWindow = false;
+
+  oneHighlight(index: number) {
+    this.h1 = index;
+  }
+
+  twoHighlight(index1: number, index2: number, setSlidingWindow = false) {
+    this.h1 = index1;
+    this.h2 = index2;
+    this.setSlidingWindow = setSlidingWindow;
+  }
+
+  threeHighlight(index1: number, index2: number, index3: number) {
+    this.h1 = index1;
+    this.h2 = index2;
+    this.h3 = index3;
+  }
+  constructor({
+    items = [],
+    h1 = null,
+    h2 = null,
+    h3 = null,
+    setSlidingWindow = false,
+  }: {
+    items?: T[];
+    h1?: number | null;
+    h2?: number | null;
+    h3?: number | null;
+    setSlidingWindow?: boolean;
+  } = {}) {
+    items.forEach((item) => {
+      this.items.push({ value: item, id: crypto.randomUUID() });
+    });
+    this.h1 = h1;
+    this.h2 = h2;
+    this.h3 = h3;
+    this.setSlidingWindow = setSlidingWindow;
   }
 
   // Add an item to the vector
   push_back(item: T): void {
-    this.items.push(item);
+    this.items.push({ value: item, id: crypto.randomUUID() });
   }
 
-  pop_back(): T | undefined {
+  pop_back(): T | null {
     if (this.items.length > 0) {
-      return this.items.pop();
+      return this.items.pop()?.value as T;
     }
-    return undefined;
+    return null;
   }
 
   // Get an item at a specific index
   get(index: number): T | undefined {
     if (index >= 0 && index < this.items.length) {
-      return this.items[index];
+      return this.items[index].value as T;
     }
     return undefined;
   }
@@ -45,7 +93,7 @@ export default class VectorRF<T> implements IReactFlow {
 
   // Convert vector to an array
   toArray(): T[] {
-    return this.items.slice();
+    return this.items.map((item) => item.value as T);
   }
 
   private createVector({
@@ -56,7 +104,7 @@ export default class VectorRF<T> implements IReactFlow {
     nodeType,
     indexType,
   }: {
-    items: T[];
+    items: VectorNodeType<T>[];
     elements: { nodes: Node[]; edges: Edge[] };
     posX: number;
     posY: number;
@@ -80,17 +128,24 @@ export default class VectorRF<T> implements IReactFlow {
     });
     for (let i = 0; i < items.length; i++) {
       elements.nodes.push({
-        id: `node-${i}`,
-        data: { label: items[i]?.toString() },
+        id: `node-${items[i].id}`,
+        data: { label: items[i].value?.toString() },
         position: { x: i * 80, y: 0 },
         type: nodeType,
         parentId: parentId,
         expandParent: true,
         extent: "parent",
         draggable: false,
+        style: {
+          backgroundColor: this.setSlidingWindow
+            ? i >= this.h1! && i <= this.h2!
+              ? "rgb(248, 113, 113)"
+              : "white"
+            : "white",
+        },
       });
       elements.nodes.push({
-        id: `index-${i}`,
+        id: `index-${items[i].id}`,
         data: { label: i.toString() },
         position: { x: i * 80 + 20, y: 30 },
         type: indexType,
@@ -98,6 +153,10 @@ export default class VectorRF<T> implements IReactFlow {
         extent: "parent",
         draggable: false,
         connectable: false,
+        style: {
+          color:
+            this.h1 === i || this.h2 === i || this.h3 === i ? "red" : "black",
+        },
       });
     }
   }

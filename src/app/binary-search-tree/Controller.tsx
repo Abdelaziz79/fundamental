@@ -45,6 +45,7 @@ const Controller = ({
         nodeType: "custom",
         edgeType: "default",
         elkOptions: defaultElkLayoutOptionsBST,
+        parentNode: false,
       })
       .then((res) => {
         setNodes(res.nodes);

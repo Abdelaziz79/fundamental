@@ -1,27 +1,36 @@
 const VectorRFDeclaration = `
 declare class VectorRF<T> {
-  private items: T[];
+   private items: T[];
+  private h1: number | null;
+  private h2: number | null;
+  private h3: number | null;
+  private setSlidingWindow: boolean;
 
-  constructor();
+  constructor({
+    items,
+    h1,
+    h2,
+    h3,
+    setSlidingWindow,
+  }?: {
+    items?: T[];
+    h1?: number | null;
+    h2?: number | null;
+    h3?: number | null;
+    setSlidingWindow?: boolean;
+  });
 
-  // Add an item to the vector
+  oneHighlight(index: number): void;
+  twoHighlight(index1: number, index2: number, setSlidingWindow?: boolean): void;
+  threeHighlight(index1: number, index2: number, index3: number): void;
+  
   push_back(item: T): void;
-
   pop_back(): T | undefined;
-
-  // Get an item at a specific index
+  
   get(index: number): T | undefined;
-
-  // Get the size of the vector
   size(): number;
-
-  // Check if the vector is empty
   isEmpty(): boolean;
-
-  // Clear all items in the vector
   clear(): void;
-
-  // Convert vector to an array
   toArray(): T[];
 
   private createVector({
@@ -45,7 +54,7 @@ declare class VectorRF<T> {
     posY,
     nodeType,
     indexType,
-  }: {
+  }?: {
     posX?: number;
     posY?: number;
     nodeType?: string;

@@ -1,8 +1,8 @@
-import { getLayoutElements } from "@/utils/helpers";
-import { Edge, Node } from "reactflow";
+import IReactFlow from "@/interfaces/IReactFlow";
 import { ReactFlowGraph } from "@/types/ReactFlowGraph";
 import { ElkLayoutOptions, defaultElkLayoutOptionsBST } from "@/types/elkTypes";
-import IReactFlow from "@/interfaces/IReactFlow";
+import { getLayoutElements } from "@/utils/helpers";
+import { Edge, Node } from "reactflow";
 export class TreeNode<T> {
   value: T;
   left: TreeNode<T> | null = null;
@@ -137,7 +137,7 @@ export default class BinarySearchTree<T> implements IReactFlow {
     elements: { nodes: Node[]; edges: Edge[] },
     nodeType: string,
     edgeType: string,
-    rootId: string
+    rootId?: string
   ) => {
     if (node === null) return;
 
@@ -147,9 +147,9 @@ export default class BinarySearchTree<T> implements IReactFlow {
       data: { label: node.value },
       position: { x: 0, y: 0 },
       type: nodeType,
-      parentId: rootId,
-      extent: "parent",
-      expandParent: true,
+      parentId: rootId ? rootId : undefined,
+      extent: rootId ? "parent" : undefined,
+      expandParent: rootId ? true : undefined,
     });
 
     if (node.left) {
@@ -282,30 +282,34 @@ export default class BinarySearchTree<T> implements IReactFlow {
     elkOptions = defaultElkLayoutOptionsBST,
     posX = 0,
     posY = 0,
+    parentNode = true,
   }: {
     nodeType?: string;
     edgeType?: string;
     elkOptions?: ElkLayoutOptions;
     posX?: number;
     posY?: number;
+    parentNode?: boolean;
   } = {}): Promise<{ nodes: any[]; edges: any[] }> {
     const elements: ReactFlowGraph = {
       nodes: [],
       edges: [],
     };
-    const rootId = "parent-" + this.root?.id;
-    elements.nodes.push({
-      id: rootId,
-      position: { x: posX, y: posY },
-      data: { label: null },
-      type: "group",
-      style: {
-        backgroundColor: "rgba(0,0,0,0)",
-        border: "0px",
-        margin: "20px",
-      },
-    });
-    this.createGraphElements(this.root, elements, nodeType, edgeType, rootId);
+    if (parentNode) {
+      const rootId = "parent-" + this.root?.id;
+      elements.nodes.push({
+        id: rootId,
+        position: { x: posX, y: posY },
+        data: { label: null },
+        type: "group",
+        style: {
+          backgroundColor: "rgba(0,0,0,0)",
+          border: "0px",
+          margin: "20px",
+        },
+      });
+      this.createGraphElements(this.root, elements, nodeType, edgeType, rootId);
+    } else this.createGraphElements(this.root, elements, nodeType, edgeType);
     return this.getBSTPositionedElements({ elements, elkOptions, posX, posY });
   }
 }
