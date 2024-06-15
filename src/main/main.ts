@@ -31,13 +31,27 @@ class Util {
     return copy;
   }
 
-  static createToast() {
-    return toast({
-      title: "deleted",
-      description: "Item deleted",
-      variant: "destructive",
-      className: "",
-    });
+  static createToast({
+    title,
+    description = null,
+    variant = "default",
+    className = "",
+  }: {
+    title: string;
+    description?: string | null;
+    variant?: "default" | "destructive";
+    className?: string;
+  }) {
+    return class Toast {
+      static call() {
+        return toast({
+          title,
+          description,
+          variant,
+          className,
+        });
+      }
+    };
   }
 }
 export function addLibs(monaco: Monaco) {
@@ -64,10 +78,27 @@ export function addLibs(monaco: Monaco) {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     `declare class Util {
       static deepCopy<T>(instance: T): T
+
+       static createToast({
+      title,
+    description = null,
+    variant = "default",
+    className = "",
+  }: {
+    title: string;
+    description?: string | null;
+    variant?: "default" | "destructive";
+    className?: string;
+  }): {
+    id: string;
+    dismiss: () => void;
+    update: (props: ToasterToast) => void;
+} 
     }`,
     "file:///node_modules/@types/Util/index.d.ts"
   );
 }
+
 export default function compile(code: string) {
   const executeCode = new Function(
     "TreeNode",

@@ -40,9 +40,10 @@ export default function Playground({}: Props) {
   // TODO: make vector support two highlight for two pointer and sliding window ✅
   // TODO: edit vector that can take all items in constructor                   ✅
   // TODO: make item for vector have unique id                                  ✅
-  // TODO: add hash map
+  // TODO: add hash map                                                         ✅
+  // TODO: crete alert function                                                 ✅
+  // TODO: fix hash map
   // TODO: create table
-  // TODO: crete alert function
   // TODO: set value name options in the IReactFlow interface
   // TODO: add console panel
   // TODO: enhance animation
@@ -51,6 +52,7 @@ export default function Playground({}: Props) {
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [running, setRunning] = useState(false);
   const [code, setCode] = useState("");
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
@@ -85,10 +87,14 @@ export default function Playground({}: Props) {
     let nodes: any[] = [];
     let edges: any[] = [];
     frame?.map(async (ele: any, i) => {
-      await ele.getReactFlowElements({ posY: i * 200 }).then((res: any) => {
-        nodes = nodes.concat(res.nodes);
-        edges = edges.concat(res.edges);
-      });
+      if (typeof ele?.getReactFlowElements === "function") {
+        await ele.getReactFlowElements({ posY: i * 200 }).then((res: any) => {
+          nodes = nodes.concat(res.nodes);
+          edges = edges.concat(res.edges);
+        });
+      } else {
+        ele?.call();
+      }
       window.requestAnimationFrame(() => {
         setElements(nodes, edges);
       });
@@ -96,6 +102,7 @@ export default function Playground({}: Props) {
   }
 
   async function handleRun() {
+    setRunning(true);
     // Convert typescript code to JavaScript
     const result = typescript.transpileModule(code, {
       compilerOptions: {
@@ -137,6 +144,7 @@ export default function Playground({}: Props) {
     } catch (error) {
       console.log(error);
     }
+    setRunning(false);
   }
 
   function handleFormat() {
@@ -213,6 +221,7 @@ function main() {
           <Button
             onClick={handleRun}
             className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
+            disabled={running}
           >
             Run
           </Button>
