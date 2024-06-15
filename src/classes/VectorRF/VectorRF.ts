@@ -1,15 +1,6 @@
 import IReactFlow from "@/interfaces/IReactFlow";
 import { Edge, Node } from "reactflow";
-
-class VectorNodeType<T> {
-  value: T | null = null;
-  id: string | null = null;
-
-  constructor(value: T) {
-    this.value = value;
-    this.id = crypto.randomUUID();
-  }
-}
+import VectorNodeType from "./VectorNodeType";
 
 export default class VectorRF<T> implements IReactFlow {
   private items: VectorNodeType<T>[] = [];
@@ -148,6 +139,8 @@ export default class VectorRF<T> implements IReactFlow {
             ? i >= this.h1! && i <= this.h2!
               ? "rgb(248, 113, 113)"
               : "white"
+            : i === this.h1 || i === this.h2 || i === this.h3
+            ? "rgb(248, 113, 113)"
             : "white",
         },
       });

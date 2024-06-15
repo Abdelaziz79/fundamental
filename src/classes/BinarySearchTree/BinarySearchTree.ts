@@ -6,16 +6,7 @@ import {
   ElkLayoutOptions,
   defaultElkLayoutOptionsBST,
 } from "../../types/elkTypes";
-export class TreeNode<T> {
-  value: T;
-  left: TreeNode<T> | null = null;
-  right: TreeNode<T> | null = null;
-  id: string;
-  constructor(value: T) {
-    this.value = value;
-    this.id = crypto.randomUUID();
-  }
-}
+import TreeNode from "./TreeNode";
 
 export default class BinarySearchTree<T> implements IReactFlow {
   private root: TreeNode<T> | null = null;

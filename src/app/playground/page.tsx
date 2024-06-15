@@ -1,6 +1,7 @@
 "use client";
 
 import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
+import HashMap from "@/classes/HashMap/HashMap";
 import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,18 +32,18 @@ const allNodesTypes = {
 };
 
 export default function Playground({}: Props) {
-  // TODO: check if need parent node in the getReactflowGraphElements ✅
-  // TODO: add waiting time ✅
-  // TODO: create draw frames array ✅
-  // TODO: make interface have getReactFlowElements method ✅
-  // TODO: edit vector can highlight the index ✅
+  // TODO: check if need parent node in the getReactflowGraphElements           ✅
+  // TODO: add waiting time                                                     ✅
+  // TODO: create draw frames array                                             ✅
+  // TODO: make interface have getReactFlowElements method                      ✅
+  // TODO: edit vector can highlight the index                                  ✅
   // TODO: make vector support two highlight for two pointer and sliding window ✅
-  // TODO: edit vector that can take all items in constructor ✅
-  // TODO: make item for vector have unique id ✅
-  // TODO: crete alert function
-  // TODO: set value name options in the IReactFlow interface
+  // TODO: edit vector that can take all items in constructor                   ✅
+  // TODO: make item for vector have unique id                                  ✅
   // TODO: add hash map
   // TODO: create table
+  // TODO: crete alert function
+  // TODO: set value name options in the IReactFlow interface
   // TODO: add console panel
   // TODO: enhance animation
   // TODO: add custom node
@@ -84,7 +85,7 @@ export default function Playground({}: Props) {
     let nodes: any[] = [];
     let edges: any[] = [];
     frame?.map(async (ele: any, i) => {
-      await ele.getReactFlowElements({ posY: i * -200 }).then((res: any) => {
+      await ele.getReactFlowElements({ posY: i * 200 }).then((res: any) => {
         nodes = nodes.concat(res.nodes);
         edges = edges.concat(res.edges);
       });
@@ -105,6 +106,7 @@ export default function Playground({}: Props) {
     try {
       // Run the compiled JavaScript code
       const res = await compile(result.outputText);
+      // console.log(res);
       await wait(0.3);
 
       setElements([], []);
@@ -197,6 +199,7 @@ function main() {
       
       `);
   }, []);
+
   return (
     <ResizablePanelGroup
       direction="horizontal"

@@ -1,11 +1,14 @@
-import BinarySearchTree from "@/types/BinarySearchTree";
-import BinarySearchTreeDeclaration from "@/types/BinarySearchTreeDeclaration";
-import TreeNode from "@/types/TreeNode";
-import TreeNodeDeclaration from "@/types/TreeNodeDeclaration";
-import VectorNodeType from "@/types/VectorNodeType";
-import VectorNodeTypeDeclaration from "@/types/VectorNodeTypeDeclarations";
-import VectorRF from "@/types/VectorRF";
-import VectorRFDeclaration from "@/types/VectorRFDeclaration";
+import BinarySearchTree from "@/classes/BinarySearchTree/BinarySearchTree";
+import BinarySearchTreeDeclaration from "@/classes/BinarySearchTree/BinarySearchTreeDeclaration";
+import TreeNode from "@/classes/BinarySearchTree/TreeNode";
+import TreeNodeDeclaration from "@/classes/BinarySearchTree/TreeNodeDeclaration";
+import HashMap from "@/classes/HashMap/HashMap";
+import HashMapDeclaration from "@/classes/HashMap/HashMapDeclaration";
+import VectorNodeType from "@/classes/VectorRF/VectorNodeType";
+import VectorNodeTypeDeclaration from "@/classes/VectorRF/VectorNodeTypeDeclarations";
+import VectorRF from "@/classes/VectorRF/VectorRF";
+import VectorRFDeclaration from "@/classes/VectorRF/VectorRFDeclaration";
+import { toast } from "@/components/ui/use-toast";
 import { Monaco } from "@monaco-editor/react";
 
 class Util {
@@ -27,6 +30,15 @@ class Util {
 
     return copy;
   }
+
+  static createToast() {
+    return toast({
+      title: "deleted",
+      description: "Item deleted",
+      variant: "destructive",
+      className: "",
+    });
+  }
 }
 export function addLibs(monaco: Monaco) {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
@@ -46,6 +58,10 @@ export function addLibs(monaco: Monaco) {
     "file:///node_modules/@types/VectorRF/index.d.ts"
   );
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    HashMapDeclaration,
+    "file:///node_modules/@types/HashMap/index.d.ts"
+  );
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
     `declare class Util {
       static deepCopy<T>(instance: T): T
     }`,
@@ -58,6 +74,7 @@ export default function compile(code: string) {
     "BinarySearchTree",
     "VectorNodeType",
     "VectorRF",
+    "HashMap",
     "Util",
     code + "\nreturn main();"
   );
@@ -67,6 +84,7 @@ export default function compile(code: string) {
     BinarySearchTree,
     VectorNodeType,
     VectorRF,
+    HashMap,
     Util
   );
 }
