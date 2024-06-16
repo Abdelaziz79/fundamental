@@ -12,7 +12,6 @@ import { PopoverContent } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { useReactFlow } from "reactflow";
 import { Item } from "../../types/Item";
-import { defaultElkLayoutOptionsBST } from "../../types/elkTypes";
 import RandomCreation from "./RandomCreation";
 import { processNode } from "./utilsFunctions";
 

@@ -314,7 +314,7 @@ export default class BinarySearchTree<T> implements IReactFlow {
     return items;
   }
 
-  getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }> {
+  async getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }> {
     const { edgeType, nodeType, elkOptions, posX, posY, parentNode } =
       this.options;
     const elements: ReactFlowGraph = {
@@ -336,6 +336,11 @@ export default class BinarySearchTree<T> implements IReactFlow {
       });
       this.createGraphElements(this.root, elements, nodeType, edgeType, rootId);
     } else this.createGraphElements(this.root, elements, nodeType, edgeType);
-    return this.getBSTPositionedElements({ elements, elkOptions, posX, posY });
+    return await this.getBSTPositionedElements({
+      elements,
+      elkOptions,
+      posX,
+      posY,
+    });
   }
 }

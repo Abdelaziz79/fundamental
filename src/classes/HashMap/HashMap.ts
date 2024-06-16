@@ -1,8 +1,9 @@
 import IReactFlow from "@/interfaces/IReactFlow";
 
-export default class HashMap<K, V> {
+export default class HashMap<K, V> implements IReactFlow {
   private map: Map<K, V>;
   private options: { posX?: number; posY?: number; nodeType?: string };
+  private p: string | null;
 
   constructor(
     options: {
@@ -12,11 +13,12 @@ export default class HashMap<K, V> {
     } = {
       posX: 0,
       posY: 0,
-      nodeType: "default",
+      nodeType: "HashMapNode",
     }
   ) {
     this.options = options;
     this.map = new Map<K, V>();
+    this.p = null;
   }
 
   static deepCopy<T>(instance: T): T {
@@ -35,6 +37,7 @@ export default class HashMap<K, V> {
       (instance.getMap() as Map<any, any>).forEach((value, key) => {
         copy.set(key, HashMap.deepCopy(value));
       });
+      copy.setPointer(instance.getPointer());
       return copy as unknown as T;
     }
 
@@ -56,6 +59,14 @@ export default class HashMap<K, V> {
     return copy;
   }
 
+  setPointer(p: string | null) {
+    this.p = p;
+  }
+
+  getPointer() {
+    return this.p;
+  }
+
   private async createHashMap(
     map: Map<K, V>,
     elements: { nodes: any[]; edges: any[] },
@@ -73,8 +84,9 @@ export default class HashMap<K, V> {
       position: { x: posX ?? 0, y: posY ?? 0 },
       style: {
         padding: "2rem",
-        boxShadow: "2px 2px 5px #888888",
         backgroundColor: "white",
+        border: "1px solid rgb(22,163,74)",
+        boxShadow: "2px 2px 5px #888888",
       },
     });
 
@@ -83,7 +95,7 @@ export default class HashMap<K, V> {
       data: {
         label: "key",
       },
-      type: "default",
+      type: "HashMapNode",
       parentId: parentId,
       extent: "parent",
       expandParent: true,
@@ -97,12 +109,13 @@ export default class HashMap<K, V> {
         label: "value",
       },
       parentId: parentId,
-      type: "default",
+      type: "HashMapNode",
       extent: "parent",
       expandParent: true,
       draggable: false,
-      position: { x: 170, y: 0 },
+      position: { x: 150, y: 0 },
     });
+
     const mapArray = Array.from(map);
     let i = 1;
 
@@ -112,17 +125,22 @@ export default class HashMap<K, V> {
       const keyNode = {
         id: nodeId,
         data: { label: key?.toString() },
-        type: nodeType ?? "default",
+        type: this.p
+          ? this.p === key?.toString()
+            ? "RedHashMapNode"
+            : nodeType ?? "HashMapNode"
+          : nodeType ?? "HashMapNode",
         parentId: parentId,
         extent: "parent",
         expandParent: true,
         draggable: false,
         position: { x: 0, y: i * 100 },
+        style: {},
       };
       elements.nodes.push(keyNode);
 
       if (typeof (value as any)?.getReactFlowElements === "function") {
-        (value as any).setPosition(170, i * 100);
+        (value as any).setPosition(150, i * 100);
         await (value as any)?.getReactFlowElements().then((res: any) => {
           if (res.nodes.length > 0)
             res.nodes.forEach((node: any) => {
@@ -130,6 +148,7 @@ export default class HashMap<K, V> {
                 node.parentId = parentId;
                 node.expandParent = true;
                 node.extent = "parent";
+                node.draggable = false;
               }
             });
           if (res.nodes.length > 0) elements.nodes.push(...res.nodes);
@@ -139,12 +158,13 @@ export default class HashMap<K, V> {
         const valueNode = {
           id: crypto.randomUUID(),
           data: { label: value?.toString() },
-          type: nodeType,
+          type: nodeType ?? "HashMapNode",
           parentId: parentId,
           extent: "parent",
           expandParent: true,
           draggable: false,
-          position: { x: 170, y: i * 100 },
+          position: { x: 150, y: i * 100 },
+          style: {},
         };
         elements.nodes.push(valueNode);
       }
@@ -200,7 +220,7 @@ export default class HashMap<K, V> {
     this.map.clear();
   }
 
-  getReactFlowElements(): Promise<{
+  async getReactFlowElements(): Promise<{
     nodes: any[];
     edges: any[];
   }> {
@@ -209,7 +229,7 @@ export default class HashMap<K, V> {
       edges: [],
     };
     const { posX, posY, nodeType } = this.options;
-    this.createHashMap(this.map, elements, posX, posY, nodeType);
+    await this.createHashMap(this.map, elements, posX, posY, nodeType);
     return Promise.resolve(elements);
   }
 }

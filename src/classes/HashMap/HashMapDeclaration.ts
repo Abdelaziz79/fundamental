@@ -6,13 +6,13 @@ declare class HashMap<K, V> {
       posY?: number;
       nodeType?: string;
     };
-
+   private p: string | null;
     constructor(options?: {
       posX?: number;
       posY?: number;
       nodeType?: string;
     });
-
+   setPointer(p: string | null):void;
     setPosition(posX: number, posY: number): void;
 
     getPosition(): {

@@ -1,7 +1,7 @@
 "use client";
 
 import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
-import HashMap from "@/classes/HashMap/HashMap";
+import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
 import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,7 @@ type Props = {};
 
 const allNodesTypes = {
   ...BSTNodeType,
+  ...HashMapNodeType,
   ...VectorNodeType,
 };
 
@@ -43,7 +44,7 @@ export default function Playground({}: Props) {
   // TODO: add hash map                                                         ✅
   // TODO: crete alert function                                                 ✅
   // TODO: set value name options in the IReactFlow interface                   ✅
-  // TODO: fix hash map
+  // TODO: fix hash map                                                         ✅
   // TODO: create table
   // TODO: add console panel
   // TODO: enhance animation

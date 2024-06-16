@@ -51,7 +51,7 @@ export default class VectorRF<T> implements IReactFlow {
     this.options = options;
   }
 
-  private createVector({
+  private async createVector({
     items,
     elements,
     posX,
@@ -199,14 +199,14 @@ export default class VectorRF<T> implements IReactFlow {
     return this.items.map((item) => item.value as T);
   }
 
-  getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }> {
+  async getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }> {
     const { indexType, nodeType, posX, posY } = this.options;
     const elements = {
       nodes: [],
       edges: [],
     };
 
-    this.createVector({
+    await this.createVector({
       items: this.items,
       elements,
       posX,
