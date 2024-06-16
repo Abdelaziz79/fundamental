@@ -147,7 +147,7 @@ export async function processNode({
           title: "found",
           description: "Item found",
           variant: "default",
-          className: "bg-green-200 border-green-500 border-2 ",
+          className: "bg-green-200 border-green-500 border-2",
         });
       } else {
         toast({

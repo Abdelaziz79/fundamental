@@ -19,7 +19,7 @@ function VectorRFComp({ vec }: { vec: VectorRF<string> }) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [elements, setElements] = useState({ nodes: [], edges: [] });
   useEffect(() => {
-    vec.getReactFlowElements({}).then((res) => {
+    vec.getReactFlowElements().then((res) => {
       setNodes(res.nodes);
       setEdges(res.edges);
     });

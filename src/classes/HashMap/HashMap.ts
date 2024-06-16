@@ -1,57 +1,67 @@
 import IReactFlow from "@/interfaces/IReactFlow";
 
-export default class HashMap<K, V> implements IReactFlow {
-  private map;
-  constructor() {
+export default class HashMap<K, V> {
+  private map: Map<K, V>;
+  private options: { posX?: number; posY?: number; nodeType?: string };
+
+  constructor(
+    options: {
+      posX?: number;
+      posY?: number;
+      nodeType?: string;
+    } = {
+      posX: 0,
+      posY: 0,
+      nodeType: "default",
+    }
+  ) {
+    this.options = options;
     this.map = new Map<K, V>();
   }
-  set(key: K, value: V) {
-    this.map.set(key, value);
-  }
 
-  get(key: K) {
-    return this.map.get(key);
-  }
+  static deepCopy<T>(instance: T): T {
+    if (instance === null || typeof instance !== "object") {
+      return instance;
+    }
 
-  getMap() {
-    return this.map;
-  }
+    if (Array.isArray(instance)) {
+      return instance.map((item) => HashMap.deepCopy(item)) as unknown as T;
+    }
 
-  delete(key: K) {
-    this.map.delete(key);
-  }
+    if (instance instanceof HashMap) {
+      const copy = new HashMap<any, any>(
+        Object.assign({}, instance.getOptions())
+      );
+      (instance.getMap() as Map<any, any>).forEach((value, key) => {
+        copy.set(key, HashMap.deepCopy(value));
+      });
+      return copy as unknown as T;
+    }
 
-  size() {
-    return this.map.size;
-  }
+    if (instance instanceof Map) {
+      const copy = new Map<any, any>();
+      instance.forEach((value, key) => {
+        copy.set(key, HashMap.deepCopy(value));
+      });
+      return copy as unknown as T;
+    }
 
-  clear() {
-    this.map.clear();
-  }
+    const copy = Object.create(Object.getPrototypeOf(instance));
+    for (const key in instance) {
+      if (instance.hasOwnProperty(key)) {
+        (copy as any)[key] = HashMap.deepCopy((instance as any)[key]);
+      }
+    }
 
-  async getReactFlowElements({
-    posX = 0,
-    posY = 0,
-    nodeType = "default",
-  }: { posX?: number; posY?: number; nodeType?: string } = {}): Promise<{
-    nodes: any[];
-    edges: any[];
-  }> {
-    const elements: { nodes: any[]; edges: any[] } = {
-      nodes: [],
-      edges: [],
-    };
-
-    await this.createHashMap(this.map, elements, posX, posY, nodeType);
-    return Promise.resolve(elements);
+    return copy;
   }
 
   private async createHashMap(
     map: Map<K, V>,
     elements: { nodes: any[]; edges: any[] },
-    posX: number,
-    posY: number,
-    nodeType: string
+    posX: number | undefined,
+    posY: number | undefined,
+    nodeType: string | undefined
   ) {
     if (map === null || map === undefined) return;
     const parentId = `parent-${crypto.randomUUID()}`;
@@ -60,7 +70,7 @@ export default class HashMap<K, V> implements IReactFlow {
       id: parentId,
       type: "group",
       data: { label: null },
-      position: { x: posX, y: posY },
+      position: { x: posX ?? 0, y: posY ?? 0 },
       style: {
         padding: "2rem",
         boxShadow: "2px 2px 5px #888888",
@@ -102,7 +112,7 @@ export default class HashMap<K, V> implements IReactFlow {
       const keyNode = {
         id: nodeId,
         data: { label: key?.toString() },
-        type: nodeType,
+        type: nodeType ?? "default",
         parentId: parentId,
         extent: "parent",
         expandParent: true,
@@ -112,20 +122,19 @@ export default class HashMap<K, V> implements IReactFlow {
       elements.nodes.push(keyNode);
 
       if (typeof (value as any)?.getReactFlowElements === "function") {
-        await (value as any)
-          ?.getReactFlowElements({ posX: 170, posY: i * 100 })
-          .then((res: any) => {
-            if (res.nodes.length > 0)
-              res.nodes.forEach((node: any) => {
-                if (node.id.startsWith("parent")) {
-                  node.parentId = parentId;
-                  node.expandParent = true;
-                  node.extent = "parent";
-                }
-              });
-            if (res.nodes.length > 0) elements.nodes.push(...res.nodes);
-            if (res.edges.length > 0) elements.edges.push(...res.edges);
-          });
+        (value as any).setPosition(170, i * 100);
+        await (value as any)?.getReactFlowElements().then((res: any) => {
+          if (res.nodes.length > 0)
+            res.nodes.forEach((node: any) => {
+              if (node.id.startsWith("parent")) {
+                node.parentId = parentId;
+                node.expandParent = true;
+                node.extent = "parent";
+              }
+            });
+          if (res.nodes.length > 0) elements.nodes.push(...res.nodes);
+          if (res.edges.length > 0) elements.edges.push(...res.edges);
+        });
       } else {
         const valueNode = {
           id: crypto.randomUUID(),
@@ -142,38 +151,65 @@ export default class HashMap<K, V> implements IReactFlow {
       i++;
     }
   }
-  static deepCopy<T>(instance: T): T {
-    if (instance === null || typeof instance !== "object") {
-      return instance;
-    }
 
-    if (Array.isArray(instance)) {
-      return instance.map((item) => HashMap.deepCopy(item)) as unknown as T;
-    }
+  setOptions(options: {
+    posX?: number;
+    posY?: number;
+    nodeType?: string;
+  }): void {
+    this.options = options;
+  }
 
-    if (instance instanceof HashMap) {
-      const copy = new HashMap<any, any>();
-      (instance.getMap() as Map<any, any>).forEach((value, key) => {
-        copy.set(key, HashMap.deepCopy(value));
-      });
-      return copy as unknown as T;
-    }
+  getOptions() {
+    return this.options;
+  }
 
-    if (instance instanceof Map) {
-      const copy = new Map<any, any>();
-      instance.forEach((value, key) => {
-        copy.set(key, HashMap.deepCopy(value));
-      });
-      return copy as unknown as T;
-    }
+  setPosition(posX: number, posY: number) {
+    this.options.posX = posX;
+    this.options.posY = posY;
+  }
 
-    const copy = Object.create(Object.getPrototypeOf(instance));
-    for (const key in instance) {
-      if (instance.hasOwnProperty(key)) {
-        (copy as any)[key] = HashMap.deepCopy((instance as any)[key]);
-      }
-    }
+  getPosition() {
+    return {
+      posX: this.options.posX,
+      posY: this.options.posY,
+    };
+  }
 
-    return copy;
+  set(key: K, value: V) {
+    this.map.set(key, value);
+  }
+
+  get(key: K) {
+    return this.map.get(key);
+  }
+
+  getMap() {
+    return this.map;
+  }
+
+  delete(key: K) {
+    this.map.delete(key);
+  }
+
+  size() {
+    return this.map.size;
+  }
+
+  clear() {
+    this.map.clear();
+  }
+
+  getReactFlowElements(): Promise<{
+    nodes: any[];
+    edges: any[];
+  }> {
+    const elements: { nodes: any[]; edges: any[] } = {
+      nodes: [],
+      edges: [],
+    };
+    const { posX, posY, nodeType } = this.options;
+    this.createHashMap(this.map, elements, posX, posY, nodeType);
+    return Promise.resolve(elements);
   }
 }

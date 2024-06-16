@@ -1,101 +1,126 @@
 const BinarySearchTreeDeclaration = `
 declare class BinarySearchTree<T> {
-  private root: TreeNode<T> | null = null;
+  private root: TreeNode<T> | null;
+    private options: {
+      nodeType: string;
+      edgeType: string;
+      elkOptions: ElkLayoutOptions;
+      posX?: number;
+      posY?: number;
+      parentNode?: boolean;
+    };
 
-  private insertNode(
-    node: TreeNode<T>,
-    newNode: TreeNode<T>,
-    callback?: (node: TreeNode<T>) => void
-  ): void { /* Implementation omitted for brevity */ }
+    constructor(options?: {
+      nodeType: string;
+      edgeType: string;
+      elkOptions: ElkLayoutOptions;
+      posX?: number;
+      posY?: number;
+      parentNode?: boolean;
+    });
 
-  private preOrderTraverseNode(
-    node: TreeNode<T> | null,
-    callback: (node: TreeNode<T>) => void
-  ): void { /* Implementation omitted for brevity */ }
+    setOptions(options: {
+      nodeType: string;
+      edgeType: string;
+      elkOptions: ElkLayoutOptions;
+      posX?: number;
+      posY?: number;
+      parentNode?: boolean;
+    }): void;
 
-  private inOrderTraverseNode(
-    node: TreeNode<T> | null,
-    callback: (node: TreeNode<T>) => void
-  ): void { /* Implementation omitted for brevity */ }
+    getOptions(): {
+      nodeType: string;
+      edgeType: string;
+      elkOptions: ElkLayoutOptions;
+      posX?: number;
+      posY?: number;
+      parentNode?: boolean;
+    };
 
-  private postOrderTraverseNode(
-    node: TreeNode<T> | null,
-    callback: (node: TreeNode<T>) => void
-  ): void { /* Implementation omitted for brevity */ }
+    setPosition(posX: number, posY: number): void;
 
-  private searchNode(
-    node: TreeNode<T> | null,
-    value: T,
-    callback?: (node: TreeNode<T>) => void
-  ): boolean { /* Implementation omitted for brevity */ }
+    getPosition(): { posX: number | undefined; posY: number | undefined };
 
-  private getDepthNode(node: TreeNode<T> | null): number { /* Implementation omitted for brevity */ }
+    private insertNode(
+      node: TreeNode<T>,
+      newNode: TreeNode<T>,
+      callback?: (node: TreeNode<T>) => void
+    ): void;
 
-  private deleteNode(
-    node: TreeNode<T> | null,
-    value: T,
-    callback?: (node: TreeNode<T>) => void
-  ): TreeNode<T> | null { /* Implementation omitted for brevity */ }
+    private preOrderTraverseNode(
+      node: TreeNode<T> | null,
+      callback: (node: TreeNode<T>) => void
+    ): void;
 
-  private findMinNode(node: TreeNode<T> | null): TreeNode<T> { /* Implementation omitted for brevity */ }
+    private inOrderTraverseNode(
+      node: TreeNode<T> | null,
+      callback: (node: TreeNode<T>) => void
+    ): void;
 
-  private createGraphElements = (
-    node: TreeNode<T> | null,
-    elements: { nodes: Node[]; edges: Edge[] },
-    nodeType: string,
-    edgeType: string,
-    rootId: string
-  ) => { /* Implementation omitted for brevity */ };
+    private postOrderTraverseNode(
+      node: TreeNode<T> | null,
+      callback: (node: TreeNode<T>) => void
+    ): void;
 
-  private async getBSTPositionedElements({
-    elements,
-    elkOptions,
-    posX,
-    posY,
-  }: {
-    elements: { nodes: any[]; edges: any[] };
-    elkOptions: ElkLayoutOptions;
-    posX: number;
-    posY: number;
-  }): Promise<{ nodes: any[]; edges: any[] }> { /* Implementation omitted for brevity */ }
+    private searchNode(
+      node: TreeNode<T> | null,
+      value: T,
+      callback?: (node: TreeNode<T>) => void
+    ): boolean;
 
-  insert(value: T, callback?: (node: TreeNode<T>) => void) { /* Implementation omitted for brevity */ }
+    private getDepthNode(node: TreeNode<T> | null): number;
 
-  delete(value: T, callback?: (node: TreeNode<T>) => void): void { /* Implementation omitted for brevity */ }
+    private deleteNode(
+      node: TreeNode<T> | null,
+      value: T,
+      callback?: (node: TreeNode<T>) => void
+    ): TreeNode<T> | null;
 
-  search(value: T, callback?: (node: TreeNode<T>) => void): boolean { /* Implementation omitted for brevity */ }
+    private findMinNode(node: TreeNode<T> | null): TreeNode<T>;
 
-  inOrderTraverse(callback: (node: TreeNode<T>) => void): void { /* Implementation omitted for brevity */ }
+    private createGraphElements(
+      node: TreeNode<T> | null,
+      elements: { nodes: Node[]; edges: Edge[] },
+      nodeType: string,
+      edgeType: string,
+      rootId?: string
+    ): void;
 
-  preOrderTraverse(callback: (node: TreeNode<T>) => void): void { /* Implementation omitted for brevity */ }
+    private getBSTPositionedElements({
+      elements,
+      elkOptions,
+      posX,
+      posY,
+    }: {
+      elements: { nodes: any[]; edges: any[] };
+      elkOptions: ElkLayoutOptions;
+      posX: number | undefined;
+      posY: number | undefined;
+    }): Promise<{ nodes: any[]; edges: any[] }>;
 
-  postOrderTraverse(callback: (node: TreeNode<T>) => void): void { /* Implementation omitted for brevity */ }
+    insert(value: T, callback?: (node: TreeNode<T>) => void): void;
 
-  getRoot(): TreeNode<T> | null { /* Implementation omitted for brevity */ }
+    delete(value: T, callback?: (node: TreeNode<T>) => void): void;
 
-  getDepth(): number { /* Implementation omitted for brevity */ }
+    search(value: T, callback?: (node: TreeNode<T>) => void): boolean;
 
-  getMaxItem(): T | null { /* Implementation omitted for brevity */ }
+    inOrderTraverse(callback: (node: TreeNode<T>) => void): void;
 
-  getMinItem(): T | null { /* Implementation omitted for brevity */ }
+    preOrderTraverse(callback: (node: TreeNode<T>) => void): void;
 
-  getItems(): T[] { /* Implementation omitted for brevity */ }
+    postOrderTraverse(callback: (node: TreeNode<T>) => void): void;
 
-  getReactFlowElements({
-    nodeType = 'custom',
-    edgeType = 'step',
-    elkOptions = defaultElkLayoutOptionsBST,
-    posX = 0,
-    posY = 0,
-    parentNode = true,
-  }: {
-    nodeType?: string;
-    edgeType?: string;
-    elkOptions?: ElkLayoutOptions;
-    posX?: number;
-    posY?: number;
-    parentNode?: boolean;
-  } = {}): Promise<{ nodes: any[]; edges: any[] }> { /* Implementation omitted for brevity */ }
+    getRoot(): TreeNode<T> | null;
+
+    getDepth(): number;
+
+    getMaxItem(): T | null;
+
+    getMinItem(): T | null;
+
+    getItems(): T[];
+
+    getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }>;
 }
   `;
 

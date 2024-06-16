@@ -24,7 +24,7 @@ export default function Controller({ vec, elements, setElements }: Props) {
   const { setNodes, fitView } = useReactFlow();
   function updateGraphElements() {
     setElements({ nodes: [], edges: [] });
-    vec.getReactFlowElements({}).then((res) => {
+    vec.getReactFlowElements().then((res) => {
       setNodes(res.nodes);
       window.requestAnimationFrame(() => fitView());
     });

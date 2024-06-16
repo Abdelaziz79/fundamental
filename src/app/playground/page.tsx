@@ -42,9 +42,9 @@ export default function Playground({}: Props) {
   // TODO: make item for vector have unique id                                  ✅
   // TODO: add hash map                                                         ✅
   // TODO: crete alert function                                                 ✅
+  // TODO: set value name options in the IReactFlow interface                   ✅
   // TODO: fix hash map
   // TODO: create table
-  // TODO: set value name options in the IReactFlow interface
   // TODO: add console panel
   // TODO: enhance animation
   // TODO: add custom node
@@ -88,7 +88,9 @@ export default function Playground({}: Props) {
     let edges: any[] = [];
     frame?.map(async (ele: any, i) => {
       if (typeof ele?.getReactFlowElements === "function") {
-        await ele.getReactFlowElements({ posY: i * 200 }).then((res: any) => {
+        const { posX, posY } = ele.getPosition();
+        if (posX === 0 && posY === 0) ele.setPosition(0, i * 200);
+        await ele.getReactFlowElements().then((res: any) => {
           nodes = nodes.concat(res.nodes);
           edges = edges.concat(res.edges);
         });

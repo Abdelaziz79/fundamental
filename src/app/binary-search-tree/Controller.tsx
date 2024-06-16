@@ -40,18 +40,11 @@ const Controller = ({
   const [maximum, setMaximum] = useState(bst.getMaxItem());
 
   function updateGraphElements() {
-    bst
-      .getReactFlowElements({
-        nodeType: "custom",
-        edgeType: "default",
-        elkOptions: defaultElkLayoutOptionsBST,
-        parentNode: false,
-      })
-      .then((res) => {
-        setNodes(res.nodes);
-        setEdges(res.edges);
-        window.requestAnimationFrame(() => fitView());
-      });
+    bst.getReactFlowElements().then((res) => {
+      setNodes(res.nodes);
+      setEdges(res.edges);
+      window.requestAnimationFrame(() => fitView());
+    });
   }
 
   function handleSubmitRandomSize() {

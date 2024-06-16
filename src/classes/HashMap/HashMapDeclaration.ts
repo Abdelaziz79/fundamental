@@ -1,33 +1,63 @@
 const HashMapDeclaration = `
 declare class HashMap<K, V> {
   private map: Map<K, V>;
+    private options: {
+      posX?: number;
+      posY?: number;
+      nodeType?: string;
+    };
 
-  constructor();
-  set(key: K, value: V): void;
-  get(key: K): V | undefined;
-  getMap(): Map<K, V>;
-  delete(key: K): boolean;
-  size(): number;
-  clear(): void;
+    constructor(options?: {
+      posX?: number;
+      posY?: number;
+      nodeType?: string;
+    });
 
-  getReactFlowElements(params?: {
-    posX?: number;
-    posY?: number;
-    nodeType?: string;
-  }): Promise<{
-    nodes: any[];
-    edges: any[];
-  }>;
+    setPosition(posX: number, posY: number): void;
 
-  private createHashMap(
-    map: Map<K, V>,
-    elements: { nodes: any[]; edges: any[] },
-    posX: number,
-    posY: number,
-    nodeType: string
-  ): Promise<void>;
+    getPosition(): {
+      posX: number | undefined;
+      posY: number | undefined;
+    };
 
-  static deepCopy<T>(instance: T): T ;
+    setOptions(options: {
+      posX?: number;
+      posY?: number;
+      nodeType?: string;
+    }): void;
+
+    getOptions(): {
+      posX?: number;
+      posY?: number;
+      nodeType?: string;
+    };
+
+    set(key: K, value: V): void;
+
+    get(key: K): V | undefined;
+
+    getMap(): Map<K, V>;
+
+    delete(key: K): void;
+
+    size(): number;
+
+    clear(): void;
+
+    getReactFlowElements(): Promise<{
+      nodes: any[];
+      edges: any[];
+    }>;
+
+    private createHashMap(
+      map: Map<K, V>,
+      elements: { nodes: any[]; edges: any[] },
+      posX: number | undefined,
+      posY: number | undefined,
+      nodeType: string | undefined
+    ): Promise<void>;
+
+    static deepCopy<T>(instance: T): T;
 }
   `;
 

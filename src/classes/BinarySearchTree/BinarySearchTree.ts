@@ -8,8 +8,32 @@ import {
 } from "../../types/elkTypes";
 import TreeNode from "./TreeNode";
 
+type BSTOptions = {
+  nodeType: string;
+  edgeType: string;
+  elkOptions: ElkLayoutOptions;
+  posX?: number;
+  posY?: number;
+  parentNode?: boolean;
+};
+
 export default class BinarySearchTree<T> implements IReactFlow {
   private root: TreeNode<T> | null = null;
+
+  private options: BSTOptions;
+
+  constructor(
+    options: BSTOptions = {
+      nodeType: "custom",
+      edgeType: "default",
+      elkOptions: defaultElkLayoutOptionsBST,
+      posX: 0,
+      posY: 0,
+      parentNode: true,
+    }
+  ) {
+    this.options = options;
+  }
 
   private insertNode(
     node: TreeNode<T>,
@@ -183,8 +207,8 @@ export default class BinarySearchTree<T> implements IReactFlow {
   }: {
     elements: { nodes: any[]; edges: any[] };
     elkOptions: ElkLayoutOptions;
-    posX: number;
-    posY: number;
+    posX: number | undefined;
+    posY: number | undefined;
   }): Promise<{ nodes: any[]; edges: any[] }> {
     const ns = elements.nodes;
     const es = elements.edges;
@@ -195,8 +219,8 @@ export default class BinarySearchTree<T> implements IReactFlow {
         return {
           ...node,
           position: {
-            x: posX,
-            y: posY,
+            x: posX ?? 0,
+            y: posY ?? 0,
           },
         };
       } else {
@@ -206,6 +230,26 @@ export default class BinarySearchTree<T> implements IReactFlow {
     return {
       nodes: nodes,
       edges: (res as any).edges,
+    };
+  }
+
+  setOptions(options: BSTOptions): void {
+    this.options = options;
+  }
+
+  getOptions(): {} {
+    return this.options;
+  }
+
+  setPosition(posX: number, posY: number) {
+    this.options.posX = posX;
+    this.options.posY = posY;
+  }
+
+  getPosition() {
+    return {
+      posX: this.options.posX,
+      posY: this.options.posY,
     };
   }
 
@@ -270,21 +314,9 @@ export default class BinarySearchTree<T> implements IReactFlow {
     return items;
   }
 
-  getReactFlowElements({
-    nodeType = "custom",
-    edgeType = "step",
-    elkOptions = defaultElkLayoutOptionsBST,
-    posX = 0,
-    posY = 0,
-    parentNode = true,
-  }: {
-    nodeType?: string;
-    edgeType?: string;
-    elkOptions?: ElkLayoutOptions;
-    posX?: number;
-    posY?: number;
-    parentNode?: boolean;
-  } = {}): Promise<{ nodes: any[]; edges: any[] }> {
+  getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }> {
+    const { edgeType, nodeType, elkOptions, posX, posY, parentNode } =
+      this.options;
     const elements: ReactFlowGraph = {
       nodes: [],
       edges: [],
@@ -293,7 +325,7 @@ export default class BinarySearchTree<T> implements IReactFlow {
       const rootId = "parent-" + this.root?.id;
       elements.nodes.push({
         id: rootId,
-        position: { x: posX, y: posY },
+        position: { x: posX ?? 0, y: posY ?? 0 },
         data: { label: null },
         type: "group",
         style: {
