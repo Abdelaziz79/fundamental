@@ -120,7 +120,9 @@ declare class BinarySearchTree<T> {
 
     getItems(): T[];
 
-    getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }>;
+    getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }>;\
+
+    static clone<T>(instance: T): T ;
 }
   `;
 

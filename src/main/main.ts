@@ -12,25 +12,6 @@ import { toast } from "@/components/ui/use-toast";
 import { Monaco } from "@monaco-editor/react";
 
 class Util {
-  static deepCopy<T>(instance: T): T {
-    if (instance === null || typeof instance !== "object") {
-      return instance;
-    }
-
-    if (Array.isArray(instance)) {
-      return instance.map((item) => this.deepCopy(item)) as unknown as T;
-    }
-
-    const copy = Object.create(Object.getPrototypeOf(instance));
-    for (const key in instance) {
-      if (instance.hasOwnProperty(key)) {
-        (copy as any)[key] = this.deepCopy((instance as any)[key]);
-      }
-    }
-
-    return copy;
-  }
-
   static createToast({
     title,
     description = null,
@@ -54,6 +35,7 @@ class Util {
     };
   }
 }
+
 export function addLibs(monaco: Monaco) {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     TreeNodeDeclaration,
@@ -76,25 +58,24 @@ export function addLibs(monaco: Monaco) {
     "file:///node_modules/@types/HashMap/index.d.ts"
   );
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
-    `declare class Util {
-      static deepCopy<T>(instance: T): T
-
-       static createToast({
+    ` declare class Util {
+      
+    static createToast({
       title,
-    description = null,
-    variant = "default",
-    className = "",
-  }: {
-    title: string;
-    description?: string | null;
-    variant?: "default" | "destructive";
-    className?: string;
-  }): {
-    id: string;
-    dismiss: () => void;
-    update: (props: ToasterToast) => void;
-} 
-    }`,
+      description = null,
+      variant = "default",
+      className = "",
+    }: {
+      title: string;
+      description?: string | null;
+      variant?: "default" | "destructive";
+      className?: string;
+    }): {
+      id: string;
+      dismiss: () => void;
+      update: (props: ToasterToast) => void;
+    }; 
+  }`,
     "file:///node_modules/@types/Util/index.d.ts"
   );
 }

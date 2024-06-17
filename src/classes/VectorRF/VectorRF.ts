@@ -219,4 +219,23 @@ export default class VectorRF<T> implements IReactFlow {
       edges: elements.edges,
     });
   }
+
+  static clone<T>(instance: T): T {
+    if (instance === null || typeof instance !== "object") {
+      return instance;
+    }
+
+    if (Array.isArray(instance)) {
+      return instance.map((item) => this.clone(item)) as unknown as T;
+    }
+
+    const copy = Object.create(Object.getPrototypeOf(instance));
+    for (const key in instance) {
+      if (instance.hasOwnProperty(key)) {
+        (copy as any)[key] = this.clone((instance as any)[key]);
+      }
+    }
+
+    return copy;
+  }
 }

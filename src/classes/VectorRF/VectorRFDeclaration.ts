@@ -91,6 +91,8 @@ declare class VectorRF<T> {
     }): void;
 
     getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }>;
+
+    static clone<T>(instance: T): T ;
 }
 `;
 export default VectorRFDeclaration;
