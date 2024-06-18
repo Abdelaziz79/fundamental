@@ -4,6 +4,8 @@ import TreeNode from "@/classes/BinarySearchTree/TreeNode";
 import TreeNodeDeclaration from "@/classes/BinarySearchTree/TreeNodeDeclaration";
 import HashMap from "@/classes/HashMap/HashMap";
 import HashMapDeclaration from "@/classes/HashMap/HashMapDeclaration";
+import Table from "@/classes/Table/Table";
+import TableDeclaration from "@/classes/Table/TableDeclaration";
 import VectorNodeType from "@/classes/VectorRF/VectorNodeType";
 import VectorNodeTypeDeclaration from "@/classes/VectorRF/VectorNodeTypeDeclarations";
 import VectorRF from "@/classes/VectorRF/VectorRF";
@@ -57,6 +59,12 @@ export function addLibs(monaco: Monaco) {
     HashMapDeclaration,
     "file:///node_modules/@types/HashMap/index.d.ts"
   );
+
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    TableDeclaration,
+    "file:///node_modules/@types/Table/index.d.ts"
+  );
+
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     ` declare class Util {
       
@@ -87,6 +95,7 @@ export default function compile(code: string) {
     "VectorNodeType",
     "VectorRF",
     "HashMap",
+    "Table",
     "Util",
     code + "\nreturn main();"
   );
@@ -97,6 +106,7 @@ export default function compile(code: string) {
     VectorNodeType,
     VectorRF,
     HashMap,
+    Table,
     Util
   );
 }

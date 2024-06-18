@@ -76,45 +76,78 @@ export default class VectorRF<T> implements IReactFlow {
       style: {
         border: "1px solid rgb(22,163,74)",
         padding: "2rem",
+        backgroundColor: undefined,
         width: items.length * 80,
-        backgroundColor: "white",
         boxShadow: "2px 2px 5px #888888",
       },
     });
     for (let i = 0; i < items.length; i++) {
-      elements.nodes.push({
-        id: `node-${items[i].id}`,
-        data: { label: items[i].value?.toString() },
-        position: { x: i * 80, y: 0 },
-        type: nodeType ?? "default",
-        parentId: parentId,
-        expandParent: true,
-        extent: "parent",
-        draggable: false,
-        style: {
-          backgroundColor: this.setSlidingWindow
-            ? i >= this.h1! && i <= this.h2!
+      if (typeof (items[i].value as any)?.getReactFlowElements === "function") {
+        (items[i].value as any).setPosition(100, i * 100);
+        await (items[i].value as any)
+          ?.getReactFlowElements()
+          .then((res: any) => {
+            if (res.nodes.length > 0)
+              res.nodes.forEach((node: any) => {
+                if (node.id.startsWith("parent")) {
+                  node.parentId = parentId;
+                  node.expandParent = true;
+                  node.extent = "parent";
+                  node.draggable = false;
+                }
+              });
+            if (res.nodes.length > 0) elements.nodes.push(...res.nodes);
+            if (res.edges.length > 0) elements.edges.push(...res.edges);
+          });
+        elements.nodes.push({
+          id: `index-${items[i].id}`,
+          data: { label: i.toString() },
+          position: { x: 0, y: i * 100 },
+          type: indexType ?? "default",
+          parentId: parentId,
+          extent: "parent",
+          draggable: false,
+          connectable: false,
+          style: {
+            color:
+              this.h1 === i || this.h2 === i || this.h3 === i ? "red" : "black",
+          },
+        });
+      } else {
+        elements.nodes.push({
+          id: `node-${items[i].id}`,
+          data: { label: items[i].value?.toString() },
+          position: { x: i * 80, y: 0 },
+          type: nodeType ?? "default",
+          parentId: parentId,
+          expandParent: true,
+          extent: "parent",
+          draggable: false,
+          style: {
+            backgroundColor: this.setSlidingWindow
+              ? i >= this.h1! && i <= this.h2!
+                ? "rgb(248, 113, 113)"
+                : "white"
+              : i === this.h1 || i === this.h2 || i === this.h3
               ? "rgb(248, 113, 113)"
-              : "white"
-            : i === this.h1 || i === this.h2 || i === this.h3
-            ? "rgb(248, 113, 113)"
-            : "white",
-        },
-      });
-      elements.nodes.push({
-        id: `index-${items[i].id}`,
-        data: { label: i.toString() },
-        position: { x: i * 80 + 20, y: 30 },
-        type: indexType ?? "default",
-        parentId: parentId,
-        extent: "parent",
-        draggable: false,
-        connectable: false,
-        style: {
-          color:
-            this.h1 === i || this.h2 === i || this.h3 === i ? "red" : "black",
-        },
-      });
+              : "white",
+          },
+        });
+        elements.nodes.push({
+          id: `index-${items[i].id}`,
+          data: { label: i.toString() },
+          position: { x: i * 80 + 20, y: 30 },
+          type: indexType ?? "default",
+          parentId: parentId,
+          extent: "parent",
+          draggable: false,
+          connectable: false,
+          style: {
+            color:
+              this.h1 === i || this.h2 === i || this.h3 === i ? "red" : "black",
+          },
+        });
+      }
     }
   }
 

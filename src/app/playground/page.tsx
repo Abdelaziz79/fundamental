@@ -46,7 +46,7 @@ export default function Playground({}: Props) {
   // TODO: set value name options in the IReactFlow interface                   ✅
   // TODO: fix hash map                                                         ✅
   // TODO: make function to auto create deep copy                               ✅
-  // TODO: create table
+  // TODO: create table                                                         ✅
   // TODO: add console panel
   // TODO: enhance animation
   // TODO: add custom node
