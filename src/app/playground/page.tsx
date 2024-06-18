@@ -24,6 +24,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
+
 type Props = {};
 
 const allNodesTypes = {
@@ -47,7 +48,7 @@ export default function Playground({}: Props) {
   // TODO: fix hash map                                                         ✅
   // TODO: make function to auto create deep copy                               ✅
   // TODO: create table                                                         ✅
-  // TODO: add console panel
+  // TODO: add console panel                                                    ✅
   // TODO: enhance animation
   // TODO: add custom node
   // TODO: add custom edge
@@ -56,6 +57,8 @@ export default function Playground({}: Props) {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState("");
+  const [logs, setLogs] = useState<string[] | null>(null);
+
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   function handleEditorDidMount(
@@ -107,6 +110,15 @@ export default function Playground({}: Props) {
 
   async function handleRun() {
     setRunning(true);
+    // handle console.log to use it in console panel
+    const log = console.log;
+    const capturedLogs: string[] = [];
+
+    console.log = (...args: any[]) => {
+      capturedLogs.push(args.join(" "));
+      log(...args);
+    };
+
     // Convert typescript code to JavaScript
     const result = typescript.transpileModule(code, {
       compilerOptions: {
@@ -116,8 +128,12 @@ export default function Playground({}: Props) {
     });
     try {
       // Run the compiled JavaScript code
+
       const res = await compile(result.outputText);
-      // console.log(res);
+      // Restore the original console.log
+      console.log = log;
+      setLogs(capturedLogs);
+      console.log(capturedLogs);
       await wait(0.3);
 
       setElements([], []);
@@ -157,7 +173,6 @@ export default function Playground({}: Props) {
 
   useEffect(() => {
     setCode(`
-
 enum ElkAlgorithm {
   SporeOverlap = "sporeOverlap",
   Layered = "layered",
@@ -198,17 +213,14 @@ function main() {
     const num = Math.round(Math.random() * 100);
     bst.insert(num);
     vec.push_back(num)
-    let newBst = Util.deepCopy<BinarySearchTree<number>>(bst);
-    let newVec = Util.deepCopy<VectorRF<number>>(vec);
+    let newBst = BinarySearchTree.clone(bst);
+    let newVec = VectorRF.clone(vec);
 
     frame.push([newBst, newVec]);
   }
 
   return { frame };
-}
-
-
-      
+} 
       `);
   }, []);
 
@@ -248,18 +260,45 @@ function main() {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          nodeTypes={allNodesTypes}
-        >
-          <Controls />
+        <ResizablePanelGroup direction="vertical">
+          <ResizablePanel>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              nodeTypes={allNodesTypes}
+            >
+              <Controls />
 
-          <Background variant={BackgroundVariant.Dots} />
-        </ReactFlow>
+              <Background variant={BackgroundVariant.Dots} />
+            </ReactFlow>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={20}>
+            <ConsolePanel logs={logs} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </ResizablePanel>
     </ResizablePanelGroup>
+  );
+}
+
+function ConsolePanel({ logs }: { logs: string[] | null }) {
+  return (
+    <>
+      <div className="flex m-2 flex-col gap-2 ">
+        <h1>Console Panel</h1>
+        <ul className="overflow-auto max-h-[1000px]">
+          {logs?.map((log, i) => {
+            return (
+              <li className=" py-2 border-gray-300 border-b" key={i}>
+                {log}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </>
   );
 }
