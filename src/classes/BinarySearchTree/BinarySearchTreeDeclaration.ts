@@ -122,7 +122,7 @@ declare class BinarySearchTree<T> {
 
     getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }>;\
 
-    static clone<T>(instance: T): T ;
+    clone<T>(instance: T): T ;
 }
   `;
 

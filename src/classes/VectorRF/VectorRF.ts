@@ -253,7 +253,7 @@ export default class VectorRF<T> implements IReactFlow {
     });
   }
 
-  static clone<T>(instance: T): T {
+  clone<T>(instance: T): T {
     if (instance === null || typeof instance !== "object") {
       return instance;
     }

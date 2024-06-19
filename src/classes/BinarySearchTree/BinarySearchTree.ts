@@ -344,7 +344,7 @@ export default class BinarySearchTree<T> implements IReactFlow {
     });
   }
 
-  static clone<T>(instance: T): T {
+  clone<T>(instance: T): T {
     if (instance === null || typeof instance !== "object") {
       return instance;
     }

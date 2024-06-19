@@ -3,13 +3,14 @@
 import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
 import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
 import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
+import ConsolePanel from "@/components/ConsolePanel";
 import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import compile, { addLibs } from "@/main/main";
+import compile, { Util, addLibs } from "@/main/main";
 import { wait } from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
@@ -24,6 +25,8 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 type Props = {};
 
@@ -49,6 +52,10 @@ export default function Playground({}: Props) {
   // TODO: make function to auto create deep copy                               ✅
   // TODO: create table                                                         ✅
   // TODO: add console panel                                                    ✅
+  // TODO: add generic function to make copies                                  ✅
+  // TODO: fix this function to accept all types and createToast Function       ✅
+  // TODO: add function to auto copy                                            ✅
+  // TODO: add db
   // TODO: enhance animation
   // TODO: add custom node
   // TODO: add custom edge
@@ -58,6 +65,7 @@ export default function Playground({}: Props) {
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState("");
   const [logs, setLogs] = useState<string[] | null>(null);
+  const [autoFrame, setAutoFrame] = useState<boolean>(true);
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
@@ -93,8 +101,8 @@ export default function Playground({}: Props) {
     let edges: any[] = [];
     frame?.map(async (ele: any, i) => {
       if (typeof ele?.getReactFlowElements === "function") {
-        const { posX, posY } = ele.getPosition();
-        if (posX === 0 && posY === 0) ele.setPosition(0, i * 200);
+        // const { posX, posY } = ele.getPosition();
+        // if (posX === 0 && posY === 0) ele.setPosition(0, i * 200);
         await ele.getReactFlowElements().then((res: any) => {
           nodes = nodes.concat(res.nodes);
           edges = edges.concat(res.edges);
@@ -118,9 +126,18 @@ export default function Playground({}: Props) {
       capturedLogs.push(args.join(" "));
       log(...args);
     };
-
+    // Util.autoCopy(code);
+    let runCode = code;
+    if (autoFrame)
+      runCode = Util.autoCopy(code, [
+        "Table",
+        "BinarySearchTree",
+        "HashMap",
+        "VectorRF",
+      ]);
+    // const runCode = code;
     // Convert typescript code to JavaScript
-    const result = typescript.transpileModule(code, {
+    const result = typescript.transpileModule(runCode, {
       compilerOptions: {
         module: typescript.ModuleKind.ESNext,
         target: typescript.ScriptTarget.ESNext,
@@ -133,10 +150,9 @@ export default function Playground({}: Props) {
       // Restore the original console.log
       console.log = log;
       setLogs(capturedLogs);
-      console.log(capturedLogs);
       await wait(0.3);
 
-      setElements([], []);
+      // setElements([], []);
       if (res?.frame) {
         for (let i = 0; i < res?.frame.length; i++) {
           await getFrameElements({
@@ -213,10 +229,7 @@ function main() {
     const num = Math.round(Math.random() * 100);
     bst.insert(num);
     vec.push_back(num)
-    let newBst = BinarySearchTree.clone(bst);
-    let newVec = VectorRF.clone(vec);
-
-    frame.push([newBst, newVec]);
+   
   }
 
   return { frame };
@@ -233,21 +246,13 @@ function main() {
         defaultSize={30}
         className="w-1/2 h-full flex-col items-center "
       >
-        <div className="w-full flex items-center h-5 bg-zinc-800">
-          <Button
-            onClick={handleRun}
-            className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
-            disabled={running}
-          >
-            Run
-          </Button>
-          <Button
-            onClick={handleFormat}
-            className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
-          >
-            format
-          </Button>
-        </div>
+        <EditorButtons
+          setAutoFrame={setAutoFrame}
+          autoFrame={autoFrame}
+          handleFormat={handleFormat}
+          handleRun={handleRun}
+          running={running}
+        />
         <Editor
           className="w-full h-full"
           height={"100%"}
@@ -284,21 +289,42 @@ function main() {
   );
 }
 
-function ConsolePanel({ logs }: { logs: string[] | null }) {
+function EditorButtons({
+  handleRun,
+  handleFormat,
+  running,
+  autoFrame,
+  setAutoFrame,
+}: {
+  handleRun: () => void;
+  handleFormat: () => void;
+  running: boolean;
+  autoFrame: boolean;
+  setAutoFrame: (value: boolean) => void;
+}) {
   return (
-    <>
-      <div className="flex m-2 flex-col gap-2 ">
-        <h1>Console Panel</h1>
-        <ul className="overflow-auto max-h-[1000px]">
-          {logs?.map((log, i) => {
-            return (
-              <li className=" py-2 border-gray-300 border-b" key={i}>
-                {log}
-              </li>
-            );
-          })}
-        </ul>
+    <div className="w-full flex items-center h-5 bg-zinc-800">
+      <Button
+        onClick={handleRun}
+        className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
+        disabled={running}
+      >
+        Run
+      </Button>
+      <Button
+        onClick={handleFormat}
+        className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
+      >
+        format
+      </Button>
+      <div className="flex  bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none text-white gap-2 items-center ">
+        <Checkbox
+          id="autoFrame"
+          checked={autoFrame}
+          onCheckedChange={() => setAutoFrame(!autoFrame)}
+        />
+        <Label htmlFor="autoFrame">Auto Frame</Label>
       </div>
-    </>
+    </div>
   );
 }

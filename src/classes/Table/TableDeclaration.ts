@@ -30,6 +30,7 @@ declare class Table<K, V> extends HashMap<K, V> {
   delete(key: K): boolean;
   get(key: K): V | undefined;
   size(): number;
+  clone(instance: any): any;
 }
 
 `;

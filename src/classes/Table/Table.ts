@@ -5,6 +5,33 @@ export default class Table<K, V> extends HashMap<K, V> {
     super();
   }
 
+  // Clone function to create a deep copy of the Table instance
+  clone(instance: any): any {
+    const clonedTable = new Table<K, V>();
+
+    // Copy all key-value pairs from the original table to the cloned table
+    for (const [key, value] of Array.from(this.getMap())) {
+      // Deep copy of values if they are objects or arrays
+      const copiedValue = Array.isArray(value)
+        ? [...value]
+        : value instanceof Object
+        ? { ...value }
+        : value;
+      clonedTable.set(key, copiedValue as V);
+    }
+
+    // Copy options
+    const options = this.getOptions();
+    clonedTable.setOptions({ ...options });
+
+    // Copy position and pointer
+    const position = this.getPosition();
+    clonedTable.setPosition(position.posX ?? 0, position.posY ?? 0);
+    clonedTable.setPointer(this.getPointer());
+
+    return clonedTable;
+  }
+
   private async getTableElements(
     map: Map<K, V>,
     elements: { nodes: any[]; edges: any[] },
@@ -46,7 +73,9 @@ export default class Table<K, V> extends HashMap<K, V> {
         expandParent: true,
         draggable: false,
         position: { x: 100 * i, y: 0 },
-        style: {},
+        style: {
+          fontSize: "1.5rem",
+        },
       };
 
       elements.nodes.push(keyNode);

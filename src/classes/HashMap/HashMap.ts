@@ -21,13 +21,13 @@ export default class HashMap<K, V> implements IReactFlow {
     this.p = null;
   }
 
-  static clone<T>(instance: T): T {
+  clone<T>(instance: T): T {
     if (instance === null || typeof instance !== "object") {
       return instance;
     }
 
     if (Array.isArray(instance)) {
-      return instance.map((item) => HashMap.clone(item)) as unknown as T;
+      return instance.map((item) => this.clone(item)) as unknown as T;
     }
 
     if (instance instanceof HashMap) {
@@ -35,7 +35,7 @@ export default class HashMap<K, V> implements IReactFlow {
         Object.assign({}, instance.getOptions())
       );
       (instance.getMap() as Map<any, any>).forEach((value, key) => {
-        copy.set(key, HashMap.clone(value));
+        copy.set(key, this.clone(value));
       });
       copy.setPointer(instance.getPointer());
       return copy as unknown as T;
@@ -44,7 +44,7 @@ export default class HashMap<K, V> implements IReactFlow {
     if (instance instanceof Map) {
       const copy = new Map<any, any>();
       instance.forEach((value, key) => {
-        copy.set(key, HashMap.clone(value));
+        copy.set(key, this.clone(value));
       });
       return copy as unknown as T;
     }
@@ -52,7 +52,7 @@ export default class HashMap<K, V> implements IReactFlow {
     const copy = Object.create(Object.getPrototypeOf(instance));
     for (const key in instance) {
       if (instance.hasOwnProperty(key)) {
-        (copy as any)[key] = HashMap.clone((instance as any)[key]);
+        (copy as any)[key] = this.clone((instance as any)[key]);
       }
     }
 

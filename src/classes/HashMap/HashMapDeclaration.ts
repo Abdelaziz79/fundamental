@@ -57,7 +57,7 @@ declare class HashMap<K, V> {
       nodeType: string | undefined
     ): Promise<void>;
 
-    static clone<T>(instance: T): T;
+    clone<T>(instance: T): T;
 }
   `;
 

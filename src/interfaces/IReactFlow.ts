@@ -14,4 +14,6 @@ export default interface IReactFlow {
     nodes: any[];
     edges: any[];
   }>;
+
+  clone<T>(instance: T): T;
 }
