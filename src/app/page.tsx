@@ -1,6 +1,7 @@
 import Container from "@/components/Container";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
+import algorithms from "@/db/algorithms";
 import Link from "next/link";
 
 type Props = {};
@@ -38,7 +39,17 @@ export default function App({}: Props) {
               <h3 className="text-xl text-center font-bold my-2 ">
                 Algorithms
               </h3>
-              <div className="flex gap"></div>
+              <div className="flex gap">
+                {algorithms.map((algo) => {
+                  return (
+                    <Link href={`/algorithm/${algo.id}`} key={algo.id}>
+                      <Badge className="bg-gray-200 text-gray-800 m-2 text-md p-2 hover:bg-gray-300 font-semibold">
+                        {algo.title}
+                      </Badge>
+                    </Link>
+                  );
+                })}
+              </div>
             </Container>
           </div>
         </div>

@@ -5,6 +5,8 @@ import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
 import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 import ConsolePanel from "@/components/ConsolePanel";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -14,7 +16,7 @@ import compile, { Util, addLibs } from "@/main/main";
 import { wait } from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -25,10 +27,11 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 
-type Props = {};
+type Props = {
+  codeString?: string;
+  autoFrameCheckbox?: boolean;
+};
 
 const allNodesTypes = {
   ...BSTNodeType,
@@ -36,7 +39,17 @@ const allNodesTypes = {
   ...VectorNodeType,
 };
 
-export default function Playground({}: Props) {
+export default function Playground({
+  codeString = `let frame = [];
+let wait = 0.5;
+
+function main() {
+    // write your code here
+
+    return { frame }
+}`,
+  autoFrameCheckbox = true,
+}: Props) {
   // TODO: check if need parent node in the getReactflowGraphElements           ✅
   // TODO: add waiting time                                                     ✅
   // TODO: create draw frames array                                             ✅
@@ -55,7 +68,9 @@ export default function Playground({}: Props) {
   // TODO: add generic function to make copies                                  ✅
   // TODO: fix this function to accept all types and createToast Function       ✅
   // TODO: add function to auto copy                                            ✅
-  // TODO: add db
+  // TODO: add db                                                               ✅
+  // TODO: add IReactFlow interface to the web
+  // TODO: add helper functions to the web
   // TODO: enhance animation
   // TODO: add custom node
   // TODO: add custom edge
@@ -63,9 +78,9 @@ export default function Playground({}: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [running, setRunning] = useState(false);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(codeString);
   const [logs, setLogs] = useState<string[] | null>(null);
-  const [autoFrame, setAutoFrame] = useState<boolean>(true);
+  const [autoFrame, setAutoFrame] = useState<boolean>(autoFrameCheckbox);
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
@@ -186,56 +201,6 @@ export default function Playground({}: Props) {
   function handleFormat() {
     editorRef.current?.getAction("editor.action.formatDocument")?.run();
   }
-
-  useEffect(() => {
-    setCode(`
-enum ElkAlgorithm {
-  SporeOverlap = "sporeOverlap",
-  Layered = "layered",
-  Random = "random",
-  Box = "box",
-  MrTree = "mrtree",
-  Disco = "disco",
-  Fixed = "fixed",
-  Force = "force",
-  Radial = "radial",
-  RectPacking = "rectpacking",
-  SporeCompaction = "sporeCompaction",
-  Stress = "stress",
-}
-
-const defaultElkLayoutOptionsBS = {
-  "elk.algorithm": ElkAlgorithm.MrTree,
-  "elk.direction": "DOWN",
-  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
-  "elk.spacing.nodeNode": "80",
-  // Add default values for other options as needed
-};
-
-let nodes = [];
-let edges = [];
-let animatedNodesIds = [];
-
-
-let frame = [];
-
-function main() {
-
-  const vec = new VectorRF<number>();
-
-  const bst = new BinarySearchTree<number>();
-
-  for (let i = 0; i < 30; i++) {
-    const num = Math.round(Math.random() * 100);
-    bst.insert(num);
-    vec.push_back(num)
-   
-  }
-
-  return { frame };
-} 
-      `);
-  }, []);
 
   return (
     <ResizablePanelGroup
