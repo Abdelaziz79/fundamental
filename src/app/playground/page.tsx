@@ -69,7 +69,7 @@ function main() {
   // TODO: fix this function to accept all types and createToast Function       ✅
   // TODO: add function to auto copy                                            ✅
   // TODO: add db                                                               ✅
-  // TODO: add IReactFlow interface to the web
+  // TODO: add IReactFlow interface to the web                                  ✅
   // TODO: add helper functions to the web
   // TODO: enhance animation
   // TODO: add custom node

@@ -11,11 +11,10 @@ import VectorNodeTypeDeclaration from "@/classes/VectorRF/VectorNodeTypeDeclarat
 import VectorRF from "@/classes/VectorRF/VectorRF";
 import VectorRFDeclaration from "@/classes/VectorRF/VectorRFDeclaration";
 import { toast } from "@/components/ui/use-toast";
+import IReactFlowDeclaration from "@/interfaces/IReactFlowDeclaration";
+import IReactFlow from "@/interfaces/IReactFlow";
 import { Monaco } from "@monaco-editor/react";
-type stringAndNumber = {
-  name: string;
-  index: number;
-};
+
 export class Util {
   static createToast({
     title,
@@ -198,6 +197,11 @@ export function addLibs(monaco: Monaco) {
 
   }`,
     "file:///node_modules/@types/Util/index.d.ts"
+  );
+
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    IReactFlowDeclaration,
+    "file:///node_modules/@types/IReactFlow/index.d.ts"
   );
 }
 
