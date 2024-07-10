@@ -1,8 +1,9 @@
 import Container from "@/components/Container";
+import IconLinkButton from "@/components/IconButton";
 import Navbar from "@/components/Navbar";
-import { Badge } from "@/components/ui/badge";
 import algorithms from "@/db/algorithms";
-import Link from "next/link";
+import { SiDatabricks } from "react-icons/si";
+import { TbAtom2 } from "react-icons/tb";
 
 type Props = {};
 
@@ -20,17 +21,13 @@ export default function App({}: Props) {
               <h3 className="text-xl text-center font-bold my-2 ">
                 Data Structures
               </h3>
-              <div className="flex gap">
-                <Link href={"/vector"}>
-                  <Badge className="bg-gray-200 text-gray-800 m-2 text-md p-2 hover:bg-gray-300 font-semibold">
-                    Vector
-                  </Badge>
-                </Link>
-                <Link href={"/binary-search-tree"}>
-                  <Badge className="bg-gray-200 text-gray-800 m-2 text-md p-2 hover:bg-gray-300 font-semibold">
-                    Binary Search Tree
-                  </Badge>
-                </Link>
+              <div className="flex gap-2 flex-wrap">
+                <IconLinkButton href={"/vector"}>
+                  <SiDatabricks className="mr-2 h-5 w-5" /> Vector
+                </IconLinkButton>
+                <IconLinkButton href={"/binary-search-tree"}>
+                  <SiDatabricks className="mr-2 h-5 w-5" /> Binary Search Tree
+                </IconLinkButton>
               </div>
             </Container>
           </div>
@@ -39,14 +36,15 @@ export default function App({}: Props) {
               <h3 className="text-xl text-center font-bold my-2 ">
                 Algorithms
               </h3>
-              <div className="flex gap">
+              <div className="flex gap-2 flex-wrap">
                 {algorithms.map((algo) => {
                   return (
-                    <Link href={`/algorithm/${algo.id}`} key={algo.id}>
-                      <Badge className="bg-gray-200 text-gray-800 m-2 text-md p-2 hover:bg-gray-300 font-semibold">
-                        {algo.title}
-                      </Badge>
-                    </Link>
+                    <IconLinkButton
+                      href={`/algorithm/${algo.id}`}
+                      key={algo.id}
+                    >
+                      <TbAtom2 className="mr-2 h-5 w-5" /> {algo.title}
+                    </IconLinkButton>
                   );
                 })}
               </div>

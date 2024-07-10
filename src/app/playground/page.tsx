@@ -46,7 +46,7 @@ let wait = 0.5;
 function main() {
     // write your code here
 
-    return { frame }
+    return { frame, wait }
 }`,
   autoFrameCheckbox = true,
 }: Props) {
@@ -71,9 +71,9 @@ function main() {
   // TODO: add db                                                               ✅
   // TODO: add IReactFlow interface to the web                                  ✅
   // TODO: add helper functions to the web
-  // TODO: enhance animation
   // TODO: add custom node
   // TODO: add custom edge
+  // TODO: enhance animation
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
