@@ -49,6 +49,8 @@ declare class HashMap<K, V> {
       edges: any[];
     }>;
 
+    entries(): IterableIterator<[K, V]>;
+    has(key: K): boolean;
     private createHashMap(
       map: Map<K, V>,
       elements: { nodes: any[]; edges: any[] },

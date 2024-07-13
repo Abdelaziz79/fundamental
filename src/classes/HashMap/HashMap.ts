@@ -219,6 +219,12 @@ export default class HashMap<K, V> implements IReactFlow {
   clear() {
     this.map.clear();
   }
+  has(key: K) {
+    return this.map.has(key);
+  }
+  entries() {
+    return this.map.entries();
+  }
 
   async getReactFlowElements(): Promise<{
     nodes: any[];
