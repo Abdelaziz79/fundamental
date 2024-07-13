@@ -76,6 +76,7 @@ function main() {
   // TODO: add helper functions to the web
   // TODO: add custom node
   // TODO: add custom edge
+  // TODO: add more feature to compile function
   // TODO: enhance animation
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);

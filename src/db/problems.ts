@@ -528,6 +528,290 @@ function main() {
 }
  `,
   },
+  {
+    id: "125",
+    title: "125. Valid Palindrome",
+    description: "",
+    autoFrame: false,
+    level: "easy",
+    code: `let frame = [];
+let wait = 0.5;
+
+function isAlphaNumeric(c: string): boolean {
+    const charCode = c.charCodeAt(0);
+    if (charCode < 48 || charCode > 122) return false;
+    if (charCode > 57 && charCode < 65) return false;
+    if (charCode > 90 && charCode < 97) return false;
+    return true;
+}
+
+function isPalindrome(s: VectorRF<string>): boolean {
+    let l = 0;
+    let h = s.size() - 1;
+
+    s.setPosition(0, 100);
+    frame.push([Util.deepCopy(s)]);
+
+    while (l < h) {
+        while (l < s.size() && h >= 0 && !isAlphaNumeric(s.get(l))) l++;
+        while (l < s.size() && h >= 0 && !isAlphaNumeric(s.get(h))) h--;
+
+        s.twoHighlight(l, h);
+        frame.push([Util.deepCopy(s)]);
+
+        if (l < s.size() && h >= 0 && s.get(l).toLowerCase() !== s.get(h).toLowerCase()) {
+            const resultToast = Util.createToast({ title: "Not a Palindrome", variant: "destructive" });
+            frame.push([Util.deepCopy(s), resultToast]);
+            return false;
+        }
+
+        l++;
+        h--;
+
+        frame.push([Util.deepCopy(s)]);
+    }
+
+    const resultToast = Util.createToast({ title: "Is a Palindrome", className: "bg-green-200 border-green-500" });
+    frame.push([Util.deepCopy(s), resultToast]);
+
+    return true;
+}
+
+function main() {
+    const input = new VectorRF<string>({ items: Array.from("A man, a plan, a canal: Panama") });
+    const result = isPalindrome(input);
+
+    return { frame, wait };
+}
+`,
+  },
+  {
+    id: "167",
+    title: "167. Two Sum II - Input Array Is Sorted",
+    description: "",
+    autoFrame: false,
+    level: "medium",
+    code: `let frame = [];
+let wait = 0.5;
+
+function twoSum(numbers: VectorRF<number>, target: number): VectorRF<number> {
+    let l = 0, h = numbers.size() - 1;
+    const result = new VectorRF<number>();
+
+    numbers.setPosition(0, 100);
+    frame.push([Util.deepCopy(numbers)]);
+
+    while (l < h) {
+        numbers.twoHighlight(l, h);
+        frame.push([Util.deepCopy(numbers)]);
+
+        if (numbers.get(l) + numbers.get(h) === target) {
+            result.push_back(l + 1);
+            result.push_back(h + 1);
+            const resultToast = Util.createToast({ title: \`Pair Found: [\${l + 1}, \${h + 1}]\`, className: "bg-green-200 border-green-500" });
+            frame.push([Util.deepCopy(numbers), result, resultToast]);
+            return result;
+        }
+        if (numbers.get(l) + numbers.get(h) > target) {
+            h--;
+        } else {
+            l++;
+        }
+
+        frame.push([Util.deepCopy(numbers)]);
+    }
+
+    result.push_back(-1);
+    result.push_back(-1);
+    const resultToast = Util.createToast({ title: "Pair Not Found", className: "bg-red-200 border-red-500" });
+    frame.push([Util.deepCopy(numbers), result, resultToast]);
+
+    return result;
+}
+
+function main() {
+    const input = new VectorRF<number>({ items: [2, 7, 11, 15, 21, 43, 66, 102, 104] });
+    const target = 64;
+    const result = twoSum(input, target);
+
+    return { frame, wait };
+}
+`,
+  },
+  {
+    id: "15",
+    title: "15. 3Sum",
+    description: "",
+    autoFrame: false,
+    level: "medium",
+    code: `let frame = [];
+let wait = 0.5;
+
+function threeSum(nums: VectorRF<number>): VectorRF<VectorRF<number>> {
+    const res = new VectorRF<VectorRF<number>>();
+    res.setPosition(0, 100);
+    const n = nums.size();
+    nums.sort((a, b) => a - b);
+
+    frame.push([Util.deepCopy(nums), Util.deepCopy(res)]);
+
+    for (let i = 0; i < n - 1; i++) {
+        if (i > 0 && nums.get(i - 1) === nums.get(i)) continue;
+
+        let l = i + 1, r = n - 1;
+
+        while (l < r) {
+            nums.twoHighlight(i, l);
+            nums.oneHighlight(r);
+            frame.push([Util.deepCopy(nums), Util.deepCopy(res)]);
+
+            const sum = nums.get(i) + nums.get(l) + nums.get(r);
+            if (sum === 0) {
+                res.push_back(new VectorRF<number>({ items: [nums.get(i), nums.get(l), nums.get(r)] }));
+                l++;
+                while (l < r && nums.get(l - 1) === nums.get(l)) l++;
+            } else if (sum > 0) {
+                r--;
+            } else {
+                l++;
+            }
+
+            frame.push([Util.deepCopy(nums), Util.deepCopy(res)]);
+        }
+    }
+
+    const resultToast = Util.createToast({ title: "Finished", className: "bg-green-200 border-green-500" });
+    frame.push([Util.deepCopy(nums), Util.deepCopy(res), resultToast]);
+
+    return res;
+}
+
+function main() {
+    const input = new VectorRF<number>({ items: [-1, 0, 1, 2, -1, -4] });
+    const result = threeSum(input);
+
+    return { frame, wait };
+}
+`,
+  },
+  {
+    id: "11",
+    title: "11. Container With Most Water",
+    description: "",
+    autoFrame: false,
+    level: "medium",
+    code: `let frame = [];
+let wait = 0.5;
+const table = new Table<string, number[]>();
+table.set("left", []);
+table.set("right", []);
+table.set("result", []);
+table.set("v", []);
+table.setPosition(0, 100);
+
+function maxArea(height: VectorRF<number>): number {
+
+    let res = 0;
+    const n = height.size();
+    let l = 0, r = n - 1;
+
+    frame.push([Util.deepCopy(height)]);
+
+    while (l < r) {
+        height.twoHighlight(l, r);
+        const v = Math.min(height.get(l), height.get(r)) * (r - l);
+        res = Math.max(res, v);
+        table.set("left", [...table.get("left"), l])
+        table.set("right", [...table.get("right"), r])
+        table.set("result", [...table.get("result"), res])
+        table.set("v", [...table.get("v"), v])
+        frame.push([Util.deepCopy(height), Util.deepCopy(table)]);
+
+        if (height.get(l) <= height.get(r)) {
+            l++;
+        } else {
+            r--;
+        }
+    }
+
+    const resultToast = Util.createToast({ title: \`Maximum Area: \${res}\`, className: "bg-green-200 border-green-500" });
+    frame.push([Util.deepCopy(height), Util.deepCopy(table), resultToast]);
+
+    return res;
+}
+
+function main() {
+    const input = new VectorRF<number>({ items: [1, 8, 6, 2, 5, 4, 8, 3, 7] });
+    const result = maxArea(input);
+
+    return { frame, wait };
+}
+`,
+  },
+  {
+    id: "42",
+    title: "42. Trapping Rain Water",
+    description: "",
+    autoFrame: false,
+    level: "hard",
+    code: `let frame = [];
+let wait = 0.5;
+const table = new Table<string, number[]>();
+table.set("maxLeft", []);
+table.set("maxRight", []);
+table.set("sum", []);
+table.setPosition(0, 300);
+
+function trap(height: VectorRF<number>): number {
+    let res = 0;
+    const n = height.size();
+    const maxLeft = new VectorRF<number>({ items: new Array(n).fill(0) });
+    const maxRight = new VectorRF<number>({ items: new Array(n).fill(0) });
+
+    maxLeft.setPosition(0, 100);
+    maxRight.setPosition(0, 200);
+    frame.push([Util.deepCopy(height), Util.deepCopy(maxLeft), Util.deepCopy(maxRight), Util.deepCopy(table)]);
+
+    for (let i = 1; i < n; i++) {
+        height.oneHighlight(i - 1);
+        maxLeft.oneHighlight(i - 1);
+        maxLeft.set(i, Math.max(maxLeft.get(i - 1), height.get(i - 1)));
+        table.set("maxLeft", maxLeft.toArray());
+        frame.push([Util.deepCopy(height), Util.deepCopy(maxLeft), Util.deepCopy(maxRight), Util.deepCopy(table)]);
+    }
+
+    for (let i = n - 2; i >= 0; i--) {
+        height.oneHighlight(i + 1);
+        maxRight.oneHighlight(i + 1);
+        maxRight.set(i, Math.max(maxRight.get(i + 1), height.get(i + 1)));
+        table.set("maxRight", maxRight.toArray());
+        frame.push([Util.deepCopy(height), Util.deepCopy(maxLeft), Util.deepCopy(maxRight), Util.deepCopy(table)]);
+    }
+
+    for (let i = 0; i < n; i++) {
+        maxRight.oneHighlight(i);
+        maxLeft.oneHighlight(i);
+        height.oneHighlight(i);
+        const sum = Math.min(maxLeft.get(i), maxRight.get(i)) - height.get(i);
+        if (sum > 0) res += sum;
+        table.set("sum", [...table.get("sum"), sum]);
+        frame.push([Util.deepCopy(height), Util.deepCopy(maxLeft), Util.deepCopy(maxRight), Util.deepCopy(table), { i, sum, res }]);
+    }
+
+    const resultToast = Util.createToast({ title: \`Total Water Trapped: \${res}\`, className: "bg-green-200 border-green-500" });
+    frame.push([Util.deepCopy(height), Util.deepCopy(maxLeft), Util.deepCopy(maxRight), Util.deepCopy(table), resultToast]);
+
+    return res;
+}
+
+function main() {
+    const input = new VectorRF<number>({ items: [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1] });
+    const result = trap(input);
+
+    return { frame, wait };
+}
+`,
+  },
 ];
 
 export default problems;

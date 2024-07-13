@@ -72,6 +72,8 @@ declare class VectorRF<T> {
 
     clear(): void;
 
+    sort(compareFunction?: (a: T, b: T) => number): void;
+    
     toArray(): T[];
 
     private createVector({

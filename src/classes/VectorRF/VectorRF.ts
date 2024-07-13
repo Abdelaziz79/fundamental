@@ -231,7 +231,22 @@ export default class VectorRF<T> implements IReactFlow {
   toArray(): T[] {
     return this.items.map((item) => item.value as T);
   }
-
+  sort(compareFunction?: (a: T, b: T) => number): void {
+    this.items.sort((a, b) => {
+      if (compareFunction) {
+        if (a.value !== null && b.value !== null) {
+          return compareFunction(a.value, b.value);
+        }
+      }
+      if (a.value && b.value && a.value < b.value) {
+        return -1;
+      }
+      if (a.value && b.value && a.value > b.value) {
+        return 1;
+      }
+      return 0;
+    });
+  }
   async getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }> {
     const { indexType, nodeType, posX, posY } = this.options;
     const elements = {
