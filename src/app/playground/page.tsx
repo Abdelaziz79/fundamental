@@ -12,7 +12,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import compile, { Util, addLibs } from "@/main/main";
+import compile, { addLibs } from "@/main/main";
+import Util from "@/main/Util";
 import { wait } from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
@@ -70,7 +71,8 @@ function main() {
   // TODO: add function to auto copy                                            ✅
   // TODO: add db                                                               ✅
   // TODO: add IReactFlow interface to the web                                  ✅
-  // TODO: add one element class like string number
+  // TODO: add one element class like string number                             ✅
+  // TODO: add the stack
   // TODO: add name to classes
   // TODO: add backend
   // TODO: add helper functions to the web
@@ -120,8 +122,6 @@ function main() {
     let edges: any[] = [];
     frame?.map(async (ele: any, i) => {
       if (typeof ele?.getReactFlowElements === "function") {
-        // const { posX, posY } = ele.getPosition();
-        // if (posX === 0 && posY === 0) ele.setPosition(0, i * 200);
         await ele.getReactFlowElements().then((res: any) => {
           nodes = nodes.concat(res.nodes);
           edges = edges.concat(res.edges);
@@ -153,8 +153,9 @@ function main() {
         "BinarySearchTree",
         "HashMap",
         "VectorRF",
+        "ElementRF",
       ]);
-    // const runCode = code;
+
     // Convert typescript code to JavaScript
     const result = typescript.transpileModule(runCode, {
       compilerOptions: {

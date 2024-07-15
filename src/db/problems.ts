@@ -795,7 +795,7 @@ function trap(height: VectorRF<number>): number {
         const sum = Math.min(maxLeft.get(i), maxRight.get(i)) - height.get(i);
         if (sum > 0) res += sum;
         table.set("sum", [...table.get("sum"), sum]);
-        frame.push([Util.deepCopy(height), Util.deepCopy(maxLeft), Util.deepCopy(maxRight), Util.deepCopy(table), { i, sum, res }]);
+        frame.push([Util.deepCopy(height), Util.deepCopy(maxLeft), Util.deepCopy(maxRight), Util.deepCopy(table)]);
     }
 
     const resultToast = Util.createToast({ title: \`Total Water Trapped: \${res}\`, className: "bg-green-200 border-green-500" });
