@@ -73,11 +73,9 @@ function main() {
   // TODO: add IReactFlow interface to the web                                  ✅
   // TODO: add one element class like string number                             ✅
   // TODO: add backend                                                          ✅
+  // TODO: add helper functions to the web                                      ✅
   // TODO: add the stack
-  // TODO: add name to classes
-  // TODO: add helper functions to the web
-  // TODO: add custom node
-  // TODO: add custom edge
+  // TODO: make the playground as tsx file
   // TODO: add more feature to compile function
   // TODO: enhance animation
 

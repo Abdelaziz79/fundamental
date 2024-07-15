@@ -15,6 +15,11 @@ import VectorRFDeclaration from "@/classes/VectorRF/VectorRFDeclaration";
 import IReactFlowDeclaration from "@/interfaces/IReactFlowDeclaration";
 import { Monaco } from "@monaco-editor/react";
 import Util from "./Util";
+import {
+  getLayoutElements,
+  getRandomNumber,
+  wait as waitSec,
+} from "@/utils/helpers";
 
 export function addLibs(monaco: Monaco) {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
@@ -77,6 +82,24 @@ export function addLibs(monaco: Monaco) {
     IReactFlowDeclaration,
     "file:///node_modules/@types/IReactFlow/index.d.ts"
   );
+
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    `declare function waitSec(sec: number): Promise<void>;`,
+    "file:///node_modules/@types/wait/index.d.ts"
+  );
+
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    `declare const getLayoutElements: (nodes: any, edges: any, options: any) => Promise<{
+      nodes: { position: { x: number, y: number } }[];
+      edges: any[];
+    }>;`,
+    "file:///node_modules/@types/getLayoutElements/index.d.ts"
+  );
+
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    `declare function getRandomNumber(min: number, max: number): number;`,
+    "file:///node_modules/@types/getRandomNumber/index.d.ts"
+  );
 }
 
 export default function compile(code: string) {
@@ -89,6 +112,9 @@ export default function compile(code: string) {
     "Table",
     "ElementRF",
     "Util",
+    "getLayoutElements",
+    "waitSec",
+    "getRandomNumber",
     code + "\nreturn main();"
   );
 
@@ -100,6 +126,9 @@ export default function compile(code: string) {
     HashMap,
     Table,
     ElementRF,
-    Util
+    Util,
+    getLayoutElements,
+    waitSec,
+    getRandomNumber
   );
 }
