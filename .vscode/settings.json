@@ -7,6 +7,7 @@
     "mrtree",
     "nums",
     "rectpacking",
-    "simplebezier"
+    "simplebezier",
+    "supabase"
   ]
 }

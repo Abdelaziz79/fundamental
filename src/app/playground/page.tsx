@@ -72,9 +72,9 @@ function main() {
   // TODO: add db                                                               ✅
   // TODO: add IReactFlow interface to the web                                  ✅
   // TODO: add one element class like string number                             ✅
+  // TODO: add backend                                                          ✅
   // TODO: add the stack
   // TODO: add name to classes
-  // TODO: add backend
   // TODO: add helper functions to the web
   // TODO: add custom node
   // TODO: add custom edge

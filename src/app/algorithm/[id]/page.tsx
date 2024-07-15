@@ -1,14 +1,19 @@
 import Playground from "@/app/playground/page";
-import algorithms from "@/db/algorithms";
-import React from "react";
+import { getAlgorithmById } from "@/services/algorithmsApi";
+import { TbFidgetSpinner } from "react-icons/tb";
 
 type Props = {
   params: { id: string };
 };
-export default function Algorithm({ params }: Props) {
-  const algo = algorithms.find((algo) => algo.id === params.id);
+export default async function Algorithm({ params }: Props) {
+  const algo = await getAlgorithmById(params.id);
 
-  return (
-    <Playground codeString={algo?.code} autoFrameCheckbox={algo?.autoFrame} />
+  return algo ? (
+    <Playground
+      codeString={algo[0]?.code}
+      autoFrameCheckbox={algo[0]?.autoFrame}
+    />
+  ) : (
+    <TbFidgetSpinner />
   );
 }

@@ -1,18 +1,19 @@
 import Playground from "@/app/playground/page";
-import algorithms from "@/db/algorithms";
-import problems from "@/db/problems";
-import React from "react";
+import { getProblemById } from "@/services/problemsApi";
+import { TbFidgetSpinner } from "react-icons/tb";
 
 type Props = {
   params: { id: string };
 };
-export default function Algorithm({ params }: Props) {
-  const problem = problems.find((prob) => prob.id === params.id);
+export default async function Algorithm({ params }: Props) {
+  const problem = await getProblemById(params.id);
 
-  return (
+  return problem ? (
     <Playground
-      codeString={problem?.code}
-      autoFrameCheckbox={problem?.autoFrame}
+      codeString={problem[0]?.code}
+      autoFrameCheckbox={problem[0]?.autoFrame}
     />
+  ) : (
+    <TbFidgetSpinner />
   );
 }

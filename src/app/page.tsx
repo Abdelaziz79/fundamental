@@ -1,15 +1,16 @@
 import Container from "@/components/Container";
 import IconLinkButton from "@/components/IconButton";
 import Navbar from "@/components/Navbar";
-import algorithms from "@/db/algorithms";
-import problems from "@/db/problems";
+import { getAllAlgorithms } from "@/services/algorithmsApi";
+import { getAllProblems } from "@/services/problemsApi";
 import { SiDatabricks } from "react-icons/si";
-import { TbAtom2 } from "react-icons/tb";
-import { TbBrain } from "react-icons/tb";
+import { TbAtom2, TbBrain } from "react-icons/tb";
 
 type Props = {};
 
-export default function App({}: Props) {
+export default async function App({}: Props) {
+  const problems = await getAllProblems();
+  const algorithms = await getAllAlgorithms();
   return (
     <>
       <Navbar />
@@ -39,17 +40,18 @@ export default function App({}: Props) {
                 Algorithms
               </h3>
               <div className="flex gap-2 flex-wrap">
-                {algorithms.map((algo) => {
-                  return (
-                    <IconLinkButton
-                      href={`/algorithm/${algo.id}`}
-                      key={algo.id}
-                      variant={"link"}
-                    >
-                      <TbAtom2 className="mr-2 h-5 w-5" /> {algo.title}
-                    </IconLinkButton>
-                  );
-                })}
+                {algorithms &&
+                  algorithms?.map((algo) => {
+                    return (
+                      <IconLinkButton
+                        href={`/algorithm/${algo.id}`}
+                        key={algo.id}
+                        variant={"link"}
+                      >
+                        <TbAtom2 className="mr-2 h-5 w-5" /> {algo.title}
+                      </IconLinkButton>
+                    );
+                  })}
               </div>
             </Container>
           </div>
@@ -57,17 +59,18 @@ export default function App({}: Props) {
             <Container>
               <h3 className="text-xl text-center font-bold my-2 ">Problems</h3>
               <div className="flex gap-2 flex-wrap">
-                {problems.map((problem) => {
-                  return (
-                    <IconLinkButton
-                      href={`/problems/${problem.id}`}
-                      key={problem.id}
-                      variant={"link"}
-                    >
-                      <TbBrain className="mr-2 h-5 w-5" /> {problem.title}
-                    </IconLinkButton>
-                  );
-                })}
+                {problems &&
+                  problems?.map((problem) => {
+                    return (
+                      <IconLinkButton
+                        href={`/problems/${problem.id}`}
+                        key={problem.id}
+                        variant={"link"}
+                      >
+                        <TbBrain className="mr-2 h-5 w-5" /> {problem.title}
+                      </IconLinkButton>
+                    );
+                  })}
               </div>
             </Container>
           </div>
