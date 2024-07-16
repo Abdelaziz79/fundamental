@@ -13,6 +13,15 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import compile, { addLibs } from "@/main/main";
 import Util from "@/main/Util";
 import { wait } from "@/utils/helpers";
@@ -29,8 +38,6 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
-import { createHighlighter } from "shiki";
-import { shikiToMonaco } from "@shikijs/monaco";
 type Props = {
   codeString?: string;
   autoFrameCheckbox?: boolean;
@@ -76,8 +83,8 @@ function main() {
   // TODO: add one element class like string number                             ✅
   // TODO: add backend                                                          ✅
   // TODO: add helper functions to the web                                      ✅
+  // TODO: make the playground as tsx file                                      ✅
   // TODO: add the stack
-  // TODO: make the playground as tsx file
   // TODO: add more feature to compile function
   // TODO: enhance animation
 
@@ -87,23 +94,13 @@ function main() {
   const [code, setCode] = useState(codeString);
   const [logs, setLogs] = useState<string[] | null>(null);
   const [autoFrame, setAutoFrame] = useState<boolean>(autoFrameCheckbox);
-
+  const [theme, setTheme] = useState<string>("andromeeda");
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   async function handleEditorDidMount(
     editor: monaco.editor.IStandaloneCodeEditor,
     monaco: Monaco
   ) {
-    const highlighter = await createHighlighter({
-      themes: ["andromeeda"],
-      langs: ["javascript", "typescript", "tsx", "jsx"],
-    });
-
-    monaco.languages.register({ id: "jsx" });
-    monaco.languages.register({ id: "tsx" });
-    monaco.languages.register({ id: "javascript" });
-    monaco.languages.register({ id: "typescript" });
-    shikiToMonaco(highlighter, monaco);
     addLibs(editor, monaco);
     editorRef.current = editor;
   }
@@ -230,6 +227,8 @@ function main() {
           handleFormat={handleFormat}
           handleRun={handleRun}
           running={running}
+          theme={theme}
+          setTheme={setTheme}
         />
         <Editor
           className="w-full h-full"
@@ -237,8 +236,10 @@ function main() {
           defaultLanguage="typescript"
           onMount={handleEditorDidMount}
           onChange={handleEditorChange}
+          defaultPath={"index.tsx"}
+          path="index.tsx"
           value={code}
-          theme="vs-dark"
+          theme={theme ?? "vs-dark"}
         />
       </ResizablePanel>
       <ResizableHandle withHandle />
@@ -273,12 +274,16 @@ function EditorButtons({
   running,
   autoFrame,
   setAutoFrame,
+  theme,
+  setTheme,
 }: {
   handleRun: () => void;
   handleFormat: () => void;
   running: boolean;
   autoFrame: boolean;
   setAutoFrame: (value: boolean) => void;
+  theme: string;
+  setTheme: (value: string) => void;
 }) {
   return (
     <div className="w-full flex items-center h-5 bg-zinc-800">
@@ -311,6 +316,38 @@ function EditorButtons({
           <Label htmlFor="autoFrame">Auto Frame</Label>
         </div>
       </div>
+      <div className="flex ">
+        <div className="bg-zinc-700 hover:bg-zinc-600 rounded-none text-white">
+          <Select onValueChange={setTheme} value={theme}>
+            <SelectTrigger className="w-[180px]  border-none">
+              <SelectValue placeholder="theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Theme</SelectLabel>
+                {themes.map((themeName) => (
+                  <SelectItem key={themeName} value={themeName}>
+                    {themeName}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
     </div>
   );
 }
+const themes = [
+  "andromeeda",
+  "catppuccin-frappe",
+  "catppuccin-macchiato",
+  "catppuccin-mocha",
+  "dark-plus",
+  "dracula",
+  "dracula-soft",
+  "github-dark",
+  "monokai",
+  "one-dark-pro",
+  "poimandres",
+];

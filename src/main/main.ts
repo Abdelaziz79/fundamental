@@ -13,23 +13,112 @@ import VectorNodeTypeDeclaration from "@/classes/VectorRF/VectorNodeTypeDeclarat
 import VectorRF from "@/classes/VectorRF/VectorRF";
 import VectorRFDeclaration from "@/classes/VectorRF/VectorRFDeclaration";
 import IReactFlowDeclaration from "@/interfaces/IReactFlowDeclaration";
-import { Monaco } from "@monaco-editor/react";
-import Util from "./Util";
 import {
   getLayoutElements,
   getRandomNumber,
   wait as waitSec,
 } from "@/utils/helpers";
+import { Monaco } from "@monaco-editor/react";
+import { shikiToMonaco } from "@shikijs/monaco";
 import * as monaco from "monaco-editor";
 import { createHighlighter } from "shiki";
-import shiki from "shiki";
-import { shikiToMonaco } from "@shikijs/monaco";
 import reactDefinitionFile from "./react-definition-file";
+import Util from "./Util";
+
+const themes = [
+  "andromeeda",
+  "aurora-x",
+  "ayu-dark",
+  "catppuccin-frappe",
+  "catppuccin-latte",
+  "catppuccin-macchiato",
+  "catppuccin-mocha",
+  "dark-plus",
+  "dracula",
+  "dracula-soft",
+  "github-dark",
+  "github-dark-default",
+  "github-dark-dimmed",
+  "github-light",
+  "github-light-default",
+  "houston",
+  "laserwave",
+  "light-plus",
+  "material-theme",
+  "material-theme-darker",
+  "material-theme-lighter",
+  "material-theme-ocean",
+  "material-theme-palenight",
+  "min-dark",
+  "min-light",
+  "night-owl",
+  "nord",
+  "none",
+  "monokai",
+  "one-dark-pro",
+  "poimandres",
+  "one-light",
+  "red",
+  "rose-pine",
+  "rose-pine-dawn",
+  "rose-pine-moon",
+  "slack-dark",
+  "slack-ochin",
+  "snazzy-light",
+  "solarized-dark",
+  "solarized-light",
+  "synthwave-84",
+  "tokyo-night",
+  "vesper",
+  "vitesse-black",
+  "vitesse-dark",
+  "vitesse-light",
+];
 
 export async function addLibs(
   editor: monaco.editor.IStandaloneCodeEditor,
   monaco: Monaco
 ) {
+  const highlighter = await createHighlighter({
+    themes: [
+      "andromeeda",
+      "catppuccin-frappe",
+      "catppuccin-macchiato",
+      "catppuccin-mocha",
+      "dark-plus",
+      "dracula",
+      "dracula-soft",
+      "github-dark",
+      "monokai",
+      "one-dark-pro",
+      "poimandres",
+    ],
+    langs: ["javascript", "typescript", "tsx", "jsx"],
+  });
+
+  monaco.languages.register({ id: "jsx" });
+  monaco.languages.register({ id: "tsx" });
+  monaco.languages.register({ id: "javascript" });
+  monaco.languages.register({ id: "typescript" });
+  shikiToMonaco(highlighter, monaco);
+
+  monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+    jsx: monaco.languages.typescript.JsxEmit.React,
+    jsxFactory: "React.createElement",
+    reactNamespace: "React",
+    target: monaco.languages.typescript.ScriptTarget.Latest,
+    allowNonTsExtensions: true,
+    moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+    module: monaco.languages.typescript.ModuleKind.CommonJS,
+    noEmit: true,
+    typeRoots: ["node_modules/@types"],
+  });
+
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    reactDefinitionFile,
+    `file:///node_modules/@react/types/index.d.ts`
+  );
+
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     TreeNodeDeclaration,
     "file:///node_modules/@types/TreeNode/index.d.ts"
@@ -108,55 +197,6 @@ export async function addLibs(
     `declare function getRandomNumber(min: number, max: number): number;`,
     "file:///node_modules/@types/getRandomNumber/index.d.ts"
   );
-
-  // monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-  //   jsx: monaco.languages.typescript.JsxEmit.React,
-  //   target: monaco.languages.typescript.ScriptTarget.ESNext,
-  //   module: monaco.languages.typescript.ModuleKind.ESNext,
-  //   noEmit: true,
-  //   allowJs: true,
-  //   skipLibCheck: true,
-  //   allowSyntheticDefaultImports: true,
-  //   esModuleInterop: true,
-  //   strict: true,
-  //   strictNullChecks: true,
-  //   strictFunctionTypes: true,
-  //   strictBindCallApply: true,
-  //   strictPropertyInitialization: true,
-  //   noImplicitAny: true,
-  //   noImplicitThis: true,
-  //   noUnusedLocals: true,
-  //   noUnusedParameters: true,
-  //   noImplicitReturns: true,
-  //   noFallthroughCasesInSwitch: true,
-  //   noUncheckedIndexedAccess: true,
-  //   noImplicitOverride: true,
-  //   noPropertyAccessFromIndexSignature: true,
-  //   allowNonTsExtensions: true,
-  // });
-
-  // monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-  //   target: monaco.languages.typescript.ScriptTarget.Latest,
-  //   allowNonTsExtensions: true,
-  //   moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-  //   module: monaco.languages.typescript.ModuleKind.CommonJS,
-  //   noEmit: true,
-  //   esModuleInterop: true,
-  //   jsx: monaco.languages.typescript.JsxEmit.React,
-  //   reactNamespace: "React",
-  //   allowJs: true,
-  //   typeRoots: ["node_modules/@types"],
-  // });
-
-  // monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-  //   noSemanticValidation: false,
-  //   noSyntaxValidation: false,
-  // });
-
-  // monaco.languages.typescript.typescriptDefaults.addExtraLib(
-  //   reactDefinitionFile,
-  //   `file:///node_modules/@react/types/index.d.ts`
-  // );
 }
 
 export default function compile(code: string) {
