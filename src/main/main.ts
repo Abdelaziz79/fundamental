@@ -20,8 +20,16 @@ import {
   getRandomNumber,
   wait as waitSec,
 } from "@/utils/helpers";
+import * as monaco from "monaco-editor";
+import { createHighlighter } from "shiki";
+import shiki from "shiki";
+import { shikiToMonaco } from "@shikijs/monaco";
+import reactDefinitionFile from "./react-definition-file";
 
-export function addLibs(monaco: Monaco) {
+export async function addLibs(
+  editor: monaco.editor.IStandaloneCodeEditor,
+  monaco: Monaco
+) {
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     TreeNodeDeclaration,
     "file:///node_modules/@types/TreeNode/index.d.ts"
@@ -100,6 +108,55 @@ export function addLibs(monaco: Monaco) {
     `declare function getRandomNumber(min: number, max: number): number;`,
     "file:///node_modules/@types/getRandomNumber/index.d.ts"
   );
+
+  // monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+  //   jsx: monaco.languages.typescript.JsxEmit.React,
+  //   target: monaco.languages.typescript.ScriptTarget.ESNext,
+  //   module: monaco.languages.typescript.ModuleKind.ESNext,
+  //   noEmit: true,
+  //   allowJs: true,
+  //   skipLibCheck: true,
+  //   allowSyntheticDefaultImports: true,
+  //   esModuleInterop: true,
+  //   strict: true,
+  //   strictNullChecks: true,
+  //   strictFunctionTypes: true,
+  //   strictBindCallApply: true,
+  //   strictPropertyInitialization: true,
+  //   noImplicitAny: true,
+  //   noImplicitThis: true,
+  //   noUnusedLocals: true,
+  //   noUnusedParameters: true,
+  //   noImplicitReturns: true,
+  //   noFallthroughCasesInSwitch: true,
+  //   noUncheckedIndexedAccess: true,
+  //   noImplicitOverride: true,
+  //   noPropertyAccessFromIndexSignature: true,
+  //   allowNonTsExtensions: true,
+  // });
+
+  // monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+  //   target: monaco.languages.typescript.ScriptTarget.Latest,
+  //   allowNonTsExtensions: true,
+  //   moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+  //   module: monaco.languages.typescript.ModuleKind.CommonJS,
+  //   noEmit: true,
+  //   esModuleInterop: true,
+  //   jsx: monaco.languages.typescript.JsxEmit.React,
+  //   reactNamespace: "React",
+  //   allowJs: true,
+  //   typeRoots: ["node_modules/@types"],
+  // });
+
+  // monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+  //   noSemanticValidation: false,
+  //   noSyntaxValidation: false,
+  // });
+
+  // monaco.languages.typescript.typescriptDefaults.addExtraLib(
+  //   reactDefinitionFile,
+  //   `file:///node_modules/@react/types/index.d.ts`
+  // );
 }
 
 export default function compile(code: string) {

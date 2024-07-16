@@ -1,4 +1,5 @@
 "use client";
+import { VscDebugStart, VscListFlat } from "react-icons/vsc";
 
 import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
 import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
@@ -28,7 +29,8 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
-
+import { createHighlighter } from "shiki";
+import { shikiToMonaco } from "@shikijs/monaco";
 type Props = {
   codeString?: string;
   autoFrameCheckbox?: boolean;
@@ -88,12 +90,22 @@ function main() {
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
-  function handleEditorDidMount(
+  async function handleEditorDidMount(
     editor: monaco.editor.IStandaloneCodeEditor,
     monaco: Monaco
   ) {
+    const highlighter = await createHighlighter({
+      themes: ["andromeeda"],
+      langs: ["javascript", "typescript", "tsx", "jsx"],
+    });
+
+    monaco.languages.register({ id: "jsx" });
+    monaco.languages.register({ id: "tsx" });
+    monaco.languages.register({ id: "javascript" });
+    monaco.languages.register({ id: "typescript" });
+    shikiToMonaco(highlighter, monaco);
+    addLibs(editor, monaco);
     editorRef.current = editor;
-    addLibs(monaco);
   }
 
   function handleEditorChange(
@@ -143,7 +155,6 @@ function main() {
       capturedLogs.push(args.join(" "));
       log(...args);
     };
-    // Util.autoCopy(code);
     let runCode = code;
     if (autoFrame)
       runCode = Util.autoCopy(code, [
@@ -159,18 +170,17 @@ function main() {
       compilerOptions: {
         module: typescript.ModuleKind.ESNext,
         target: typescript.ScriptTarget.ESNext,
+        jsx: typescript.JsxEmit.React, // Add this line
       },
     });
     try {
       // Run the compiled JavaScript code
-
       const res = await compile(result.outputText);
       // Restore the original console.log
       console.log = log;
       setLogs(capturedLogs);
-      await wait(0.3);
+      await wait(0.2);
 
-      // setElements([], []);
       if (res?.frame) {
         for (let i = 0; i < res?.frame.length; i++) {
           await getFrameElements({
@@ -277,21 +287,29 @@ function EditorButtons({
         className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
         disabled={running}
       >
-        Run
+        <span className="flex items-center gap-1">
+          <VscDebugStart size={18} />
+          Run
+        </span>
       </Button>
       <Button
         onClick={handleFormat}
         className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
       >
-        format
+        <span className="flex items-center gap-1">
+          <VscListFlat size={18} />
+          format
+        </span>
       </Button>
-      <div className="flex  bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none text-white gap-2 items-center ">
-        <Checkbox
-          id="autoFrame"
-          checked={autoFrame}
-          onCheckedChange={() => setAutoFrame(!autoFrame)}
-        />
-        <Label htmlFor="autoFrame">Auto Frame</Label>
+      <div>
+        <div className="flex  bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none text-white gap-1 items-center ">
+          <Checkbox
+            id="autoFrame"
+            checked={autoFrame}
+            onCheckedChange={() => setAutoFrame(!autoFrame)}
+          />
+          <Label htmlFor="autoFrame">Auto Frame</Label>
+        </div>
       </div>
     </div>
   );
