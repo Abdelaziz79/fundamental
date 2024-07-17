@@ -1,6 +1,28 @@
+import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
+import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
+import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
+
 import { toast } from "@/components/ui/use-toast";
 
 export default class Util {
+  private static nodeTypes = {};
+  constructor() {}
+  static addNodeType(name: string, func: any) {
+    this.nodeTypes = {
+      ...this.nodeTypes,
+      [name]: func,
+    };
+  }
+
+  static getAllNodeTypes() {
+    return {
+      ...BSTNodeType,
+      ...HashMapNodeType,
+      ...VectorNodeType,
+      ...this.nodeTypes,
+    };
+  }
+
   static createToast({
     title,
     description = null,

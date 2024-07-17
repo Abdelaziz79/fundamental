@@ -1,9 +1,6 @@
 "use client";
 import { VscDebugStart, VscListFlat } from "react-icons/vsc";
 
-import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
-import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
-import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 import ConsolePanel from "@/components/ConsolePanel";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -41,12 +38,6 @@ import { animate } from "../binary-search-tree/utilsFunctions";
 type Props = {
   codeString?: string;
   autoFrameCheckbox?: boolean;
-};
-
-const allNodesTypes = {
-  ...BSTNodeType,
-  ...HashMapNodeType,
-  ...VectorNodeType,
 };
 
 export default function Playground({
@@ -95,7 +86,10 @@ function main() {
   const [logs, setLogs] = useState<string[] | null>(null);
   const [autoFrame, setAutoFrame] = useState<boolean>(autoFrameCheckbox);
   const [theme, setTheme] = useState<string>("andromeeda");
+
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
+  const [newNodes, setNewNodes] = useState(Util.getAllNodeTypes());
 
   async function handleEditorDidMount(
     editor: monaco.editor.IStandaloneCodeEditor,
@@ -173,6 +167,8 @@ function main() {
     try {
       // Run the compiled JavaScript code
       const res = await compile(result.outputText);
+      setNewNodes(Util.getAllNodeTypes());
+
       // Restore the original console.log
       console.log = log;
       setLogs(capturedLogs);
@@ -251,7 +247,7 @@ function main() {
               edges={edges}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
-              nodeTypes={allNodesTypes}
+              nodeTypes={newNodes}
             >
               <Controls />
 
@@ -319,7 +315,7 @@ function EditorButtons({
       <div className="flex ">
         <div className="bg-zinc-700 hover:bg-zinc-600 rounded-none text-white">
           <Select onValueChange={setTheme} value={theme}>
-            <SelectTrigger className="w-[180px]  border-none">
+            <SelectTrigger className="w-[150px]  border-none">
               <SelectValue placeholder="theme" />
             </SelectTrigger>
             <SelectContent>

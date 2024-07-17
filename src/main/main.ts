@@ -21,7 +21,10 @@ import {
 import { Monaco } from "@monaco-editor/react";
 import { shikiToMonaco } from "@shikijs/monaco";
 import * as monaco from "monaco-editor";
+import React from "react";
+import ReactFlow, { Handle, Position } from "reactflow";
 import { createHighlighter } from "shiki";
+import handleTypes from "./handle";
 import reactDefinitionFile from "./react-definition-file";
 import Util from "./Util";
 
@@ -168,6 +171,7 @@ export async function addLibs(
       dismiss: () => void;
       update: (props: ToasterToast) => void;
     }; 
+    static addNodeType(name: string, func: any):void;
 
     static deepCopy(obj: any): any
 
@@ -197,10 +201,19 @@ export async function addLibs(
     `declare function getRandomNumber(min: number, max: number): number;`,
     "file:///node_modules/@types/getRandomNumber/index.d.ts"
   );
+
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    handleTypes,
+    "file:///node_modules/@types/reactflow/index.d.ts"
+  );
 }
 
 export default function compile(code: string) {
   const executeCode = new Function(
+    "React",
+    "ReactFlow",
+    "Handle",
+    "Position",
     "TreeNode",
     "BinarySearchTree",
     "VectorNodeType",
@@ -216,6 +229,10 @@ export default function compile(code: string) {
   );
 
   return executeCode(
+    React,
+    ReactFlow,
+    Handle,
+    Position,
     TreeNode,
     BinarySearchTree,
     VectorNodeType,
