@@ -1,24 +1,12 @@
 "use client";
-import { VscDebugStart, VscListFlat } from "react-icons/vsc";
 
 import ConsolePanel from "@/components/ConsolePanel";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import EditorButtons from "@/components/EditorButtons";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import compile, { addLibs } from "@/main/main";
 import Util from "@/main/Util";
 import { wait } from "@/utils/helpers";
@@ -35,6 +23,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
+
 type Props = {
   codeString?: string;
   autoFrameCheckbox?: boolean;
@@ -51,34 +40,6 @@ function main() {
 }`,
   autoFrameCheckbox = true,
 }: Props) {
-  // TODO: check if need parent node in the getReactflowGraphElements           ✅
-  // TODO: add waiting time                                                     ✅
-  // TODO: create draw frames array                                             ✅
-  // TODO: make interface have getReactFlowElements method                      ✅
-  // TODO: edit vector can highlight the index                                  ✅
-  // TODO: make vector support two highlight for two pointer and sliding window ✅
-  // TODO: edit vector that can take all items in constructor                   ✅
-  // TODO: make item for vector have unique id                                  ✅
-  // TODO: add hash map                                                         ✅
-  // TODO: crete alert function                                                 ✅
-  // TODO: set value name options in the IReactFlow interface                   ✅
-  // TODO: fix hash map                                                         ✅
-  // TODO: make function to auto create deep copy                               ✅
-  // TODO: create table                                                         ✅
-  // TODO: add console panel                                                    ✅
-  // TODO: add generic function to make copies                                  ✅
-  // TODO: fix this function to accept all types and createToast Function       ✅
-  // TODO: add function to auto copy                                            ✅
-  // TODO: add db                                                               ✅
-  // TODO: add IReactFlow interface to the web                                  ✅
-  // TODO: add one element class like string number                             ✅
-  // TODO: add backend                                                          ✅
-  // TODO: add helper functions to the web                                      ✅
-  // TODO: make the playground as tsx file                                      ✅
-  // TODO: add the stack
-  // TODO: add more feature to compile function
-  // TODO: enhance animation
-
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [running, setRunning] = useState(false);
@@ -266,87 +227,3 @@ function main() {
     </ResizablePanelGroup>
   );
 }
-
-function EditorButtons({
-  handleRun,
-  handleFormat,
-  running,
-  autoFrame,
-  setAutoFrame,
-  theme,
-  setTheme,
-}: {
-  handleRun: () => void;
-  handleFormat: () => void;
-  running: boolean;
-  autoFrame: boolean;
-  setAutoFrame: (value: boolean) => void;
-  theme: string;
-  setTheme: (value: string) => void;
-}) {
-  return (
-    <div className="w-full flex items-center h-5 bg-zinc-800">
-      <Button
-        onClick={handleRun}
-        className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
-        disabled={running}
-      >
-        <span className="flex items-center gap-1">
-          <VscDebugStart size={18} />
-          Run
-        </span>
-      </Button>
-      <Button
-        onClick={handleFormat}
-        className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
-      >
-        <span className="flex items-center gap-1">
-          <VscListFlat size={18} />
-          format
-        </span>
-      </Button>
-      <div>
-        <div className="flex  bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none text-white gap-1 items-center ">
-          <Checkbox
-            id="autoFrame"
-            checked={autoFrame}
-            onCheckedChange={() => setAutoFrame(!autoFrame)}
-          />
-          <Label htmlFor="autoFrame">Auto Frame</Label>
-        </div>
-      </div>
-      <div className="flex ">
-        <div className="bg-zinc-700 hover:bg-zinc-600 rounded-none text-white">
-          <Select onValueChange={setTheme} value={theme}>
-            <SelectTrigger className="w-[150px]  border-none">
-              <SelectValue placeholder="theme" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Theme</SelectLabel>
-                {themes.map((themeName) => (
-                  <SelectItem key={themeName} value={themeName}>
-                    {themeName}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </div>
-  );
-}
-const themes = [
-  "andromeeda",
-  "catppuccin-frappe",
-  "catppuccin-macchiato",
-  "catppuccin-mocha",
-  "dark-plus",
-  "dracula",
-  "dracula-soft",
-  "github-dark",
-  "monokai",
-  "one-dark-pro",
-  "poimandres",
-];
