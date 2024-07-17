@@ -2,11 +2,11 @@ import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
 import { getLayoutElements } from "@/utils/helpers";
 import { Edge, Node } from "reactflow";
-import { ReactFlowGraph } from "../../types/ReactFlowGraph";
+import { ReactFlowGraph } from "../../Types/ReactFlowGraph";
 import {
   ElkLayoutOptions,
   defaultElkLayoutOptionsBST,
-} from "../../types/elkTypes";
+} from "../../Types/elkTypes";
 import TreeNode from "./TreeNode";
 
 type BSTOptions = {
