@@ -252,7 +252,6 @@ export default function compile(code: string) {
     "waitSec",
     "getRandomNumber",
     "tailwindcss",
-    "pseudoClass",
     code + "\nreturn main();"
   );
 
