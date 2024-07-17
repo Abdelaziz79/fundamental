@@ -33,7 +33,6 @@ import {
   useReactFlow,
   useStore,
 } from "reactflow";
-import { createHighlighter } from "shiki";
 import reactDefinitionFile from "./react-definition-file";
 import reactFlowTypes from "./reactFlowTypes";
 import Util from "./Util";
@@ -92,6 +91,7 @@ export async function addLibs(
   editor: monaco.editor.IStandaloneCodeEditor,
   monaco: Monaco
 ) {
+  const { createHighlighter } = await import("shiki");
   const highlighter = await createHighlighter({
     themes: [
       "andromeeda",
