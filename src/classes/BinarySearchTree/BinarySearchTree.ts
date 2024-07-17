@@ -1,3 +1,4 @@
+import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
 import { getLayoutElements } from "@/utils/helpers";
 import { Edge, Node } from "reactflow";
@@ -17,7 +18,7 @@ type BSTOptions = {
   parentNode?: boolean;
 };
 
-export default class BinarySearchTree<T> implements IReactFlow {
+export default class BinarySearchTree<T> implements IReactFlow, IController {
   private root: TreeNode<T> | null = null;
 
   private options: BSTOptions;

@@ -36,6 +36,7 @@ import { createHighlighter } from "shiki";
 import reactDefinitionFile from "./react-definition-file";
 import reactFlowTypes from "./reactFlowTypes";
 import Util from "./Util";
+import IControllerDeclaration from "@/interfaces/IControllerDeclaration";
 
 const themes = [
   "andromeeda",
@@ -119,6 +120,7 @@ export async function addLibs(
     jsx: monaco.languages.typescript.JsxEmit.React,
     jsxFactory: "React.createElement",
     reactNamespace: "React",
+    jsxFragmentFactory: "React.Fragment",
     target: monaco.languages.typescript.ScriptTarget.Latest,
     allowNonTsExtensions: true,
     moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
@@ -194,6 +196,10 @@ export async function addLibs(
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
     IReactFlowDeclaration,
     "file:///node_modules/@types/IReactFlow/index.d.ts"
+  );
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    IControllerDeclaration,
+    "file:///node_modules/@types/IController/index.d.ts"
   );
 
   monaco.languages.typescript.typescriptDefaults.addExtraLib(

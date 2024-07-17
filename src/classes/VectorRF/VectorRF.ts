@@ -1,8 +1,9 @@
+import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
 import { Edge, Node } from "reactflow";
 import VectorNodeType from "./VectorNodeType";
 
-export default class VectorRF<T> implements IReactFlow {
+export default class VectorRF<T> implements IReactFlow, IController {
   private items: VectorNodeType<T>[] = [];
   private options: {
     posX?: number;

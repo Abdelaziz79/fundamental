@@ -1,6 +1,7 @@
+import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
 
-export default class HashMap<K, V> implements IReactFlow {
+export default class HashMap<K, V> implements IReactFlow, IController {
   private map: Map<K, V>;
   private options: { posX?: number; posY?: number; nodeType?: string };
   private p: string | null;

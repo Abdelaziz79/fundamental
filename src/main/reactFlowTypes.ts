@@ -1,5 +1,10 @@
 const reactFlowTypes = `
-declare type Position = 'top' | 'bottom' | 'left' | 'right';
+declare enum Position {
+  Top = "top",
+  Left = "left",
+  Right = "right",
+  Bottom = "bottom",
+}
 
 declare interface HandleProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'id'> {
   id?: string;
