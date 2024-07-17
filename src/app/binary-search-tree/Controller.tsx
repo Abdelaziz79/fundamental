@@ -11,7 +11,7 @@ import { getRandomNumber } from "@/utils/helpers";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { useState } from "react";
 import { useReactFlow } from "reactflow";
-import { Item } from "../../types/Item";
+import { Item } from "../../Types/Item";
 import RandomCreation from "./RandomCreation";
 import { processNode } from "./utilsFunctions";
 
