@@ -12,6 +12,7 @@ import VectorNodeType from "@/classes/VectorRF/VectorNodeType";
 import VectorNodeTypeDeclaration from "@/classes/VectorRF/VectorNodeTypeDeclarations";
 import VectorRF from "@/classes/VectorRF/VectorRF";
 import VectorRFDeclaration from "@/classes/VectorRF/VectorRFDeclaration";
+import IControllerDeclaration from "@/interfaces/IControllerDeclaration";
 import IReactFlowDeclaration from "@/interfaces/IReactFlowDeclaration";
 import {
   getLayoutElements,
@@ -36,7 +37,6 @@ import { createHighlighter } from "shiki";
 import reactDefinitionFile from "./react-definition-file";
 import reactFlowTypes from "./reactFlowTypes";
 import Util from "./Util";
-import IControllerDeclaration from "@/interfaces/IControllerDeclaration";
 
 const themes = [
   "andromeeda",

@@ -1,5 +1,3 @@
-import { Handle, Position } from "reactflow";
-
 function HashMapNode({ data }: { data: { label: string } }) {
   return (
     <div className="overflow-hidden rounded border border-green-600 m-5 h-10 w-20 font-bold  flex items-center justify-center shadow-sm shadow-black">
