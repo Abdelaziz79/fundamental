@@ -123,7 +123,10 @@ function main() {
       compilerOptions: {
         module: typescript.ModuleKind.ESNext,
         target: typescript.ScriptTarget.ESNext,
-        jsx: typescript.JsxEmit.React, // Add this line
+        jsx: typescript.JsxEmit.React,
+        jsxFactory: `React.createElement`,
+        jsxFragmentFactory: `React.Fragment`,
+        // Add this line
       },
     });
     try {

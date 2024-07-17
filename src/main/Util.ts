@@ -1,15 +1,15 @@
 import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
 import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
 import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
-
 import { toast } from "@/components/ui/use-toast";
+import React from "react";
 
 export default class Util {
   private static nodeTypes = {};
   private static edgeTypes = {};
   constructor() {}
 
-  static addNodeType(name: string, func: any) {
+  static addNodeType(name: string, func: React.FC<any>) {
     this.nodeTypes = {
       ...this.nodeTypes,
       [name]: func,

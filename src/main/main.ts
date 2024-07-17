@@ -35,6 +35,7 @@ import {
 } from "reactflow";
 import reactDefinitionFile from "./react-definition-file";
 import reactFlowTypes from "./reactFlowTypes";
+import tailwindcssDefinition from "./tailwindcssDefinition";
 import Util from "./Util";
 
 const themes = [
@@ -185,7 +186,7 @@ export async function addLibs(
       dismiss: () => void;
       update: (props: ToasterToast) => void;
     }; 
-    static addNodeType(name: string, func: any):void;
+    static addNodeType(name: string, func: React.FC<any>):void;
 
     static addEdgeType(name: string, func: any):void;
 
@@ -250,6 +251,8 @@ export default function compile(code: string) {
     "getLayoutElements",
     "waitSec",
     "getRandomNumber",
+    "tailwindcss",
+    "pseudoClass",
     code + "\nreturn main();"
   );
 
@@ -273,6 +276,7 @@ export default function compile(code: string) {
     Util,
     getLayoutElements,
     waitSec,
-    getRandomNumber
+    getRandomNumber,
+    tailwindcssDefinition
   );
 }

@@ -15,6 +15,7 @@
     "shiki",
     "shikijs",
     "simplebezier",
-    "supabase"
+    "supabase",
+    "tailwindcss"
   ]
 }
