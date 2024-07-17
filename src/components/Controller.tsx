@@ -1,7 +1,7 @@
 "use client";
-import { Item } from "../types/Item";
 import React, { useState } from "react";
 import { LuSlidersHorizontal } from "react-icons/lu";
+import { Item } from "../Types/Item";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
