@@ -6,7 +6,9 @@ import { toast } from "@/components/ui/use-toast";
 
 export default class Util {
   private static nodeTypes = {};
+  private static edgeTypes = {};
   constructor() {}
+
   static addNodeType(name: string, func: any) {
     this.nodeTypes = {
       ...this.nodeTypes,
@@ -20,6 +22,19 @@ export default class Util {
       ...HashMapNodeType,
       ...VectorNodeType,
       ...this.nodeTypes,
+    };
+  }
+
+  static addEdgeType(name: string, func: any) {
+    this.edgeTypes = {
+      ...this.edgeTypes,
+      [name]: func,
+    };
+  }
+
+  static getAllEdgeTypes() {
+    return {
+      ...this.edgeTypes,
     };
   }
 

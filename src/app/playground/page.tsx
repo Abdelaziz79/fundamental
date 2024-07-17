@@ -90,6 +90,7 @@ function main() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   const [newNodes, setNewNodes] = useState(Util.getAllNodeTypes());
+  const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
 
   async function handleEditorDidMount(
     editor: monaco.editor.IStandaloneCodeEditor,
@@ -168,6 +169,7 @@ function main() {
       // Run the compiled JavaScript code
       const res = await compile(result.outputText);
       setNewNodes(Util.getAllNodeTypes());
+      setNewEdges(Util.getAllEdgeTypes());
 
       // Restore the original console.log
       console.log = log;
@@ -248,6 +250,7 @@ function main() {
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               nodeTypes={newNodes}
+              edgeTypes={newEdges}
             >
               <Controls />
 

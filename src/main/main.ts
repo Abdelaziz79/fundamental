@@ -103,6 +103,7 @@ export async function addLibs(
   monaco.languages.register({ id: "tsx" });
   monaco.languages.register({ id: "javascript" });
   monaco.languages.register({ id: "typescript" });
+
   shikiToMonaco(highlighter, monaco);
 
   monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
