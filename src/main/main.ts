@@ -22,10 +22,19 @@ import { Monaco } from "@monaco-editor/react";
 import { shikiToMonaco } from "@shikijs/monaco";
 import * as monaco from "monaco-editor";
 import React from "react";
-import ReactFlow, { Handle, Position } from "reactflow";
+import {
+  BaseEdge,
+  BezierEdge,
+  EdgeLabelRenderer,
+  getBezierPath,
+  Handle,
+  Position,
+  useReactFlow,
+  useStore,
+} from "reactflow";
 import { createHighlighter } from "shiki";
-import handleTypes from "./handle";
 import reactDefinitionFile from "./react-definition-file";
+import reactFlowTypes from "./reactFlowTypes";
 import Util from "./Util";
 
 const themes = [
@@ -174,6 +183,8 @@ export async function addLibs(
     }; 
     static addNodeType(name: string, func: any):void;
 
+    static addEdgeType(name: string, func: any):void;
+
     static deepCopy(obj: any): any
 
   }`,
@@ -204,7 +215,7 @@ export async function addLibs(
   );
 
   monaco.languages.typescript.typescriptDefaults.addExtraLib(
-    handleTypes,
+    reactFlowTypes,
     "file:///node_modules/@types/reactflow/index.d.ts"
   );
 }
@@ -212,7 +223,12 @@ export async function addLibs(
 export default function compile(code: string) {
   const executeCode = new Function(
     "React",
-    "ReactFlow",
+    "BaseEdge",
+    "EdgeLabelRenderer",
+    "getBezierPath",
+    "useReactFlow",
+    "BezierEdge",
+    "useStore",
     "Handle",
     "Position",
     "TreeNode",
@@ -231,7 +247,12 @@ export default function compile(code: string) {
 
   return executeCode(
     React,
-    ReactFlow,
+    BaseEdge,
+    EdgeLabelRenderer,
+    getBezierPath,
+    useReactFlow,
+    BezierEdge,
+    useStore,
     Handle,
     Position,
     TreeNode,
