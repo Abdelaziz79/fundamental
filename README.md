@@ -1,96 +1,181 @@
-# Binary Search Tree Visualizer
+![image](https://res.cloudinary.com/daily-now/image/upload/s--Y1vf3tiD--/f_auto/v1721307385/ugc/content_db874517-135b-4739-b48b-82311fc5d011)
 
-![image](https://github.com/Abdelaziz79/fundamental/assets/77078975/df758ba5-c619-44b8-8965-3dc0eb6ff444)
+## [Fun & Mental](https://fundamental-iota.vercel.app/): Visualizing Data Structures and Algorithms with React Flow and Monaco Editor
 
-A web application to visualize binary search trees, built with Next.js, TypeScript, React components, and React Flow.
+Welcome to **[Fun & Mental](https://fundamental-iota.vercel.app/)**, an innovative project that brings data structures and algorithms to life through interactive visualizations. This project, currently under development, leverages the power of React Flow and Monaco Editor to allow users to create, visualize, and understand complex data structures and algorithms in a fun and intuitive way.
 
+### Key Features
 
-## Table of Contents
+1. **Interactive Visualizations**: Use React Flow to create dynamic nodes and edges representing various data structures and algorithms.
+2. **Code in TSX**: Write and visualize your code directly in TSX files using the Monaco Editor.
+3. **Customizable Components**: Design your own data structures, nodes, and edges with ease.
+4. **Integrated Layout Management**: Utilize ELK library for efficient and customizable layout management.
+5. **Ready-to-Use Data Structures**: Access pre-built data structures like Binary Search Trees, Stacks, Vectors, HashMaps, and Tables.
+6. **LeetCode Problem Visualizations**: Visualize solutions to various LeetCode problems, with plans to cover all Neetcode problems.
 
-1. [Introduction](#introduction)
-2. [Demonstration Video](#demonstration-video)
-3. [Features](#features)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Technologies Used](#technologies-used)
-7. [Contributing](#contributing)
-8. [License](#license)
+### Getting Started
 
-## Introduction
+### Example Code
 
-This project is a web application that visualizes binary search trees. It allows users to interactively create and manipulate binary search trees, providing a visual understanding of the data structure. The application is built using the following technologies:
-- **Next.js**: A React framework for server-side rendering and building static websites.
-- **TypeScript**: A typed superset of JavaScript that adds static types.
-- **React**: A JavaScript library for building user interfaces.
-- **React Flow**: A library for building node-based graphs.
+Here's a quick example to get you started with visualizing a Binary Search Tree:
 
-## Demonstration Video
+```tsx
+let frame = [];
+let wait = 0.3;
 
-[![Binary Search Tree Visualizer Demo](http://img.youtube.com/vi/q7TmcuxUdls/0.jpg)](http://www.youtube.com/watch?v=q7TmcuxUdls)
+function main() {
+  const bst = new BinarySearchTree<number>();
+  bst.setOptions({
+    nodeType: "custom",
+    edgeType: "step",
+    elkOptions: defaultElkLayoutOptionsBS,
+    parentNode: true,
+    posX: 0,
+    posY: 0,
+  });
 
-**[youtube video](http://www.youtube.com/watch?v=q7TmcuxUdls)**
+  for (let i = 0; i < 30; i++) {
+    const num = Math.round(Math.random() * 100);
+    bst.insert(num);
+    frame.push([Util.deepCopy(bst)]);
+  }
 
-**[Click here to see the live demo](https://fundamental-ten.vercel.app/binary-search-tree)**
+  return { frame, wait };
+}
+const defaultElkLayoutOptionsBS = {
+  "elk.algorithm": "mrtree",
+  "elk.direction": "DOWN",
+  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
+  "elk.spacing.nodeNode": "80",
+  // Add default values for other options as needed
+};
+```
 
-## Features
+![ezgif-5-1bcd419ec2](https://res.cloudinary.com/daily-now/image/upload/s--QfqJzo95--/f_auto/v1721307442/ugc/content_2f982989-9394-41b2-9114-5bd50bfc986f)
 
-- Interactive visualization of binary search trees.
-- Node addition.
-- Node Search
-- Random tree creation.
-- Traversal algorithms: pre-order, in-order, and post-order.
-- User-friendly interface.
+In this example:
 
-## Installation
+- `frame` is an array that stores each state of the binary search tree.
+- `wait` sets the wait time between each render.
+- `Util.deepCopy` is used to get a deep copy of the object.
 
-To get a local copy of the project up and running, follow these steps:
+link to this example https://fundamental-iota.vercel.app/algorithm/2
 
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/Abdelaziz79/fundamental.git
-    cd fundamental
-    ```
+### Custom Data Structures
 
-2. **Install dependencies:**
-    ```bash
-    npm install
-    ```
+You can create your own data structures by implementing the `IReactFlow` interface. Here's an example of a Stack implementation:
 
-3. **Run the development server:**
-    ```bash
-    npm run dev
-    ```
+```tsx
+class Stack implements IReactFlow {
+  elements;
+  reactFlowElements;
+  constructor() {
+    this.elements = [];
+    this.reactFlowElements = {
+      nodes: [],
+      edges: [],
+    };
+  }
 
-4. **Open your browser and navigate to:**
-    ```
-    http://localhost:3000
-    ```
+  push(element) {
+    this.elements.push(element);
+  }
 
-## Usage
+  pop() {
+    return this.elements.pop();
+  }
 
-- **Viewing The Tree**: The tree will be displayed on the interface.
-- **Random Tree Creation**: Click the "Generate Random Tree" button to create a tree with random values.
-- **Adding Nodes**: Use the input field to enter the value of the node you want to add and click the "Inseart" button.
-- **Traversal Algorithms**: Select from pre-order, in-order, or post-order to see the tree traversal.
-- **Search**: Use the input field to enter the value of the node you want to search and click the "Find" button.
+  peek() {
+    return this.elements[this.elements.length - 1];
+  }
 
-## Technologies Used
+  isEmpty() {
+    return this.elements.length === 0;
+  }
 
-- **Next.js**: [Next.js Documentation](https://nextjs.org/docs)
-- **TypeScript**: [TypeScript Documentation](https://www.typescriptlang.org/docs/)
-- **React**: [React Documentation](https://reactjs.org/docs/getting-started.html)
-- **React Flow**: [React Flow Documentation](https://reactflow.dev/docs/)
+  async getReactFlowElements() {
+    this.reactFlowElements.nodes = this.elements.map((element, index) => ({
+      id: `node-${index}`,
+      data: { label: element },
+      type: "stackNode",
+      position: {
+        x: 250,
+        y: index * 100,
+      },
+    }));
 
-## Contributing
+    return this.reactFlowElements;
+  }
+}
+let frame = [];
+function main() {
+  const s = new Stack();
+  s.push(10);
+  s.push(10);
+  s.push(10);
+  s.push(10);
 
-Contributions are welcome! Please follow these steps:
+  frame.push([s]);
+  return { frame };
+}
+```
 
-1. Fork the repository.
-2. Create a new branch: `git checkout -b feature/your-feature-name`.
-3. Make your changes and commit them: `git commit -m 'Add some feature'`.
-4. Push to the branch: `git push origin feature/your-feature-name`.
-5. Open a pull request.
+And if you want full control you can implement the `IController` interface
 
-## License
+### Custom Node and Edge Types
 
-This project is licensed under the MIT License.
+Follow react flow documentation for creating nodes and edges [here](https://reactflow.dev/examples/nodes/custom-node)
+
+Creating custom node types is straightforward. Here’s how you can define a `StackNode`:
+
+```tsx
+const StackNode = ({ data }) => {
+  return (
+    <div className="p-4 bg-blue-500 text-white rounded shadow-lg flex justify-center items-center">
+      {data.label}
+    </div>
+  );
+};
+
+Util.addNodeType("stackNode", StackNode);
+```
+
+### Layout Management with ELK
+
+Use the ELK library to manage the layout before return the final nodes and edges:
+
+```tsx
+const defaultElkLayoutOptionsBS = {
+  "elk.algorithm": "mrtree",
+  "elk.direction": "DOWN",
+  "elk.layered.spacing.nodeNodeBetweenLayers": "100",
+  "elk.spacing.nodeNode": "80",
+  // Add default values for other options as needed
+};
+
+getLayoutElements(nodes, edges, elkOptions);
+```
+
+### Styling with Tailwind CSS
+
+While you can style your React components using Tailwind CSS, note that pseudo-classes in Tailwind are not currently working in this project.
+
+### Ready-to-Use Data Structures
+
+Explore our ready-to-use data structures like Binary Search Trees, Stacks, Vectors, HashMaps, and Tables. These structures come pre-built but with basic styling for now.
+
+### Visualizing LeetCode Problems
+
+One of our exciting goals is to visualize all Neetcode problems. This feature will help users understand and solve coding challenges with clear, step-by-step visualizations.
+
+### Project Status
+
+Please note that **Fun & Mental** is still under development. We are continuously working to improve functionality and add more features. Your feedback and contributions are welcome!
+
+---
+
+Enjoy exploring and visualizing data structures and algorithms with **Fun & Mental**! Stay tuned for more updates and improvements.
+
+### Stay Connected
+
+Follow our progress and contribute to the project on [GitHub](https://github.com/Abdelaziz79/fundamental). Happy coding!
