@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 function HashMapNode({ data }: { data: { label: string } }) {
   return (
     <div className="overflow-hidden rounded border border-green-600 m-5 h-10 w-20 font-bold  flex items-center justify-center shadow-sm shadow-black">
@@ -13,6 +15,6 @@ function RedHashMapNode({ data }: { data: { label: string } }) {
   );
 }
 export const HashMapNodeType = {
-  HashMapNode: HashMapNode,
-  RedHashMapNode: RedHashMapNode,
+  HashMapNode: memo(HashMapNode),
+  RedHashMapNode: memo(RedHashMapNode),
 };

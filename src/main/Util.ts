@@ -1,5 +1,6 @@
 import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
 import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
+import { StackNodeType } from "@/classes/StackRF/StackRF";
 import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
 import { toast } from "@/components/ui/use-toast";
 import React from "react";
@@ -21,6 +22,7 @@ export default class Util {
       ...BSTNodeType,
       ...HashMapNodeType,
       ...VectorNodeType,
+      ...StackNodeType,
       ...this.nodeTypes,
     };
   }

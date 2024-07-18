@@ -6,12 +6,15 @@ import ElementRF from "@/classes/ElementRF/ElementRF";
 import ElementRFDeclaration from "@/classes/ElementRF/ElementRFDeclaration";
 import HashMap from "@/classes/HashMap/HashMap";
 import HashMapDeclaration from "@/classes/HashMap/HashMapDeclaration";
+import StackRF from "@/classes/StackRF/StackRF";
+import StackRFDeclaration from "@/classes/StackRF/StackRfDeclaration";
 import Table from "@/classes/Table/Table";
 import TableDeclaration from "@/classes/Table/TableDeclaration";
 import VectorNodeType from "@/classes/VectorRF/VectorNodeType";
 import VectorNodeTypeDeclaration from "@/classes/VectorRF/VectorNodeTypeDeclarations";
 import VectorRF from "@/classes/VectorRF/VectorRF";
 import VectorRFDeclaration from "@/classes/VectorRF/VectorRFDeclaration";
+import { toast } from "@/components/ui/use-toast";
 import IControllerDeclaration from "@/interfaces/IControllerDeclaration";
 import IReactFlowDeclaration from "@/interfaces/IReactFlowDeclaration";
 import {
@@ -227,55 +230,64 @@ export async function addLibs(
     reactFlowTypes,
     "file:///node_modules/@types/reactflow/index.d.ts"
   );
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    StackRFDeclaration,
+    "file:///node_modules/@types/StackRF/index.d.ts"
+  );
 }
 
 export default function compile(code: string) {
-  const executeCode = new Function(
-    "React",
-    "BaseEdge",
-    "EdgeLabelRenderer",
-    "getBezierPath",
-    "useReactFlow",
-    "BezierEdge",
-    "useStore",
-    "Handle",
-    "Position",
-    "TreeNode",
-    "BinarySearchTree",
-    "VectorNodeType",
-    "VectorRF",
-    "HashMap",
-    "Table",
-    "ElementRF",
-    "Util",
-    "getLayoutElements",
-    "waitSec",
-    "getRandomNumber",
-    "tailwindcss",
-    code + "\nreturn main();"
-  );
-
-  return executeCode(
-    React,
-    BaseEdge,
-    EdgeLabelRenderer,
-    getBezierPath,
-    useReactFlow,
-    BezierEdge,
-    useStore,
-    Handle,
-    Position,
-    TreeNode,
-    BinarySearchTree,
-    VectorNodeType,
-    VectorRF,
-    HashMap,
-    Table,
-    ElementRF,
-    Util,
-    getLayoutElements,
-    waitSec,
-    getRandomNumber,
-    tailwindcssDefinition
-  );
+  try {
+    const executeCode = new Function(
+      "React",
+      "BaseEdge",
+      "EdgeLabelRenderer",
+      "getBezierPath",
+      "useReactFlow",
+      "BezierEdge",
+      "useStore",
+      "Handle",
+      "Position",
+      "TreeNode",
+      "BinarySearchTree",
+      "VectorNodeType",
+      "VectorRF",
+      "HashMap",
+      "Table",
+      "ElementRF",
+      "Util",
+      "getLayoutElements",
+      "waitSec",
+      "getRandomNumber",
+      "tailwindcss",
+      "StackRF",
+      code + "\nreturn main();"
+    );
+    return executeCode(
+      React,
+      BaseEdge,
+      EdgeLabelRenderer,
+      getBezierPath,
+      useReactFlow,
+      BezierEdge,
+      useStore,
+      Handle,
+      Position,
+      TreeNode,
+      BinarySearchTree,
+      VectorNodeType,
+      VectorRF,
+      HashMap,
+      Table,
+      ElementRF,
+      Util,
+      getLayoutElements,
+      waitSec,
+      getRandomNumber,
+      tailwindcssDefinition,
+      StackRF
+    );
+  } catch (err: any) {
+    toast({ title: "Error", description: err.message, variant: "destructive" });
+  }
 }

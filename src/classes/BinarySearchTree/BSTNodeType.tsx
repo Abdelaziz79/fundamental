@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Handle, Position } from "reactflow";
 
 export const CustomNode: React.FC<{ data: { label: string } }> = ({ data }) => {
@@ -91,8 +92,8 @@ export const SmallCustomNode: React.FC<{ data: { label: string } }> = ({
 };
 
 export const BSTNodeType = {
-  custom: CustomNode,
-  mid: MidCustomNode,
-  red: RedNode,
-  small: SmallCustomNode,
+  custom: memo(CustomNode),
+  mid: memo(MidCustomNode),
+  red: memo(RedNode),
+  small: memo(SmallCustomNode),
 };

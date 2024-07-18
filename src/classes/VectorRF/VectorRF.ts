@@ -102,13 +102,13 @@ export default class VectorRF<T> implements IReactFlow, IController {
           });
         elements.nodes.push({
           id: `index-${items[i].id}`,
-          data: { label: i.toString() },
           position: { x: 0, y: i * 100 },
-          type: indexType ?? "default",
           parentId: parentId,
           extent: "parent",
           draggable: false,
           connectable: false,
+          data: { label: i.toString() },
+          type: indexType ?? "default",
           style: {
             color:
               this.h1 === i || this.h2 === i || this.h3 === i ? "red" : "black",
@@ -117,13 +117,13 @@ export default class VectorRF<T> implements IReactFlow, IController {
       } else {
         elements.nodes.push({
           id: `node-${items[i].id}`,
-          data: { label: items[i].value?.toString() },
           position: { x: i * 80, y: 0 },
-          type: nodeType ?? "default",
+          data: { label: items[i].value?.toString() },
           parentId: parentId,
           expandParent: true,
           extent: "parent",
           draggable: false,
+          type: nodeType ?? "default",
           style: {
             backgroundColor: this.setSlidingWindow
               ? i >= this.h1! && i <= this.h2!
@@ -248,6 +248,7 @@ export default class VectorRF<T> implements IReactFlow, IController {
       return 0;
     });
   }
+
   async getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }> {
     const { indexType, nodeType, posX, posY } = this.options;
     const elements = {

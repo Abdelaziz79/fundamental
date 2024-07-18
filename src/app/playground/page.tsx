@@ -7,6 +7,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { toast } from "@/components/ui/use-toast";
 import compile, { addLibs } from "@/main/main";
 import Util from "@/main/Util";
 import { wait } from "@/utils/helpers";
@@ -81,55 +82,68 @@ function main() {
     watingTime: number;
   }) {
     await wait(watingTime);
+
     let nodes: any[] = [];
     let edges: any[] = [];
-    frame?.map(async (ele: any, i) => {
-      if (typeof ele?.getReactFlowElements === "function") {
-        await ele.getReactFlowElements().then((res: any) => {
-          nodes = nodes.concat(res.nodes);
-          edges = edges.concat(res.edges);
+    try {
+      frame?.map(async (ele: any, i) => {
+        if (typeof ele?.getReactFlowElements === "function") {
+          await ele.getReactFlowElements().then((res: any) => {
+            if (!res) {
+              return;
+            }
+            nodes = nodes.concat(res.nodes);
+            edges = edges.concat(res.edges);
+          });
+        } else {
+          ele?.call();
+        }
+        window.requestAnimationFrame(() => {
+          setElements(nodes, edges);
         });
-      } else {
-        ele?.call();
-      }
-      window.requestAnimationFrame(() => {
-        setElements(nodes, edges);
       });
-    });
+    } catch (e: any) {
+      toast({
+        title: "Error",
+        description: e.message,
+        variant: "destructive",
+      });
+    }
   }
 
   async function handleRun() {
     setRunning(true);
     // handle console.log to use it in console panel
-    const log = console.log;
-    const capturedLogs: string[] = [];
-
-    console.log = (...args: any[]) => {
-      capturedLogs.push(args.join(" "));
-      log(...args);
-    };
-    let runCode = code;
-    if (autoFrame)
-      runCode = Util.autoCopy(code, [
-        "Table",
-        "BinarySearchTree",
-        "HashMap",
-        "VectorRF",
-        "ElementRF",
-      ]);
-
-    // Convert typescript code to JavaScript
-    const result = typescript.transpileModule(runCode, {
-      compilerOptions: {
-        module: typescript.ModuleKind.ESNext,
-        target: typescript.ScriptTarget.ESNext,
-        jsx: typescript.JsxEmit.React,
-        jsxFactory: `React.createElement`,
-        jsxFragmentFactory: `React.Fragment`,
-        // Add this line
-      },
-    });
     try {
+      const log = console.log;
+      const capturedLogs: string[] = [];
+
+      console.log = (...args: any[]) => {
+        capturedLogs.push(args.join(" "));
+        log(...args);
+      };
+      let runCode = code;
+      if (autoFrame)
+        runCode = Util.autoCopy(code, [
+          "Table",
+          "BinarySearchTree",
+          "HashMap",
+          "VectorRF",
+          "ElementRF",
+        ]);
+
+      // Convert typescript code to JavaScript
+      const result = typescript.transpileModule(runCode, {
+        compilerOptions: {
+          module: typescript.ModuleKind.ESNext,
+          target: typescript.ScriptTarget.ESNext,
+          jsx: typescript.JsxEmit.React,
+          jsxFactory: `React.createElement`,
+          jsxFragmentFactory: `React.Fragment`,
+          // Add this line
+        },
+      });
+
       // Run the compiled JavaScript code
       const res = await compile(result.outputText);
       setNewNodes(Util.getAllNodeTypes());
@@ -164,8 +178,12 @@ function main() {
       if (res?.nodes && res?.edges) {
         setElements(res?.nodes, res?.edges);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     }
     setRunning(false);
   }
