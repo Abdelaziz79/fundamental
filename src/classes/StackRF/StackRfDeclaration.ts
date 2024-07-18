@@ -25,8 +25,11 @@ declare class StackRF<T> {
   peek(): T | undefined;
 
   isEmpty(): boolean;
+  
+  size(): number;
 
   getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }>;
+  
   setPointer(index: number | null) : void;
   
   }

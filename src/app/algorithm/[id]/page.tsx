@@ -9,10 +9,7 @@ export default async function Algorithm({ params }: Props) {
   const algo = await getAlgorithmById(params.id);
 
   return algo ? (
-    <Playground
-      codeString={algo[0]?.code}
-      autoFrameCheckbox={algo[0]?.autoFrame}
-    />
+    <Playground codeString={algo[0]?.code} autoFrameCheckbox={false} />
   ) : (
     <TbFidgetSpinner />
   );

@@ -39,7 +39,7 @@ function main() {
 
     return { frame, wait }
 }`,
-  autoFrameCheckbox = true,
+  autoFrameCheckbox = false,
 }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -123,14 +123,14 @@ function main() {
         log(...args);
       };
       let runCode = code;
-      if (autoFrame)
-        runCode = Util.autoCopy(code, [
-          "Table",
-          "BinarySearchTree",
-          "HashMap",
-          "VectorRF",
-          "ElementRF",
-        ]);
+      // if (autoFrame)
+      //   runCode = Util.autoCopy(code, [
+      //     "Table",
+      //     "BinarySearchTree",
+      //     "HashMap",
+      //     "VectorRF",
+      //     "ElementRF",
+      //   ]);
 
       // Convert typescript code to JavaScript
       const result = typescript.transpileModule(runCode, {
@@ -202,8 +202,6 @@ function main() {
         className="w-1/2 h-full flex-col items-center "
       >
         <EditorButtons
-          setAutoFrame={setAutoFrame}
-          autoFrame={autoFrame}
           handleFormat={handleFormat}
           handleRun={handleRun}
           running={running}

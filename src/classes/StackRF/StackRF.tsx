@@ -75,6 +75,10 @@ export default class StackRF<T> implements IReactFlow, IController {
     return this.elements.length === 0;
   }
 
+  size() {
+    return this.elements.length;
+  }
+
   async getReactFlowElements() {
     const { nodeType } = this.options;
 
@@ -100,7 +104,7 @@ export default class StackRF<T> implements IReactFlow, IController {
       const nodeId = crypto.randomUUID();
       const node = {
         id: nodeId,
-        data: { label: element },
+        data: { label: element?.toString() },
         parentId: parentNodeId,
         position: { x: 0, y: (this.elements.length - 1 - i) * 80 },
         expandParent: true,
