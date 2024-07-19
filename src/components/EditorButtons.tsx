@@ -1,4 +1,4 @@
-import { VscDebugStart, VscListFlat } from "react-icons/vsc";
+import { VscDebugStart, VscListFlat, VscShare } from "react-icons/vsc";
 import { Button } from "./ui/button";
 import {
   Select,
@@ -16,12 +16,14 @@ export default function EditorButtons({
   running,
   theme,
   setTheme,
+  handleShare,
 }: {
   handleRun: () => void;
   handleFormat: () => void;
   running: boolean;
   theme: string;
   setTheme: (value: string) => void;
+  handleShare: () => void;
 }) {
   return (
     <div className="w-full flex items-center h-5 bg-zinc-800">
@@ -42,6 +44,15 @@ export default function EditorButtons({
         <span className="flex items-center gap-1">
           <VscListFlat size={18} />
           format
+        </span>
+      </Button>
+      <Button
+        onClick={handleShare}
+        className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
+      >
+        <span className="flex items-center gap-1">
+          <VscShare size={18} />
+          Share
         </span>
       </Button>
       <div className="flex ">

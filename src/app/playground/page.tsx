@@ -13,7 +13,7 @@ import Util from "@/main/Util";
 import { wait } from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -24,6 +24,24 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
+
+function formateTSX(code: string) {
+  const sharedCode = code.replace("code=", "");
+  const decoded = decodeURIComponent(sharedCode);
+  const sourceFile = typescript.createSourceFile(
+    "index.tsx",
+    decoded,
+    typescript.ScriptTarget.Latest,
+    true,
+    typescript.ScriptKind.TSX
+  );
+
+  const printer = typescript.createPrinter({
+    newLine: typescript.NewLineKind.LineFeed,
+    removeComments: false,
+  });
+  return printer.printFile(sourceFile);
+}
 
 type Props = {
   codeString?: string;
@@ -53,6 +71,22 @@ function main() {
 
   const [newNodes, setNewNodes] = useState(Util.getAllNodeTypes());
   const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
+  useEffect(() => {
+    let sharedCode = window.location.href.split("?")[1];
+    if (!sharedCode || !sharedCode.startsWith("code=")) return;
+    setCode(formateTSX(sharedCode));
+  }, []);
+
+  function handleShare() {
+    navigator.clipboard.writeText(
+      `https://fundamental-iota.vercel.app/playground?code=${encodeURIComponent(code)}`
+    );
+    toast({
+      title: "shared link copied",
+      description: "link copied to clipboard",
+      className: "bg-green-200 border-green-400 border-2 text-gray-700",
+    });
+  }
 
   async function handleEditorDidMount(
     editor: monaco.editor.IStandaloneCodeEditor,
@@ -207,6 +241,7 @@ function main() {
           running={running}
           theme={theme}
           setTheme={setTheme}
+          handleShare={handleShare}
         />
         <Editor
           className="w-full h-full"
