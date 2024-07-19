@@ -1,16 +1,28 @@
-![image](https://res.cloudinary.com/daily-now/image/upload/s--Y1vf3tiD--/f_auto/v1721307385/ugc/content_db874517-135b-4739-b48b-82311fc5d011)
+# [Fun & Mental](https://fundamental-iota.vercel.app/): Visualizing Data Structures and Algorithms with React Flow and Monaco Editor
 
-## [Fun & Mental](https://fundamental-iota.vercel.app/): Visualizing Data Structures and Algorithms with React Flow and Monaco Editor
+![image](https://res.cloudinary.com/daily-now/image/upload/s--Y1vf3tiD--/f_auto/v1721307385/ugc/content_db874517-135b-4739-b48b-82311fc5d011)
 
 Welcome to **[Fun & Mental](https://fundamental-iota.vercel.app/)**, an innovative project that brings data structures and algorithms to life through interactive visualizations. This project, currently under development, leverages the power of React Flow and Monaco Editor to allow users to create, visualize, and understand complex data structures and algorithms in a fun and intuitive way.
 
-### Key Features
+## Key Features
 
 1. **Interactive Visualizations**: Use React Flow to create dynamic nodes and edges representing various data structures and algorithms.
 2. **Code in TSX**: Write and visualize your code directly in TSX files using the Monaco Editor.
 3. **Customizable Components**: Design your own data structures, nodes, and edges with ease.
 4. **Integrated Layout Management**: Utilize ELK library for efficient and customizable layout management.
-5. **Ready-to-Use Data Structures**: Access pre-built data structures like Binary Search Trees, Stacks, Vectors, HashMaps, and Tables.
+5. **Ready-to-Use Data Structures**: Access pre-built data structures like
+   - **Binary Search Trees**
+     - ![alt text](<Screenshot 2024-07-19 105033.png>)
+   - **Stacks**
+     - ![alt text](<Screenshot 2024-07-19 105145.png>)
+   - **Vectors**,
+     - ![alt text](image-3.png)
+   - **HashMaps**
+     - ![alt text](image-1.png)
+   - **Tables**.
+     - ![alt text](image.png)
+   - **Element**
+     - ![alt text](image-2.png)
 6. **LeetCode Problem Visualizations**: Visualize solutions to various LeetCode problems, with plans to cover all Neetcode problems.
 
 ### Getting Started
@@ -59,7 +71,7 @@ In this example:
 - `wait` sets the wait time between each render.
 - `Util.deepCopy` is used to get a deep copy of the object.
 
-link to this example https://fundamental-iota.vercel.app/algorithm/2
+link to this example <https://fundamental-iota.vercel.app/algorithm/2>
 
 ### Custom Data Structures
 
