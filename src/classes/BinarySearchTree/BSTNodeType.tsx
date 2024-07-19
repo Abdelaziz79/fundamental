@@ -3,7 +3,7 @@ import { Handle, Position } from "reactflow";
 
 export const CustomNode: React.FC<{ data: { label: string } }> = ({ data }) => {
   return (
-    <div className="overflow-hidden bg-green-200 border-green-400 border-2 text-gray-700 rounded-full w-14 h-14 font-semibold flex items-center justify-center hover:bg-green-500">
+    <div className="overflow-hidden bg-green-200 border-green-400 border-2 text-gray-700 rounded-full w-14 h-14 font-semibold flex items-center justify-center">
       <Handle type="target" position={Position.Top} className="opacity-0" />
       <Handle
         type="source"

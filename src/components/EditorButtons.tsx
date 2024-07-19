@@ -43,7 +43,7 @@ export default function EditorButtons({
       >
         <span className="flex items-center gap-1">
           <VscListFlat size={18} />
-          format
+          Format
         </span>
       </Button>
       <Button
