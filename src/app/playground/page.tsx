@@ -217,57 +217,59 @@ function main() {
   }
 
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      className="h-screen w-screen flex"
-    >
-      <ResizablePanel
-        defaultSize={30}
-        className="w-1/2 h-full flex-col items-center "
+    <div className="h-screen">
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="h-screen w-screen flex"
       >
-        <EditorButtons
-          handleFormat={handleFormat}
-          handleRun={handleRun}
-          running={running}
-          theme={theme}
-          setTheme={setTheme}
-          handleShare={handleShare}
-        />
-        <Editor
-          className="w-full h-full"
-          height={"100%"}
-          defaultLanguage="typescript"
-          onMount={handleEditorDidMount}
-          onChange={handleEditorChange}
-          defaultPath={"index.tsx"}
-          path="index.tsx"
-          value={code}
-          theme={theme ?? "vs-dark"}
-        />
-      </ResizablePanel>
-      <ResizableHandle withHandle />
-      <ResizablePanel>
-        <ResizablePanelGroup direction="vertical">
-          <ResizablePanel>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              nodeTypes={newNodes}
-              edgeTypes={newEdges}
-            >
-              <Controls />
+        <ResizablePanel
+          defaultSize={30}
+          className="w-1/2 h-full flex-col items-center "
+        >
+          <EditorButtons
+            handleFormat={handleFormat}
+            handleRun={handleRun}
+            running={running}
+            theme={theme}
+            setTheme={setTheme}
+            handleShare={handleShare}
+          />
+          <Editor
+            className="w-full h-full"
+            height={"100%"}
+            defaultLanguage="typescript"
+            onMount={handleEditorDidMount}
+            onChange={handleEditorChange}
+            defaultPath={"index.tsx"}
+            path="index.tsx"
+            value={code}
+            theme={theme ?? "vs-dark"}
+          />
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel>
+          <ResizablePanelGroup direction="vertical">
+            <ResizablePanel>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                nodeTypes={newNodes}
+                edgeTypes={newEdges}
+              >
+                <Controls />
 
-              <Background variant={BackgroundVariant.Dots} />
-            </ReactFlow>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={20}>
-            <ConsolePanel logs={logs} />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+                <Background variant={BackgroundVariant.Dots} />
+              </ReactFlow>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={20}>
+              <ConsolePanel logs={logs} />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   );
 }
