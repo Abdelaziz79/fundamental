@@ -55,7 +55,7 @@ export default async function App({}: Props) {
               </div>
             </Container>
           </div>
-          <div className=" w-[48%] p-2 m-2 rounded-sm shadow-md bg-gray-100">
+          <div className="w-[97%] p-2 m-2 rounded-sm shadow-md bg-gray-100">
             <Container>
               <h3 className="text-xl text-center font-bold my-2 ">Problems</h3>
               <div className="flex gap-2 flex-wrap">
