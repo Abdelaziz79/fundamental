@@ -35,6 +35,9 @@ declare type EdgeProps<T = any> = Pick<Edge<T>, 'id' | 'animated' | 'data' | 'st
 };
 
 declare function getBezierPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, curvature, }: GetBezierPathParams): [path: string, labelX: number, labelY: number, offsetX: number, offsetY: number];
+declare function getStraightPath({ sourceX, sourceY, targetX, targetY, }: GetStraightPathParams): [path: string, labelX: number, labelY: number, offsetX: number, offsetY: number];
+declare function getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, borderRadius, centerX, centerY, offset, }: GetSmoothStepPathParams): [path: string, labelX: number, labelY: number, offsetX: number, offsetY: number];
+declare function getSimpleBezierPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, }: GetSimpleBezierPathParams): [path: string, labelX: number, labelY: number, offsetX: number, offsetY: number];
 
 declare function useReactFlow<NodeData = any, EdgeData = any>(): ReactFlowInstance<NodeData, EdgeData>;
 

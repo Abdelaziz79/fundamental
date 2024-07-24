@@ -1,7 +1,6 @@
 import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
-import { Edge, Node } from "reactflow";
-
+import { type Node, type Edge } from "reactflow";
 export default class ElementRF<T> implements IReactFlow, IController {
   private element: T;
 
