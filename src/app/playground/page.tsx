@@ -109,8 +109,8 @@ function main() {
 
     let nodes: any[] = [];
     let edges: any[] = [];
-    try {
-      frame?.map(async (ele: any, i) => {
+    frame?.map(async (ele: any, i) => {
+      try {
         if (typeof ele?.getReactFlowElements === "function") {
           await ele.getReactFlowElements().then((res: any) => {
             if (!res) {
@@ -119,20 +119,22 @@ function main() {
             nodes = nodes.concat(res.nodes);
             edges = edges.concat(res.edges);
           });
-        } else {
+        } else if (typeof ele?.call === "function") {
           ele?.call();
+        } else {
+          throw new Error("invalid frame element", ele);
         }
         window.requestAnimationFrame(() => {
           setElements(nodes, edges);
         });
-      });
-    } catch (e: any) {
-      toast({
-        title: "Error",
-        description: e.message,
-        variant: "destructive",
-      });
-    }
+      } catch (e: any) {
+        toast({
+          title: "Error",
+          description: e.message,
+          variant: "destructive",
+        });
+      }
+    });
   }
 
   async function handleRun() {

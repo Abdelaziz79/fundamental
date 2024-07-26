@@ -23,6 +23,7 @@ import {
   wait as waitSec,
 } from "@/utils/helpers";
 import { Monaco } from "@monaco-editor/react";
+import { animated, config, useSpring } from "@react-spring/web";
 import { shikiToMonaco } from "@shikijs/monaco";
 import * as monaco from "monaco-editor";
 import React from "react";
@@ -31,9 +32,9 @@ import {
   BezierEdge,
   EdgeLabelRenderer,
   getBezierPath,
-  getStraightPath,
-  getSmoothStepPath,
   getSimpleBezierPath,
+  getSmoothStepPath,
+  getStraightPath,
   Handle,
   Position,
   useReactFlow,
@@ -237,6 +238,15 @@ export async function addLibs(
     StackRFDeclaration,
     "file:///node_modules/@types/StackRF/index.d.ts"
   );
+  monaco.languages.typescript.typescriptDefaults.addExtraLib(
+    `declare function useSpring(props: any): any;
+
+    declare const config: any;
+
+    declare const animated: any;
+    `,
+    "file:///node_modules/@types/react-spring/index.d.ts"
+  );
 }
 
 export default function compile(code: string) {
@@ -267,6 +277,9 @@ export default function compile(code: string) {
       "getRandomNumber",
       "tailwindcss",
       "StackRF",
+      "animated",
+      "useSpring",
+      "config",
       code + "\nreturn main();"
     );
     return executeCode(
@@ -294,7 +307,10 @@ export default function compile(code: string) {
       waitSec,
       getRandomNumber,
       tailwindcssDefinition,
-      StackRF
+      StackRF,
+      animated,
+      useSpring,
+      config
     );
   } catch (err: any) {
     toast({ title: "Error", description: err.message, variant: "destructive" });
