@@ -24,6 +24,8 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
+import { Button } from "@/components/ui/button";
+import { LuExpand, LuSlidersHorizontal } from "react-icons/lu";
 
 function formateTSX(code: string) {
   const sharedCode = code.replace("code=", "");
@@ -59,6 +61,8 @@ function main() {
 
   const [newNodes, setNewNodes] = useState(Util.getAllNodeTypes());
   const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
+  const [codePanelOpen, setCodePanelOpen] = useState(true);
+  const [consolePanelOpen, setConsolePanelOpen] = useState(true);
   useEffect(() => {
     let sharedCode = window.location.href.split("?")[1];
     if (!sharedCode || !sharedCode.startsWith("code=")) return;
@@ -218,15 +222,24 @@ function main() {
     editorRef.current?.getAction("editor.action.formatDocument")?.run();
   }
 
+  function handleExpand() {
+    setCodePanelOpen(!codePanelOpen);
+    setConsolePanelOpen(!consolePanelOpen);
+  }
+
   return (
     <div className="h-screen">
+      <ExpandComp handleExpand={handleExpand} />
+
       <ResizablePanelGroup
         direction="horizontal"
         className="h-screen w-screen flex"
       >
         <ResizablePanel
           defaultSize={30}
-          className="w-1/2 h-full flex-col items-center "
+          className={`w-1/2 h-full flex-col items-center ${
+            codePanelOpen ? "" : "hidden"
+          }`}
         >
           <EditorButtons
             handleFormat={handleFormat}
@@ -248,6 +261,7 @@ function main() {
             theme={theme ?? "vs-dark"}
           />
         </ResizablePanel>
+
         <ResizableHandle withHandle />
         <ResizablePanel>
           <ResizablePanelGroup direction="vertical">
@@ -261,17 +275,30 @@ function main() {
                 edgeTypes={newEdges}
               >
                 <Controls />
-
                 <Background variant={BackgroundVariant.Dots} />
               </ReactFlow>
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={20}>
+
+            <ResizablePanel
+              defaultSize={20}
+              className={`${consolePanelOpen ? "" : "hidden"}`}
+            >
               <ConsolePanel logs={logs} />
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>
       </ResizablePanelGroup>
+    </div>
+  );
+}
+
+function ExpandComp({ handleExpand }: { handleExpand: () => void }) {
+  return (
+    <div className="z-50 absolute top-4 right-4">
+      <Button size={"icon"} variant={"outline"} onClick={handleExpand}>
+        <LuExpand size={24} />
+      </Button>
     </div>
   );
 }
