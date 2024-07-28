@@ -2,6 +2,7 @@
 
 import ConsolePanel from "@/components/ConsolePanel";
 import EditorButtons from "@/components/EditorButtons";
+import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -14,6 +15,7 @@ import { wait } from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
+import { LuExpand } from "react-icons/lu";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -24,8 +26,6 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
-import { Button } from "@/components/ui/button";
-import { LuExpand, LuSlidersHorizontal } from "react-icons/lu";
 
 function formateTSX(code: string) {
   const sharedCode = code.replace("code=", "");
@@ -63,6 +63,7 @@ function main() {
   const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
   const [codePanelOpen, setCodePanelOpen] = useState(true);
   const [consolePanelOpen, setConsolePanelOpen] = useState(true);
+
   useEffect(() => {
     let sharedCode = window.location.href.split("?")[1];
     if (!sharedCode || !sharedCode.startsWith("code=")) return;

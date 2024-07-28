@@ -3,7 +3,7 @@ import supabase from "./supabase";
 export async function getAllProblems() {
   let { data: problems, error } = await supabase
     .from("problems")
-    .select("title,id");
+    .select("title,id,topics");
   if (error) {
     throw new Error(error.message);
   }

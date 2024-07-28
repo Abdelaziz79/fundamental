@@ -1,81 +1,132 @@
-import Container from "@/components/Container";
-import IconLinkButton from "@/components/IconButton";
 import Navbar from "@/components/Navbar";
 import { getAllAlgorithms } from "@/services/algorithmsApi";
 import { getAllProblems } from "@/services/problemsApi";
-import { SiDatabricks } from "react-icons/si";
-import { TbAtom2, TbBrain } from "react-icons/tb";
+import MainRF from "./MainRF";
 
 type Props = {};
+type item = { title: string; id: string; topics?: string };
+function createNodesAndEdges({
+  problems,
+  algorithms,
+  dataStructures,
+}: {
+  problems: item[];
+  algorithms: item[];
+  dataStructures: item[];
+}) {
+  const nodes = [
+    {
+      id: "root",
+      data: {
+        label: "Fun & Mental Challenges",
+        description: "Explore mind-bending puzzles and problems",
+        headerColor: "bg-gradient-to-r from-purple-500 to-indigo-600",
+        stats: {
+          "Total Challenges": "100+",
+          Categories: 4,
+          "Difficulty Range": "Easy to Expert",
+        },
+      },
+      type: "customNode",
+      position: { x: 0, y: 0 },
+    },
+    {
+      id: "algorithms",
+      data: {
+        label: "Algorithms",
+        description: "Master the art of efficient problem-solving",
+        headerColor: "bg-gradient-to-r from-green-500 to-teal-500",
+        difficulty: "Intermediate",
+        difficultyColor: "bg-yellow-200 text-yellow-800",
+        stats: {
+          "Total Algorithms": 50,
+          "Complexity Range": "O(1) to O(n!)",
+          "Popular Types": 5,
+        },
+      },
+      type: "customNode",
+      position: { x: -500, y: 500 },
+    },
+    {
+      id: "problems",
+      data: {
+        label: "Coding Problems",
+        description: "Sharpen your skills with real-world challenges",
+        headerColor: "bg-gradient-to-r from-red-500 to-pink-500",
+        difficulty: "Various",
+        difficultyColor: "bg-blue-200 text-blue-800",
+        stats: {
+          "Total Problems": 200,
+          Categories: 8,
+          "New Problems": "+5 weekly",
+        },
+      },
+      type: "customNode",
+      position: { x: 0, y: 500 },
+    },
+    {
+      id: "data-structures",
+      data: {
+        label: "Data Structures",
+        description: "Build the foundation of efficient algorithms",
+        headerColor: "bg-gradient-to-r from-yellow-400 to-orange-500",
+        difficulty: "Fundamental",
+        difficultyColor: "bg-green-200 text-green-800",
+        stats: {
+          "Structure Types": 15,
+          "Implementation Lang.": 3,
+          "Practice Exercises": 100,
+        },
+      },
+      type: "customNode",
+      position: { x: 500, y: 500 },
+    },
+  ];
+
+  const edges = [
+    {
+      id: "root-algorithms",
+      source: "root",
+      target: "algorithms",
+      type: "customEdge",
+    },
+    {
+      id: "root-problems",
+      source: "root",
+      target: "problems",
+      type: "customEdge",
+    },
+    {
+      id: "root-data-structures",
+      source: "root",
+      target: "data-structures",
+      type: "customEdge",
+    },
+  ];
+
+  return { nodes, edges };
+}
 
 export default async function App({}: Props) {
   const problems = await getAllProblems();
   const algorithms = await getAllAlgorithms();
+  let nodes: any[] = [];
+  let edges: any[] = [];
+  if (problems && algorithms) {
+    const ele = await createNodesAndEdges({
+      problems,
+      algorithms,
+      dataStructures: [],
+    });
+    nodes = ele?.nodes ?? [];
+    edges = ele?.edges ?? [];
+  }
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <Navbar />
-      <Container>
-        <h1 className="text-3xl font-bold text-gray-800 text-center pt-2">
-          Learn the fundamental
-        </h1>
-        <div className="flex flex-wrap mt-10  ">
-          <div className=" w-[48%] p-2 m-2 rounded-sm shadow-md bg-gray-100 ">
-            <Container>
-              <h3 className="text-xl text-center font-bold my-2 ">
-                Data Structures
-              </h3>
-              <div className="flex gap-2 flex-wrap">
-                <IconLinkButton href={"/vector"} variant={"link"}>
-                  <SiDatabricks className="mr-2 h-5 w-5" /> Vector
-                </IconLinkButton>
-                <IconLinkButton href={"/binary-search-tree"} variant={"link"}>
-                  <SiDatabricks className="mr-2 h-5 w-5" /> Binary Search Tree
-                </IconLinkButton>
-              </div>
-            </Container>
-          </div>
-          <div className=" w-[48%] p-2 m-2 rounded-sm shadow-md bg-gray-100">
-            <Container>
-              <h3 className="text-xl text-center font-bold my-2 ">
-                Algorithms
-              </h3>
-              <div className="flex gap-2 flex-wrap">
-                {algorithms &&
-                  algorithms?.map((algo) => {
-                    return (
-                      <IconLinkButton
-                        href={`/algorithm/${algo.id}`}
-                        key={algo.id}
-                        variant={"link"}
-                      >
-                        <TbAtom2 className="mr-2 h-5 w-5" /> {algo.title}
-                      </IconLinkButton>
-                    );
-                  })}
-              </div>
-            </Container>
-          </div>
-          <div className="w-[97%] p-2 m-2 rounded-sm shadow-md bg-gray-100">
-            <Container>
-              <h3 className="text-xl text-center font-bold my-2 ">Problems</h3>
-              <div className="flex gap-2 flex-wrap">
-                {problems &&
-                  problems?.map((problem) => {
-                    return (
-                      <IconLinkButton
-                        href={`/problems/${problem.id}`}
-                        key={problem.id}
-                        variant={"link"}
-                      >
-                        <TbBrain className="mr-2 h-5 w-5" /> {problem.title}
-                      </IconLinkButton>
-                    );
-                  })}
-              </div>
-            </Container>
-          </div>
-        </div>
-      </Container>
-    </>
+      {problems && algorithms && (
+        <MainRF mainNodes={nodes} mainEdges={edges} className="flex-grow" />
+      )}
+    </div>
   );
 }

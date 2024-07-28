@@ -27,6 +27,8 @@ import { animated, config, useSpring } from "@react-spring/web";
 import { shikiToMonaco } from "@shikijs/monaco";
 import * as monaco from "monaco-editor";
 import React from "react";
+import { SiDatabricks } from "react-icons/si";
+import { TbAtom2, TbBrain } from "react-icons/tb";
 import {
   BaseEdge,
   BezierEdge,
@@ -36,6 +38,7 @@ import {
   getSmoothStepPath,
   getStraightPath,
   Handle,
+  MarkerType,
   Position,
   useReactFlow,
   useStore,
@@ -280,6 +283,10 @@ export default function compile(code: string) {
       "animated",
       "useSpring",
       "config",
+      "SiDatabricks",
+      "TbAtom2",
+      "TbBrain",
+      "MarkerType",
       code + "\nreturn main();"
     );
     return executeCode(
@@ -310,7 +317,11 @@ export default function compile(code: string) {
       StackRF,
       animated,
       useSpring,
-      config
+      config,
+      SiDatabricks,
+      TbAtom2,
+      TbBrain,
+      MarkerType
     );
   } catch (err: any) {
     toast({ title: "Error", description: err.message, variant: "destructive" });
