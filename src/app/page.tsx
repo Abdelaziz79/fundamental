@@ -23,7 +23,7 @@ function createNodesAndEdges({
         headerColor: "bg-gradient-to-r from-purple-500 to-indigo-600",
         stats: {
           "Total Challenges": "100+",
-          Categories: 4,
+          Categories: 3,
           "Difficulty Range": "Easy to Expert",
         },
       },
@@ -38,8 +38,10 @@ function createNodesAndEdges({
         headerColor: "bg-gradient-to-r from-green-500 to-teal-500",
         difficulty: "Intermediate",
         difficultyColor: "bg-yellow-200 text-yellow-800",
+        items: algorithms,
+        href: "/algorithm",
         stats: {
-          "Total Algorithms": 50,
+          "Total Algorithms": algorithms.length,
           "Complexity Range": "O(1) to O(n!)",
           "Popular Types": 5,
         },
@@ -50,13 +52,15 @@ function createNodesAndEdges({
     {
       id: "problems",
       data: {
+        items: problems,
         label: "Coding Problems",
         description: "Sharpen your skills with real-world challenges",
         headerColor: "bg-gradient-to-r from-red-500 to-pink-500",
         difficulty: "Various",
         difficultyColor: "bg-blue-200 text-blue-800",
+        href: "/problems",
         stats: {
-          "Total Problems": 200,
+          "Total Problems": problems.length,
           Categories: 8,
           "New Problems": "+5 weekly",
         },
@@ -67,13 +71,15 @@ function createNodesAndEdges({
     {
       id: "data-structures",
       data: {
+        items: dataStructures,
         label: "Data Structures",
         description: "Build the foundation of efficient algorithms",
         headerColor: "bg-gradient-to-r from-yellow-400 to-orange-500",
         difficulty: "Fundamental",
         difficultyColor: "bg-green-200 text-green-800",
+        href: "/data-structures",
         stats: {
-          "Structure Types": 15,
+          "Structure Types": dataStructures.length,
           "Implementation Lang.": 3,
           "Practice Exercises": 100,
         },
