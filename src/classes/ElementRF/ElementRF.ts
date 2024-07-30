@@ -1,6 +1,6 @@
 import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
-import { type Node, type Edge } from "reactflow";
+import { type Edge, type Node } from "reactflow";
 export default class ElementRF<T> implements IReactFlow, IController {
   private element: T;
 
@@ -53,7 +53,7 @@ export default class ElementRF<T> implements IReactFlow, IController {
       data: {
         label: name ? `${name} : ` + this.element : this.element,
       },
-      type: type,
+      type: type ?? "customElementNode",
       position: {
         x: this.posX ?? 0,
         y: this.posY ?? 0,

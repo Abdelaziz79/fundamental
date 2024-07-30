@@ -48,10 +48,13 @@ export default class Table<K, V> extends HashMap<K, V> {
       data: { label: null },
       position: { x: posX ?? 0, y: posY ?? 0 },
       style: {
-        padding: "2rem",
-        backgroundColor: "white",
-        border: "1px solid rgb(22,163,74)",
-        boxShadow: "2px 2px 5px #888888",
+        padding: "2.5rem",
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        backgroundImage: "linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%)",
+        border: "2px solid #10b981",
+        borderRadius: "12px",
+        boxShadow:
+          "0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05)",
       },
     });
 
@@ -72,7 +75,7 @@ export default class Table<K, V> extends HashMap<K, V> {
         extent: "parent",
         expandParent: true,
         draggable: false,
-        position: { x: 100 * i, y: 0 },
+        position: { x: 120 * i, y: 0 },
         style: {
           fontSize: "1.5rem",
         },
@@ -91,7 +94,7 @@ export default class Table<K, V> extends HashMap<K, V> {
             extent: "parent",
             expandParent: true,
             draggable: false,
-            position: { x: 100 * i, y: (j + 1) * 80 },
+            position: { x: 120 * i, y: (j + 1) * 80 },
             style: {},
           });
           j++;
@@ -105,7 +108,7 @@ export default class Table<K, V> extends HashMap<K, V> {
           extent: "parent",
           expandParent: true,
           draggable: false,
-          position: { x: 100 * i, y: 80 },
+          position: { x: 120 * i, y: 80 },
           style: {},
         };
 

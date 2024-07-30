@@ -1,4 +1,5 @@
 import { BSTNodeType } from "@/classes/BinarySearchTree/BSTNodeType";
+import { elementNodeTypes } from "@/classes/ElementRF/ElementRFTypes";
 import { HashMapNodeType } from "@/classes/HashMap/HashMapNodeType";
 import { StackNodeType } from "@/classes/StackRF/StackRF";
 import { VectorNodeType } from "@/classes/VectorRF/VecNodeType";
@@ -23,6 +24,7 @@ export default class Util {
       ...HashMapNodeType,
       ...VectorNodeType,
       ...StackNodeType,
+      ...elementNodeTypes,
       ...this.nodeTypes,
     };
   }

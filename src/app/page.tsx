@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import { getAllAlgorithms } from "@/services/algorithmsApi";
 import { getAllProblems } from "@/services/problemsApi";
+import { Edge, Node } from "reactflow";
 import MainRF from "./MainRF";
 
 type Props = {};
@@ -14,15 +15,17 @@ function createNodesAndEdges({
   algorithms: item[];
   dataStructures: item[];
 }) {
-  const nodes = [
+  const nodes: Node[] = [
     {
       id: "root",
+      connectable: false,
       data: {
         label: "Fun & Mental Challenges",
         description: "Explore mind-bending puzzles and problems",
         headerColor: "bg-gradient-to-r from-purple-500 to-indigo-600",
         stats: {
-          "Total Challenges": "100+",
+          "Total Challenges":
+            algorithms.length + dataStructures.length + problems.length,
           Categories: 3,
           "Difficulty Range": "Easy to Expert",
         },
@@ -32,6 +35,7 @@ function createNodesAndEdges({
     },
     {
       id: "algorithms",
+      connectable: false,
       data: {
         label: "Algorithms",
         description: "Master the art of efficient problem-solving",
@@ -51,6 +55,7 @@ function createNodesAndEdges({
     },
     {
       id: "problems",
+      connectable: false,
       data: {
         items: problems,
         label: "Coding Problems",
@@ -70,6 +75,7 @@ function createNodesAndEdges({
     },
     {
       id: "data-structures",
+      connectable: false,
       data: {
         items: dataStructures,
         label: "Data Structures",
@@ -80,8 +86,8 @@ function createNodesAndEdges({
         href: "/data-structures",
         stats: {
           "Structure Types": dataStructures.length,
-          "Implementation Lang.": 3,
-          "Practice Exercises": 100,
+          "Implementation Lang.": 2,
+          "Practice Exercises": 0,
         },
       },
       type: "customNode",
@@ -89,7 +95,7 @@ function createNodesAndEdges({
     },
   ];
 
-  const edges = [
+  const edges: Edge[] = [
     {
       id: "root-algorithms",
       source: "root",
@@ -119,7 +125,7 @@ export default async function App({}: Props) {
   let nodes: any[] = [];
   let edges: any[] = [];
   if (problems && algorithms) {
-    const ele = await createNodesAndEdges({
+    const ele = createNodesAndEdges({
       problems,
       algorithms,
       dataStructures: [],

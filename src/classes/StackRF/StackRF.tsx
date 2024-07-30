@@ -1,5 +1,6 @@
 import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
+import { animated, useSpring } from "@react-spring/web";
 
 export default class StackRF<T> implements IReactFlow, IController {
   private elements: T[];
@@ -81,8 +82,11 @@ export default class StackRF<T> implements IReactFlow, IController {
 
   async getReactFlowElements() {
     const { nodeType } = this.options;
-
     const parentNodeId = `parent-${crypto.randomUUID()}`;
+
+    const nodeHeight = 72; // Adjusted node height
+    const nodeSpacing = 8; // Space between nodes
+    const parentPadding = 16; // Padding inside parent node
 
     this.reactFlowElements.nodes.push({
       id: parentNodeId,
@@ -90,32 +94,34 @@ export default class StackRF<T> implements IReactFlow, IController {
       data: { label: null },
       position: { x: this.posX ?? 0, y: this.posY ?? 0 },
       style: {
-        border: "1px solid rgb(22,163,74)",
-        // padding: "2rem",
-        backgroundColor: undefined,
-        height: this.elements.length * 80,
-        width: 112,
-        boxShadow: "2px 2px 5px #888888",
+        border: "2px solid #4B5563",
+        borderRadius: "8px",
+        backgroundColor: "#F3F4F6",
+        padding: `${parentPadding}px`,
+        height:
+          this.elements.length * (nodeHeight + nodeSpacing) + parentPadding * 2,
+        width: 180,
+        boxShadow:
+          "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
       },
     });
-
     for (let i = this.elements.length - 1; i >= 0; i--) {
       const element = this.elements[i];
       const nodeId = crypto.randomUUID();
       const node = {
         id: nodeId,
-        data: { label: element?.toString() },
+        data: { label: element?.toString(), isPointer: this.pointer === i },
         parentId: parentNodeId,
-        position: { x: 0, y: (this.elements.length - 1 - i) * 80 },
+        position: {
+          x: parentPadding,
+          y:
+            (this.elements.length - 1 - i) * (nodeHeight + nodeSpacing) +
+            parentPadding,
+        },
         expandParent: true,
         extent: "parent",
         draggable: false,
         type: nodeType ?? "stackNode",
-        style: {
-          backgroundColor: `${
-            this.pointer === i ? "rgb(248, 113, 113)" : " white"
-          } `,
-        },
       };
       this.reactFlowElements.nodes.push(node);
     }
@@ -123,11 +129,41 @@ export default class StackRF<T> implements IReactFlow, IController {
   }
 }
 
-export const StackNode = ({ data }: { data: { label: any } }) => {
+export const StackNode = ({
+  data,
+}: {
+  data: { label: any; isPointer: boolean };
+}) => {
+  const springProps = useSpring({
+    from: { opacity: 0 },
+    to: { opacity: 1 },
+    config: { tension: 300, friction: 20 },
+  });
+
   return (
-    <div className="overflow-hidden border  border-green-600 h-20 w-28 font-bold flex items-center justify-center">
-      {data.label}
-    </div>
+    <animated.div style={springProps}>
+      <div
+        className={`
+        h-[72px] w-[148px] 
+        flex items-center justify-center 
+        border-2 ${data.isPointer ? "border-blue-500" : "border-gray-300"}
+        rounded-md 
+        ${data.isPointer ? "bg-blue-100" : "bg-white"}
+        shadow-md 
+        transition-all duration-300 ease-in-out
+        hover:shadow-lg
+      `}
+      >
+        <div
+          className={`
+          text-lg font-semibold 
+          ${data.isPointer ? "text-blue-700" : "text-gray-700"}
+        `}
+        >
+          {data.label}
+        </div>
+      </div>
+    </animated.div>
   );
 };
 

@@ -68,6 +68,7 @@ export default class VectorRF<T> implements IReactFlow, IController {
     indexType: string | undefined;
   }) {
     if (items === null || items === undefined || items.length === 0) return;
+
     const parentId = `parent-${crypto.randomUUID()}`;
     elements.nodes.push({
       id: parentId,
@@ -75,14 +76,22 @@ export default class VectorRF<T> implements IReactFlow, IController {
       data: { label: null },
       position: { x: posX ?? 0, y: posY ?? 0 },
       style: {
-        border: "1px solid rgb(22,163,74)",
-        padding: "2rem",
-        backgroundColor: undefined,
-        width: items.length * 80,
-        boxShadow: "2px 2px 5px #888888",
+        padding: "1.5rem",
+        backgroundColor: "rgba(241, 245, 249, 0.9)", // Light background
+        width: items.length * 70, // Adjusted for new spacing
+        minHeight: "70px",
+        boxShadow:
+          "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        borderRadius: "0.75rem",
+        border: "1px solid rgba(203, 213, 225, 0.5)", // Subtle border
       },
     });
+
     for (let i = 0; i < items.length; i++) {
+      const isHighlighted = this.setSlidingWindow
+        ? i >= this.h1! && i <= this.h2!
+        : i === this.h1 || i === this.h2 || i === this.h3;
+
       if (typeof (items[i].value as any)?.getReactFlowElements === "function") {
         (items[i].value as any).setPosition(100, i * 100);
         await (items[i].value as any)
@@ -117,36 +126,17 @@ export default class VectorRF<T> implements IReactFlow, IController {
       } else {
         elements.nodes.push({
           id: `node-${items[i].id}`,
-          position: { x: i * 80, y: 0 },
-          data: { label: items[i].value?.toString() },
+          position: { x: i * 100, y: 0 },
+          data: {
+            label: items[i].value?.toString(),
+            index: i,
+            isHighlighted,
+          },
           parentId: parentId,
           expandParent: true,
           extent: "parent",
           draggable: false,
-          type: nodeType ?? "default",
-          style: {
-            backgroundColor: this.setSlidingWindow
-              ? i >= this.h1! && i <= this.h2!
-                ? "rgb(248, 113, 113)"
-                : "white"
-              : i === this.h1 || i === this.h2 || i === this.h3
-              ? "rgb(248, 113, 113)"
-              : "white",
-          },
-        });
-        elements.nodes.push({
-          id: `index-${items[i].id}`,
-          data: { label: i.toString() },
-          position: { x: i * 80 + 20, y: 30 },
-          type: indexType ?? "default",
-          parentId: parentId,
-          extent: "parent",
-          draggable: false,
-          connectable: false,
-          style: {
-            color:
-              this.h1 === i || this.h2 === i || this.h3 === i ? "red" : "black",
-          },
+          type: "VectorNode",
         });
       }
     }
@@ -264,6 +254,7 @@ export default class VectorRF<T> implements IReactFlow, IController {
       nodeType,
       indexType,
     });
+
     return Promise.resolve({
       nodes: elements.nodes,
       edges: elements.edges,
