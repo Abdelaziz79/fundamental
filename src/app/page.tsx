@@ -7,6 +7,32 @@ import { getAllDataStructures } from "@/services/dataStructuresApi";
 
 type Props = {};
 type item = { title: string; id: string; topics?: string };
+
+export default async function App({}: Props) {
+  const problems = await getAllProblems();
+  const algorithms = await getAllAlgorithms();
+  const dataStructures = await getAllDataStructures();
+  let nodes: any[] = [];
+  let edges: any[] = [];
+  if (problems && algorithms && dataStructures) {
+    const ele = createNodesAndEdges({
+      problems,
+      algorithms,
+      dataStructures,
+    });
+    nodes = ele?.nodes ?? [];
+    edges = ele?.edges ?? [];
+  }
+  return (
+    <div className="flex flex-col h-screen">
+      <Navbar />
+      {problems && algorithms && dataStructures && (
+        <MainRF mainNodes={nodes} mainEdges={edges} className="flex-grow" />
+      )}
+    </div>
+  );
+}
+
 function createNodesAndEdges({
   problems,
   algorithms,
@@ -22,10 +48,11 @@ function createNodesAndEdges({
       connectable: false,
       data: {
         label: "Fun & Mental Challenges",
-        description: "Explore mind-bending puzzles and problems",
+        description:
+          "Explore mind-bending algorithms, innovative data structures, and challenging problems.",
         headerColor: "bg-gradient-to-r from-purple-500 to-indigo-600",
         stats: {
-          "Total Challenges":
+          "Total Examples":
             algorithms.length + dataStructures.length + problems.length,
           Categories: 3,
           "Difficulty Range": "Easy to Expert",
@@ -39,7 +66,8 @@ function createNodesAndEdges({
       connectable: false,
       data: {
         label: "Algorithms",
-        description: "Master the art of efficient problem-solving",
+        description:
+          "Visualize complex algorithms interactively. Discover and understand challenging problems through dynamic visualizations.",
         headerColor: "bg-gradient-to-r from-green-500 to-teal-500",
         difficulty: "Intermediate",
         difficultyColor: "bg-yellow-200 text-yellow-800",
@@ -60,7 +88,8 @@ function createNodesAndEdges({
       data: {
         items: problems,
         label: "Coding Problems",
-        description: "Sharpen your skills with real-world challenges",
+        description:
+          "Visualize challenging problems interactively. Delve into complex scenarios with dynamic, illustrative representations.",
         headerColor: "bg-gradient-to-r from-red-500 to-pink-500",
         difficulty: "Various",
         difficultyColor: "bg-blue-200 text-blue-800",
@@ -80,14 +109,15 @@ function createNodesAndEdges({
       data: {
         items: dataStructures,
         label: "Data Structures",
-        description: "Build the foundation of efficient algorithms",
+        description:
+          "Visualize intricate data structures interactively. Explore and comprehend complex concepts through dynamic visual representations.",
         headerColor: "bg-gradient-to-r from-yellow-400 to-orange-500",
         difficulty: "Fundamental",
         difficultyColor: "bg-green-200 text-green-800",
         href: "/data-structures",
         stats: {
           "Structure Types": dataStructures.length,
-          "Implementation Lang.": 2,
+          "Implementation Lang.": "Typescript",
           "Practice Exercises": 0,
         },
       },
@@ -118,29 +148,4 @@ function createNodesAndEdges({
   ];
 
   return { nodes, edges };
-}
-
-export default async function App({}: Props) {
-  const problems = await getAllProblems();
-  const algorithms = await getAllAlgorithms();
-  const dataStructures = await getAllDataStructures();
-  let nodes: any[] = [];
-  let edges: any[] = [];
-  if (problems && algorithms) {
-    const ele = createNodesAndEdges({
-      problems,
-      algorithms,
-      dataStructures,
-    });
-    nodes = ele?.nodes ?? [];
-    edges = ele?.edges ?? [];
-  }
-  return (
-    <div className="flex flex-col h-screen">
-      <Navbar />
-      {problems && algorithms && (
-        <MainRF mainNodes={nodes} mainEdges={edges} className="flex-grow" />
-      )}
-    </div>
-  );
 }
