@@ -3,6 +3,7 @@ import { getAllAlgorithms } from "@/services/algorithmsApi";
 import { getAllProblems } from "@/services/problemsApi";
 import { Edge, Node } from "reactflow";
 import MainRF from "./MainRF";
+import { getAllDataStructures } from "@/services/dataStructuresApi";
 
 type Props = {};
 type item = { title: string; id: string; topics?: string };
@@ -122,13 +123,14 @@ function createNodesAndEdges({
 export default async function App({}: Props) {
   const problems = await getAllProblems();
   const algorithms = await getAllAlgorithms();
+  const dataStructures = await getAllDataStructures();
   let nodes: any[] = [];
   let edges: any[] = [];
   if (problems && algorithms) {
     const ele = createNodesAndEdges({
       problems,
       algorithms,
-      dataStructures: [],
+      dataStructures,
     });
     nodes = ele?.nodes ?? [];
     edges = ele?.edges ?? [];
