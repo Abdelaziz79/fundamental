@@ -1,5 +1,3 @@
-import { animated, useSpring } from "@react-spring/web";
-
 interface VectorNodeProps {
   data: {
     label: string;
@@ -9,15 +7,8 @@ interface VectorNodeProps {
 }
 
 const VectorNode: React.FC<VectorNodeProps> = ({ data }) => {
-  const springs = useSpring({
-    from: {},
-    to: {},
-    config: { tension: 300, friction: 20 },
-  });
-
   return (
-    <animated.div
-      style={springs}
+    <div
       className={`
         flex flex-col items-center justify-center
         w-20 h-16 m-2
@@ -39,7 +30,7 @@ const VectorNode: React.FC<VectorNodeProps> = ({ data }) => {
         {data.index}
       </div>
       <div className="text-2xl z-10">{data.label}</div>
-    </animated.div>
+    </div>
   );
 };
 

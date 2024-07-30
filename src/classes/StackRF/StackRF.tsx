@@ -1,6 +1,5 @@
 import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
-import { animated, useSpring } from "@react-spring/web";
 
 export default class StackRF<T> implements IReactFlow, IController {
   private elements: T[];
@@ -134,14 +133,8 @@ export const StackNode = ({
 }: {
   data: { label: any; isPointer: boolean };
 }) => {
-  const springProps = useSpring({
-    from: { opacity: 0 },
-    to: { opacity: 1 },
-    config: { tension: 300, friction: 20 },
-  });
-
   return (
-    <animated.div style={springProps}>
+    <div>
       <div
         className={`
         h-[72px] w-[148px] 
@@ -152,6 +145,7 @@ export const StackNode = ({
         shadow-md 
         transition-all duration-300 ease-in-out
         hover:shadow-lg
+        hover:scale-110
       `}
       >
         <div
@@ -163,7 +157,7 @@ export const StackNode = ({
           {data.label}
         </div>
       </div>
-    </animated.div>
+    </div>
   );
 };
 

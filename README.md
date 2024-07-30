@@ -12,9 +12,9 @@ Welcome to **[Fun & Mental](https://fundamental-iota.vercel.app/)**, an innovati
 4. **Integrated Layout Management**: Utilize ELK library for efficient and customizable layout management.
 5. **Ready-to-Use Data Structures**: Access pre-built data structures like
    - **Binary Search Trees**
-     - ![alt text](<Screenshot 2024-07-19 105033.png>)
+     - ![alt text](</images/Screenshot 2024-07-19 105033.png>)
    - **Stacks**
-     - ![alt text](<Screenshot 2024-07-19 105145.png>)
+     - ![alt text](</images/Screenshot 2024-07-19 105145.png>)
    - **Vectors**,
      - ![alt text](/images/image-3.png)
    - **HashMaps**
