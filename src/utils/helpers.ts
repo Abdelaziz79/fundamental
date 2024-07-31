@@ -11,10 +11,9 @@ const elk = new ELK();
 export const getLayoutElements = async (
   nodes: any,
   edges: any,
-  options: any
+  options: any,
+  isHorizontal: boolean = false
 ) => {
-  // const isHorizontal = options?.["elk.direction"] === "RIGHT";
-  const isHorizontal = false;
   const graph = {
     id: "root",
     layoutOptions: options,
@@ -43,7 +42,7 @@ export const getLayoutElements = async (
 
       edges: layoutGraph.edges,
     };
-  } catch (message) {
-    return console.error(message);
+  } catch (err: any) {
+    throw new Error(err);
   }
 };

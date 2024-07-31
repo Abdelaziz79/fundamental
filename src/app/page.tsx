@@ -1,9 +1,9 @@
 import Navbar from "@/components/Navbar";
 import { getAllAlgorithms } from "@/services/algorithmsApi";
+import { getAllDataStructures } from "@/services/dataStructuresApi";
 import { getAllProblems } from "@/services/problemsApi";
 import { Edge, Node } from "reactflow";
 import MainRF from "./MainRF";
-import { getAllDataStructures } from "@/services/dataStructuresApi";
 
 type Props = {};
 type item = { title: string; id: string; topics?: string };
