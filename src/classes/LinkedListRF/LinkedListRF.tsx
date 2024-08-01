@@ -1,114 +1,292 @@
 import IController from "@/interfaces/IController";
 import IReactFlow from "@/interfaces/IReactFlow";
 import Util from "@/main/Util";
-import { getLayoutElements } from "@/utils/helpers";
 import {
   BaseEdge,
+  Edge,
   EdgeProps,
   getSmoothStepPath,
   Handle,
+  Node,
   NodeProps,
   Position,
 } from "reactflow";
 
+class ListNode<T> {
+  value: T;
+  next: ListNode<T> | null;
+
+  constructor(value: T) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
 export default class LinkedListRF<T> implements IReactFlow, IController {
-  private list: T[];
-  private posX?: number = 0;
-  private posY?: number = 0;
+  private head: ListNode<T> | null;
+  private tail: ListNode<T> | null;
+  private length: number;
+  private posX: number | undefined;
+  private posY: number | undefined;
   private options: {
     nodeType: string;
     edgeType: string;
-    elkOptions?: any;
-  } = {
-    nodeType: "lln",
-    edgeType: "lle",
+    layoutOptions?: any;
   };
+  private pointerNode: ListNode<T> | null = null;
+
   constructor() {
-    this.list = [];
-  }
-
-  push_back(ele: T) {
-    this.list.push(ele);
-  }
-
-  pop_back() {
-    return this.list.pop();
-  }
-
-  size() {
-    return this.list.length;
-  }
-
-  // Enhanced getReactFlowElements method
-  async getReactFlowElements() {
-    const { nodeType, edgeType, elkOptions } = this.options;
-    const elements: { nodes: any[]; edges: any[] } = {
-      nodes: [],
-      edges: [],
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+    this.posX = 0;
+    this.posY = 0;
+    this.options = {
+      nodeType: "lln",
+      edgeType: "lle",
+      layoutOptions: {
+        nodeSpacing: 150,
+        levelSpacing: 100,
+      },
     };
-    if (this.list.length === 0) return Promise.resolve(elements);
+  }
+  getHead(): ListNode<T> | null {
+    return this.head;
+  }
+  setHead(head: ListNode<T> | null) {
+    this.head = head;
+  }
+  getTail(): ListNode<T> | null {
+    return this.tail;
+  }
+  setTail(tail: ListNode<T> | null) {
+    this.tail = tail;
+  }
+  setPointer(index: number): boolean {
+    if (index < 0 || index >= this.length) return false;
 
-    elements.nodes.push({
-      id: `node-0`,
-      type: nodeType ?? "lln",
-      data: { label: this.list[0] },
-    });
-
-    let preNodeId = `node-0`;
-
-    for (let i = 1; i < this.list.length; i++) {
-      const node = {
-        id: `node-${i}`,
-        type: nodeType ?? "lln",
-        data: { label: this.list[i] },
-      };
-      elements.nodes.push(node);
-
-      const edge = {
-        id: `edge-${i}`,
-        source: preNodeId,
-        target: `node-${i}`,
-        type: edgeType ?? "lle",
-      };
-
-      elements.edges.push(edge);
-      preNodeId = `node-${i}`;
+    let current = this.head;
+    for (let i = 0; i < index; i++) {
+      current = current!.next;
     }
 
-    // Using ELK for layout
-    const res = await getLayoutElements(
-      elements.nodes,
-      elements.edges,
-      elkOptions ?? {
-        "elk.algorithm": "rectpacking",
-        "elk.spacing.nodeNode": 80,
-        "elk.layered.spacing.baseValue": 100,
+    this.pointerNode = current;
+    return true;
+  }
+  push_back(value: T): void {
+    const newNode = new ListNode(value);
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      this.tail!.next = newNode;
+      this.tail = newNode;
+    }
+    this.length++;
+  }
+
+  pop_back(): T | undefined {
+    if (!this.head) return undefined;
+
+    let current = this.head;
+    let newTail = current;
+
+    while (current.next) {
+      newTail = current;
+      current = current.next;
+    }
+
+    this.tail = newTail;
+    this.tail.next = null;
+    this.length--;
+
+    if (this.length === 0) {
+      this.head = null;
+      this.tail = null;
+    }
+
+    return current.value;
+  }
+
+  size(): number {
+    return this.length;
+  }
+
+  push_front(value: T): void {
+    const newNode = new ListNode(value);
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      newNode.next = this.head;
+      this.head = newNode;
+    }
+    this.length++;
+  }
+
+  pop_front(): T | undefined {
+    if (!this.head) return undefined;
+
+    const oldHead = this.head;
+    this.head = oldHead.next;
+    this.length--;
+
+    if (this.length === 0) {
+      this.tail = null;
+    }
+
+    return oldHead.value;
+  }
+
+  get(index: number): T | undefined {
+    if (index < 0 || index >= this.length) return undefined;
+
+    let current = this.head;
+    for (let i = 0; i < index; i++) {
+      current = current!.next;
+    }
+
+    return current!.value;
+  }
+
+  set(index: number, value: T): boolean {
+    if (index < 0 || index >= this.length) return false;
+
+    let current = this.head;
+    for (let i = 0; i < index; i++) {
+      current = current!.next;
+    }
+
+    current!.value = value;
+    return true;
+  }
+
+  insert(index: number, value: T): boolean {
+    if (index < 0 || index > this.length) return false;
+    if (index === 0) {
+      this.push_front(value);
+      return true;
+    }
+    if (index === this.length) {
+      this.push_back(value);
+      return true;
+    }
+
+    const newNode = new ListNode(value);
+    let current = this.head;
+    for (let i = 0; i < index - 1; i++) {
+      current = current!.next;
+    }
+
+    newNode.next = current!.next;
+    current!.next = newNode;
+    this.length++;
+    return true;
+  }
+
+  remove(index: number): T | undefined {
+    if (index < 0 || index >= this.length) return undefined;
+    if (index === 0) return this.pop_front();
+    if (index === this.length - 1) return this.pop_back();
+
+    let current = this.head;
+    for (let i = 0; i < index - 1; i++) {
+      current = current!.next;
+    }
+
+    const removed = current!.next;
+    current!.next = removed!.next;
+    this.length--;
+    return removed!.value;
+  }
+
+  clear(): void {
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+
+  toArray(): T[] {
+    const arr: T[] = [];
+    let current = this.head;
+    while (current) {
+      arr.push(current.value);
+      current = current.next;
+    }
+    return arr;
+  }
+
+  async getReactFlowElements() {
+    const elements: { nodes: Node[]; edges: Edge[] } = { nodes: [], edges: [] };
+
+    let current = this.head;
+    let index = 0;
+
+    while (current) {
+      const nodeId = `node-${crypto.randomUUID()}`;
+      elements.nodes.push({
+        id: nodeId,
+        type: this.options.nodeType,
+        data: {
+          label: current.value,
+          isPointer: current === this.pointerNode, // Add this line
+        },
+        position: { x: 0, y: 0 },
+      });
+
+      if (index > 0) {
+        elements.edges.push({
+          id: `edge-${crypto.randomUUID()}`,
+          source: elements.nodes[index - 1].id,
+          target: nodeId,
+          type: this.options.edgeType,
+        });
       }
-    );
-    elements.nodes = (res as any).nodes;
-    elements.edges = (res as any).edges;
-    return Promise.resolve(elements);
+
+      current = current.next;
+      index++;
+    }
+
+    return this.applyLayout(elements);
+  }
+
+  clearPointer(): void {
+    this.pointerNode = null;
+  }
+
+  private applyLayout(elements: { nodes: Node[]; edges: Edge[] }): {
+    nodes: Node[];
+    edges: Edge[];
+  } {
+    const { nodeSpacing, levelSpacing } = this.options.layoutOptions;
+
+    elements.nodes.forEach((node, index) => {
+      node.position = {
+        x: index * nodeSpacing + (this.posX || 0),
+        y: this.posY || 0,
+      };
+    });
+
+    return elements;
   }
 
   getOptions(): {} {
     return this.options;
   }
 
-  setPosition(posX: number, posY: number) {
+  setPosition(posX: number, posY: number): void {
     this.posX = posX;
     this.posY = posY;
   }
 
-  getPosition() {
-    return {
-      posX: this.posX,
-      posY: this.posY,
-    };
+  getPosition(): { posX: number | undefined; posY: number | undefined } {
+    return { posX: this.posX, posY: this.posY };
   }
+
   setOptions(options: {
     nodeType: string;
     edgeType: string;
-    elkOptions?: any;
+    layoutOptions?: any;
   }): void {
     this.options = { ...this.options, ...options };
   }
@@ -117,31 +295,33 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
     if (instance instanceof LinkedListRF) {
       const cloned = new LinkedListRF<T>();
 
-      // Deep copy the list
-      cloned.list = this.list.map((item) => {
-        if (typeof item === "object" && item !== null) {
-          return JSON.parse(JSON.stringify(item));
-        }
-        return item;
-      });
+      let current = (instance as unknown as LinkedListRF<T>).head;
+      let index = 0;
+      let pointerIndex = -1;
 
-      // Copy primitive properties
+      // First pass: clone nodes and find pointer index
+      while (current) {
+        cloned.push_back(current.value);
+        if (current === (instance as unknown as LinkedListRF<T>).pointerNode) {
+          pointerIndex = index;
+        }
+        current = current.next;
+        index++;
+      }
+
+      // Set the pointer in the cloned list
+      if (pointerIndex !== -1) {
+        cloned.setPointer(pointerIndex);
+      }
+
       cloned.posX = this.posX;
       cloned.posY = this.posY;
+      cloned.options = JSON.parse(JSON.stringify(this.options));
 
-      // Deep copy the options object
-      cloned.options = {
-        nodeType: this.options.nodeType,
-        edgeType: this.options.edgeType,
-        elkOptions: this.options.elkOptions
-          ? JSON.parse(JSON.stringify(this.options.elkOptions))
-          : undefined,
-      };
-
-      return cloned as U;
+      return cloned as unknown as U;
     }
 
-    // If the instance is not a LinkedListRF, return a shallow copy
+    // If the instance is not a LinkedList, return a shallow copy
     // This is a fallback and might not be suitable for all cases
     return { ...instance };
   }
@@ -150,15 +330,12 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
 function LinkedListNodeType({ data }: NodeProps) {
   return (
     <div className="transition-all duration-300 ease-in-out transform hover:scale-110 cursor-pointer">
-      <Handle
-        type="target"
-        position={Position.Left}
-        style={{ background: "#555" }}
-        className={"opacity-0"}
-      />
+      <Handle type="target" position={Position.Left} className={"opacity-0"} />
       <div className="flex rounded-lg shadow-lg overflow-hidden">
         <div
-          className={`bg-green-400 w-16 h-16 flex justify-center items-center text-white font-bold text-lg`}
+          className={`${
+            data?.isPointer ? "bg-red-400" : "bg-green-400"
+          } w-16 h-16 flex justify-center items-center text-white font-bold text-lg`}
         >
           {data?.label}
         </div>
@@ -166,12 +343,7 @@ function LinkedListNodeType({ data }: NodeProps) {
           <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
         </div>
       </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        style={{ background: "#555" }}
-        className={"opacity-0"}
-      />
+      <Handle type="source" position={Position.Right} className={"opacity-0"} />
     </div>
   );
 }
