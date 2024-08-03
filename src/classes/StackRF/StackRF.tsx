@@ -137,7 +137,7 @@ export const StackNode = ({
     <div>
       <div
         className={`
-        h-[72px] w-[148px] 
+        min-h-[72px] min-w-[148px] 
         flex items-center justify-center 
         border-2 ${data.isPointer ? "border-blue-500" : "border-gray-300"}
         rounded-md 

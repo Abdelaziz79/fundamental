@@ -11,7 +11,7 @@ const VectorNode: React.FC<VectorNodeProps> = ({ data }) => {
     <div
       className={`
         flex flex-col items-center justify-center
-        w-20 h-16 m-2
+        min-w-20 min-h-16 m-2
         bg-gradient-to-br ${
           data.isHighlighted
             ? "from-red-400 to-pink-500"

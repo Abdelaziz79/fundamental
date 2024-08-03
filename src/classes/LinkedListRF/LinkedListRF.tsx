@@ -513,7 +513,7 @@ function LinkedListNodeType({ data }: NodeProps) {
         <div
           className={`${
             data?.isPointer ? "bg-red-400" : "bg-green-400"
-          } w-16 h-16 flex justify-center items-center text-white font-bold text-lg`}
+          } min-w-16 p-2 h-16 flex justify-center items-center text-white font-bold text-lg`}
         >
           {data?.label}
         </div>
