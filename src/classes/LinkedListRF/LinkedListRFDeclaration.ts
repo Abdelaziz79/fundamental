@@ -63,6 +63,8 @@ declare class LinkedListRF<T> {
 
   setPointer(index: number): boolean;
   
+  getPointer(): number | null;
+
   clearPointer(): void;
   
   clone<U>(instance: U): U;
@@ -74,6 +76,9 @@ declare class LinkedListRF<T> {
   getHead(): ListNode<T> | null;
   
   getTail(): ListNode<T> | null;
+
+  setCycle(index: number): void;
+
   }`;
 
 export default linkedListRFDeclaration;

@@ -12,13 +12,14 @@ import {
   Position,
 } from "reactflow";
 
-class ListNode<T> {
+export class ListNode<T> {
   value: T;
   next: ListNode<T> | null;
-
+  id: string;
   constructor(value: T) {
     this.value = value;
     this.next = null;
+    this.id = crypto.randomUUID();
   }
 }
 
@@ -28,12 +29,12 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
   private length: number;
   private posX: number | undefined;
   private posY: number | undefined;
+  private pointerNode: ListNode<T> | null = null;
   private options: {
     nodeType: string;
     edgeType: string;
     layoutOptions?: any;
   };
-  private pointerNode: ListNode<T> | null = null;
 
   constructor() {
     this.head = null;
@@ -46,22 +47,27 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
       edgeType: "lle",
       layoutOptions: {
         nodeSpacing: 150,
-        levelSpacing: 100,
+        levelSpacing: 50,
       },
     };
   }
+
   getHead(): ListNode<T> | null {
     return this.head;
   }
+
   setHead(head: ListNode<T> | null) {
     this.head = head;
   }
+
   getTail(): ListNode<T> | null {
     return this.tail;
   }
+
   setTail(tail: ListNode<T> | null) {
     this.tail = tail;
   }
+
   setPointer(index: number): boolean {
     if (index < 0 || index >= this.length) return false;
 
@@ -73,6 +79,21 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
     this.pointerNode = current;
     return true;
   }
+
+  getPointer(): number | null {
+    let i = 0;
+    if (this.pointerNode) {
+      let current = this.head;
+      while (current !== this.pointerNode) {
+        current = current!.next;
+        i++;
+      }
+      return i;
+    } else {
+      return null;
+    }
+  }
+
   push_back(value: T): void {
     const newNode = new ListNode(value);
     if (!this.head) {
@@ -216,20 +237,34 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
     return arr;
   }
 
+  clearPointer(): void {
+    this.pointerNode = null;
+  }
+
   async getReactFlowElements() {
     const elements: { nodes: Node[]; edges: Edge[] } = { nodes: [], edges: [] };
+    const visitedNodes = new Set<string>();
 
     let current = this.head;
     let index = 0;
+    let cycleDetected = false;
+    let cycleStartNode: ListNode<T> | null = null;
 
-    while (current) {
-      const nodeId = `node-${crypto.randomUUID()}`;
+    while (current && !cycleDetected) {
+      if (visitedNodes.has(current.id)) {
+        cycleDetected = true;
+        cycleStartNode = current;
+        break;
+      }
+
+      visitedNodes.add(current.id);
+
       elements.nodes.push({
-        id: nodeId,
+        id: current.id,
         type: this.options.nodeType,
         data: {
           label: current.value,
-          isPointer: current === this.pointerNode, // Add this line
+          isPointer: current === this.pointerNode,
         },
         position: { x: 0, y: 0 },
       });
@@ -238,7 +273,7 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
         elements.edges.push({
           id: `edge-${crypto.randomUUID()}`,
           source: elements.nodes[index - 1].id,
-          target: nodeId,
+          target: current.id,
           type: this.options.edgeType,
         });
       }
@@ -247,24 +282,60 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
       index++;
     }
 
+    if (cycleDetected && cycleStartNode) {
+      // Add a special edge to indicate the cycle
+      const cycleStartIndex = elements.nodes.findIndex(
+        (node) => node.id === cycleStartNode!.id
+      );
+      if (cycleStartIndex !== -1) {
+        elements.edges.push({
+          id: `cycle-edge-${crypto.randomUUID()}`,
+          source: elements.nodes[elements.nodes.length - 1].id,
+          target: cycleStartNode.id,
+          type: this.options.edgeType,
+          style: { stroke: "red", strokeDasharray: "5,5" }, // Make the cycle edge visually distinct
+        });
+      }
+    }
+
     return this.applyLayout(elements);
   }
 
-  clearPointer(): void {
-    this.pointerNode = null;
-  }
-
-  private applyLayout(elements: { nodes: Node[]; edges: Edge[] }): {
-    nodes: Node[];
-    edges: Edge[];
-  } {
+  private async applyLayout(elements: { nodes: Node[]; edges: Edge[] }) {
     const { nodeSpacing, levelSpacing } = this.options.layoutOptions;
+    const cycleEdgeOffset = levelSpacing; // Vertical offset for cycle edges
 
+    // Position nodes
     elements.nodes.forEach((node, index) => {
       node.position = {
         x: index * nodeSpacing + (this.posX || 0),
         y: this.posY || 0,
       };
+    });
+
+    // Adjust edges
+    elements.edges.forEach((edge) => {
+      const sourceNode = elements.nodes.find((node) => node.id === edge.source);
+      const targetNode = elements.nodes.find((node) => node.id === edge.target);
+
+      if (sourceNode && targetNode) {
+        if (edge.id.startsWith("cycle-edge")) {
+          // For cycle edges, adjust the sourcePosition and targetPosition
+          edge.sourceHandle = Position.Right;
+          edge.targetHandle = Position.Left;
+          edge.style = { ...edge.style, stroke: "red" };
+
+          // Offset the edge path
+          edge.data = {
+            ...edge.data,
+            offsetY: cycleEdgeOffset,
+          };
+        } else {
+          // For regular edges, keep default positions
+          edge.sourceHandle = Position.Right;
+          edge.targetHandle = Position.Left;
+        }
+      }
     });
 
     return elements;
@@ -289,6 +360,15 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
     layoutOptions?: any;
   }): void {
     this.options = { ...this.options, ...options };
+  }
+
+  setCycle(index: number): void {
+    if (index < 0 || index >= this.length) return;
+    let current = this.head;
+    for (let i = 0; i < index; i++) {
+      current = current!.next;
+    }
+    this.tail!.next = current; // Create the cycle
   }
 
   clone<U>(instance: U): U {
@@ -317,7 +397,6 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
       cloned.posX = this.posX;
       cloned.posY = this.posY;
       cloned.options = JSON.parse(JSON.stringify(this.options));
-
       return cloned as unknown as U;
     }
 
@@ -356,7 +435,11 @@ function LinkedListEdgeType({
   sourcePosition,
   targetPosition,
   style = {},
+  data,
 }: EdgeProps) {
+  const isCycleEdge = style.stroke === "red";
+  const offsetY = isCycleEdge ? data?.offsetY || 0 : 0;
+
   const [edgePath] = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -364,6 +447,8 @@ function LinkedListEdgeType({
     targetX,
     targetY,
     targetPosition,
+    centerX: (sourceX + targetX) / 2,
+    centerY: Math.min(sourceY, targetY) - offsetY,
   });
 
   return (
@@ -374,7 +459,8 @@ function LinkedListEdgeType({
         style={{
           ...style,
           strokeWidth: 2,
-          stroke: "#888",
+          stroke: isCycleEdge ? "red" : "#888",
+          strokeDasharray: isCycleEdge ? "5,5" : "none",
           animation: "flowAnimation 1s infinite linear",
         }}
       />
@@ -387,7 +473,10 @@ function LinkedListEdgeType({
           refY="3.5"
           orient="auto"
         >
-          <polygon points="0 0, 10 3.5, 0 7" fill="#888" />
+          <polygon
+            points="0 0, 10 3.5, 0 7"
+            fill={isCycleEdge ? "red" : "#888"}
+          />
         </marker>
       </defs>
     </>

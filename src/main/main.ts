@@ -6,7 +6,7 @@ import ElementRF from "@/classes/ElementRF/ElementRF";
 import ElementRFDeclaration from "@/classes/ElementRF/ElementRFDeclaration";
 import HashMap from "@/classes/HashMap/HashMap";
 import HashMapDeclaration from "@/classes/HashMap/HashMapDeclaration";
-import LinkedListRF from "@/classes/LinkedListRF/LinkedListRF";
+import LinkedListRF, { ListNode } from "@/classes/LinkedListRF/LinkedListRF";
 import linkedListRFDeclaration from "@/classes/LinkedListRF/LinkedListRFDeclaration";
 import StackRF from "@/classes/StackRF/StackRF";
 import StackRFDeclaration from "@/classes/StackRF/StackRfDeclaration";
@@ -293,6 +293,7 @@ export default function compile(code: string) {
       "TbAtom2",
       "TbBrain",
       "MarkerType",
+      "ListNode",
       "LinkedListRF",
       code + "\nreturn main();"
     );
@@ -329,6 +330,7 @@ export default function compile(code: string) {
       TbAtom2,
       TbBrain,
       MarkerType,
+      ListNode,
       LinkedListRF
     );
   } catch (err: any) {
