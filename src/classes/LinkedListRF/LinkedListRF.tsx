@@ -451,6 +451,7 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
     if (instance instanceof LinkedListRF) {
       const cloned = new LinkedListRF<T>();
       const originalToCloned = new Map<ListNode<T>, ListNode<T>>();
+      const visitedNodes = new Set<string>();
 
       let current = (instance as unknown as LinkedListRF<T>).head;
       let index = 0;
@@ -458,6 +459,11 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
 
       // First pass: clone nodes and find pointer index
       while (current && !originalToCloned.has(current)) {
+        if (visitedNodes.has(current.id)) {
+          return cloned as unknown as U;
+        }
+        visitedNodes.add(current.id);
+
         const newNode = new ListNode(current.value);
         originalToCloned.set(current, newNode);
 
