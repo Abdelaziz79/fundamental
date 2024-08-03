@@ -79,6 +79,10 @@ declare class LinkedListRF<T> {
 
   setCycle(index: number): void;
 
+  setPointerById(id: string): boolean;
+
+  setPointerByNode(node: ListNode<T>): boolean;
+
   }`;
 
 export default linkedListRFDeclaration;

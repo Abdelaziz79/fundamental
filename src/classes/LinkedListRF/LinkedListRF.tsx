@@ -80,6 +80,82 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
     return true;
   }
 
+  setPointerById(id: string): boolean {
+    const visitedNodes = new Set<string>();
+    let current = this.head;
+    let cycleDetected = false;
+
+    while (current) {
+      if (visitedNodes.has(current.id)) {
+        cycleDetected = true;
+        break;
+      }
+
+      visitedNodes.add(current.id);
+
+      if (current.id === id) {
+        this.pointerNode = current;
+        return true;
+      }
+
+      current = current.next;
+    }
+
+    // If we've detected a cycle, we need to check the remaining nodes
+    // in case the target node is part of the cycle
+    if (cycleDetected) {
+      current = this.head;
+      while (current && !visitedNodes.has(current.id)) {
+        if (current.id === id) {
+          this.pointerNode = current;
+          return true;
+        }
+        current = current.next;
+      }
+    }
+
+    // If we've reached this point, the node with the given id was not found
+    return false;
+  }
+
+  setPointerByNode(node: ListNode<T>): boolean {
+    const visitedNodes = new Set<string>();
+    let current = this.head;
+    let cycleDetected = false;
+
+    while (current) {
+      if (visitedNodes.has(current.id)) {
+        cycleDetected = true;
+        break;
+      }
+
+      visitedNodes.add(current.id);
+
+      if (current === node) {
+        this.pointerNode = current;
+        return true;
+      }
+
+      current = current.next;
+    }
+
+    // If we've detected a cycle, we need to check the remaining nodes
+    // in case the target node is part of the cycle
+    if (cycleDetected) {
+      current = this.head;
+      while (current && !visitedNodes.has(current.id)) {
+        if (current === node) {
+          this.pointerNode = current;
+          return true;
+        }
+        current = current.next;
+      }
+    }
+
+    // If we've reached this point, the given node was not found in the list
+    return false;
+  }
+
   getPointer(): number | null {
     let i = 0;
     if (this.pointerNode) {
