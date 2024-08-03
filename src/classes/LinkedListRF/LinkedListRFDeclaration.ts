@@ -2,9 +2,9 @@ const linkedListRFDeclaration = `
 declare class ListNode<T> {
   value: T;
   next: ListNode<T> | null;
+  id: string;
 
   constructor(value: T);
-
 }
 
 declare class LinkedListRF<T> {

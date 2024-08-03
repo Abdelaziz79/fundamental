@@ -374,19 +374,36 @@ export default class LinkedListRF<T> implements IReactFlow, IController {
   clone<U>(instance: U): U {
     if (instance instanceof LinkedListRF) {
       const cloned = new LinkedListRF<T>();
+      const originalToCloned = new Map<ListNode<T>, ListNode<T>>();
 
       let current = (instance as unknown as LinkedListRF<T>).head;
       let index = 0;
       let pointerIndex = -1;
 
       // First pass: clone nodes and find pointer index
-      while (current) {
-        cloned.push_back(current.value);
+      while (current && !originalToCloned.has(current)) {
+        const newNode = new ListNode(current.value);
+        originalToCloned.set(current, newNode);
+
+        if (cloned.tail) {
+          cloned.tail.next = newNode;
+        } else {
+          cloned.head = newNode;
+        }
+        cloned.tail = newNode;
+        cloned.length++;
+
         if (current === (instance as unknown as LinkedListRF<T>).pointerNode) {
           pointerIndex = index;
         }
+
         current = current.next;
         index++;
+      }
+
+      // Second pass: connect cycles if they exist
+      if (current && originalToCloned.has(current)) {
+        cloned.tail!.next = originalToCloned.get(current)!;
       }
 
       // Set the pointer in the cloned list
