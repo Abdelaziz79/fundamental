@@ -1,4 +1,5 @@
 "use client";
+
 import ConsolePanel from "@/components/ConsolePanel";
 import EditorButtons from "@/components/EditorButtons";
 import { Button } from "@/components/ui/button";
@@ -26,15 +27,6 @@ import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
 
-const defaultCodeString = `let frame = [];
-let wait = 0.5;
-
-function main() {
-    // write your code here
-
-    return { frame, wait }
-}`;
-
 function formateTSX(code: string) {
   const sharedCode = code.replace("code=", "");
   const decoded = decodeURIComponent(sharedCode);
@@ -46,23 +38,29 @@ type Props = {
   autoFrameCheckbox?: boolean;
 };
 
-function Playground({
-  codeString = defaultCodeString,
+export default function Playground({
+  codeString = `let frame = [];
+let wait = 0.5;
+
+function main() {
+    // write your code here
+
+    return { frame, wait }
+}`,
   autoFrameCheckbox = false,
-}) {
+}: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState(codeString);
   const [logs, setLogs] = useState<string[] | null>(null);
   const [theme, setTheme] = useState<string>("andromeeda");
+  const [newNodes, setNewNodes] = useState(Util.getAllNodeTypes());
+  const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
   const [codePanelOpen, setCodePanelOpen] = useState(true);
   const [consolePanelOpen, setConsolePanelOpen] = useState(true);
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-
-  const allNodeTypes = Util.getAllNodeTypes();
-  const allEdgeTypes = Util.getAllEdgeTypes();
 
   useEffect(() => {
     let sharedCode = window.location.href.split("?")[1];
@@ -70,7 +68,7 @@ function Playground({
     setCode(formateTSX(sharedCode));
   }, []);
 
-  const handleShare = () => {
+  function handleShare() {
     navigator.clipboard.writeText(
       `https://fundamental-iota.vercel.app/playground?code=${encodeURIComponent(
         code
@@ -81,50 +79,55 @@ function Playground({
       description: "link copied to clipboard",
       className: "bg-green-200 border-green-400 border-2 text-gray-700",
     });
-  };
+  }
 
-  const handleEditorDidMount = (
+  async function handleEditorDidMount(
     editor: monaco.editor.IStandaloneCodeEditor,
     monaco: Monaco
-  ) => {
+  ) {
     addLibs(editor, monaco);
     editorRef.current = editor;
-  };
+  }
 
-  const EditorChange = (value: string | undefined) => {
+  function handleEditorChange(
+    value: string | undefined,
+    event: monaco.editor.IModelContentChangedEvent
+  ) {
     setCode(value || "");
-  };
+  }
 
-  const setElements = (nodes: any[], edges: any[]) => {
+  function setElements(nodes: any[], edges: any[]) {
     setNodes(nodes);
     setEdges(edges);
-  };
+  }
 
-  const getFrameElements = async ({
+  async function getFrameElements({
     frame,
     watingTime,
   }: {
     frame: any[];
     watingTime: number;
-  }) => {
+  }) {
     await wait(watingTime);
 
     let nodes: any[] = [];
     let edges: any[] = [];
-    frame?.forEach(async (ele: any) => {
+    frame?.map(async (ele: any, i) => {
       try {
         if (typeof ele?.getReactFlowElements === "function") {
-          const res = await ele.getReactFlowElements();
-          if (res) {
+          await ele.getReactFlowElements().then((res: any) => {
+            if (!res) {
+              return;
+            }
             nodes = nodes.concat(res.nodes);
             edges = edges.concat(res.edges);
-          }
+          });
         } else if (typeof ele?.call === "function") {
           ele?.call();
         } else {
-          throw new Error("invalid frame element");
+          throw new Error("invalid frame element", ele);
         }
-        requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
           setElements(nodes, edges);
         });
       } catch (e: any) {
@@ -135,10 +138,11 @@ function Playground({
         });
       }
     });
-  };
+  }
 
-  const handleRun = async () => {
+  async function handleRun() {
     setRunning(true);
+    // handle console.log to use it in console panel
     try {
       const log = console.log;
       const capturedLogs: string[] = [];
@@ -147,18 +151,34 @@ function Playground({
         capturedLogs.push(args.join(" "));
         log(...args);
       };
+      let runCode = code;
+      // if (autoFrame)
+      //   runCode = Util.autoCopy(code, [
+      //     "Table",
+      //     "BinarySearchTree",
+      //     "HashMap",
+      //     "VectorRF",
+      //     "ElementRF",
+      //   ]);
 
-      const result = typescript.transpileModule(code, {
+      // Convert typescript code to JavaScript
+      const result = typescript.transpileModule(runCode, {
         compilerOptions: {
           module: typescript.ModuleKind.ESNext,
           target: typescript.ScriptTarget.ESNext,
           jsx: typescript.JsxEmit.React,
           jsxFactory: `React.createElement`,
           jsxFragmentFactory: `React.Fragment`,
+          // Add this line
         },
       });
 
+      // Run the compiled JavaScript code
       const res = await compile(result.outputText);
+      setNewNodes(Util.getAllNodeTypes());
+      setNewEdges(Util.getAllEdgeTypes());
+
+      // Restore the original console.log
       console.log = log;
       setLogs(capturedLogs);
       await wait(0.2);
@@ -195,16 +215,16 @@ function Playground({
       });
     }
     setRunning(false);
-  };
+  }
 
-  const handleFormat = () => {
+  function handleFormat() {
     editorRef.current?.getAction("editor.action.formatDocument")?.run();
-  };
+  }
 
-  const handleExpand = () => {
-    setCodePanelOpen((prev) => !prev);
-    setConsolePanelOpen((prev) => !prev);
-  };
+  function handleExpand() {
+    setCodePanelOpen(!codePanelOpen);
+    setConsolePanelOpen(!consolePanelOpen);
+  }
 
   return (
     <div className="h-screen">
@@ -233,7 +253,7 @@ function Playground({
             height={"100%"}
             defaultLanguage="typescript"
             onMount={handleEditorDidMount}
-            onChange={EditorChange}
+            onChange={handleEditorChange}
             defaultPath={"index.tsx"}
             path="index.tsx"
             value={code}
@@ -250,8 +270,8 @@ function Playground({
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
-                nodeTypes={allNodeTypes}
-                edgeTypes={allEdgeTypes}
+                nodeTypes={newNodes}
+                edgeTypes={newEdges}
               >
                 <Controls />
                 <Background variant={BackgroundVariant.Dots} />
@@ -281,5 +301,3 @@ function ExpandComp({ handleExpand }: { handleExpand: () => void }) {
     </div>
   );
 }
-
-export default Playground;
