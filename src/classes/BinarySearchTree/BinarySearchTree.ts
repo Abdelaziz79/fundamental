@@ -22,6 +22,7 @@ export default class BinarySearchTree<T> implements IReactFlow, IController {
   private root: TreeNode<T> | null = null;
 
   private options: BSTOptions;
+  private pointer: TreeNode<T> | null = null;
 
   constructor(
     options: BSTOptions = {
@@ -34,6 +35,66 @@ export default class BinarySearchTree<T> implements IReactFlow, IController {
     }
   ) {
     this.options = options;
+  }
+
+  setPointerById(id: string): void {
+    const setPointerHelper = (node: TreeNode<T> | null): boolean => {
+      if (node === null) {
+        return false;
+      }
+      if (node.id === id) {
+        node.highlighted = true;
+        return true;
+      }
+      return setPointerHelper(node.left) || setPointerHelper(node.right);
+    };
+
+    // First, reset all nodes
+    this.preOrderTraverse((node) => {
+      node.highlighted = false;
+    });
+
+    // Then, set the pointer
+    setPointerHelper(this.root);
+  }
+
+  setPointer(value: T): void {
+    const setPointerHelper = (node: TreeNode<T> | null): boolean => {
+      if (node === null) {
+        return false;
+      }
+      let found = false;
+      if (node.value === value) {
+        node.highlighted = true;
+        found = true;
+      }
+      // Continue searching even if we've found a match
+      const leftFound = setPointerHelper(node.left);
+      const rightFound = setPointerHelper(node.right);
+      return found || leftFound || rightFound;
+    };
+
+    // First, reset all nodes
+    this.preOrderTraverse((node) => {
+      node.highlighted = false;
+    });
+
+    // Then, set the pointer(s)
+    setPointerHelper(this.root);
+  }
+
+  getNodeById(id: string): TreeNode<T> | null {
+    const findNode = (node: TreeNode<T> | null): TreeNode<T> | null => {
+      if (node === null) {
+        return null;
+      }
+      if (node.id === id) {
+        return node;
+      }
+      return findNode(node.left) || findNode(node.right);
+    };
+
+    return findNode(this.root);
   }
 
   private insertNode(
@@ -163,7 +224,7 @@ export default class BinarySearchTree<T> implements IReactFlow, IController {
     const nodeId = node.id;
     elements.nodes.push({
       id: nodeId,
-      data: { label: node.value },
+      data: { label: node.value, isPointer: node.highlighted },
       position: { x: 0, y: 0 },
       type: nodeType,
       parentId: rootId ? rootId : undefined,

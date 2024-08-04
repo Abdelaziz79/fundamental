@@ -1,6 +1,9 @@
 const BinarySearchTreeDeclaration = `
 declare class BinarySearchTree<T> {
   private root: TreeNode<T> | null;
+  private options: BSTOptions;
+  private pointer: TreeNode<T> | null = null;
+
     private options: {
       nodeType: string;
       edgeType: string;
@@ -18,6 +21,12 @@ declare class BinarySearchTree<T> {
       posY?: number;
       parentNode?: boolean;
     });
+    
+    setPointer(value: T): void;
+
+    setPointerById(id: string): void
+
+    getNodeById(id: string): TreeNode<T> | null;
 
     setOptions(options: {
       nodeType: string;
