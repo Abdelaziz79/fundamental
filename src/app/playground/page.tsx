@@ -38,6 +38,31 @@ type Props = {
   autoFrameCheckbox?: boolean;
 };
 
+// Helper function to stringify any value
+function stringifyValue(value: any): string {
+  if (typeof value === "object" && value !== null) {
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch (error) {
+      return String(value);
+    }
+  }
+  return String(value);
+}
+
+// Function to capture and format log messages
+function captureLog(
+  type: string,
+  originalConsole: any,
+  capturedLogs: { type: string; message: string }[],
+  args: any[]
+): void {
+  const formattedArgs = args.map(stringifyValue);
+  const logMessage = formattedArgs.join(" ");
+  capturedLogs.push({ type, message: logMessage });
+  originalConsole[type](...args);
+}
+
 export default function Playground({
   codeString = `let frame = [];
 let wait = 0.5;
@@ -53,7 +78,9 @@ function main() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState(codeString);
-  const [logs, setLogs] = useState<string[] | null>(null);
+  const [logs, setLogs] = useState<{ type: string; message: string }[] | null>(
+    null
+  );
   const [theme, setTheme] = useState<string>("andromeeda");
   const [newNodes, setNewNodes] = useState(Util.getAllNodeTypes());
   const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
@@ -142,24 +169,24 @@ function main() {
 
   async function handleRun() {
     setRunning(true);
-    // handle console.log to use it in console panel
     try {
-      const log = console.log;
-      const capturedLogs: string[] = [];
+      // handle console.log to use it in console panel
+      const originalConsole = { ...console };
+      const capturedLogs: { type: string; message: string }[] = [];
 
-      console.log = (...args: any[]) => {
-        capturedLogs.push(args.join(" "));
-        log(...args);
-      };
+      // Override console methods
+      console.log = (...args: any[]) =>
+        captureLog("log", originalConsole, capturedLogs, args);
+      console.error = (...args: any[]) =>
+        captureLog("error", originalConsole, capturedLogs, args);
+      console.warn = (...args: any[]) =>
+        captureLog("warn", originalConsole, capturedLogs, args);
+      console.info = (...args: any[]) =>
+        captureLog("info", originalConsole, capturedLogs, args);
+      console.debug = (...args: any[]) =>
+        captureLog("debug", originalConsole, capturedLogs, args);
+
       let runCode = code;
-      // if (autoFrame)
-      //   runCode = Util.autoCopy(code, [
-      //     "Table",
-      //     "BinarySearchTree",
-      //     "HashMap",
-      //     "VectorRF",
-      //     "ElementRF",
-      //   ]);
 
       // Convert typescript code to JavaScript
       const result = typescript.transpileModule(runCode, {
@@ -179,7 +206,7 @@ function main() {
       setNewEdges(Util.getAllEdgeTypes());
 
       // Restore the original console.log
-      console.log = log;
+      console = originalConsole;
       setLogs(capturedLogs);
       await wait(0.2);
 
