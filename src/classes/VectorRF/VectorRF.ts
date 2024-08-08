@@ -136,10 +136,27 @@ export default class VectorRF<T> implements IReactFlow, IController {
           expandParent: true,
           extent: "parent",
           draggable: false,
-          type: "VectorNode",
+          type: nodeType ?? "VectorNode",
         });
       }
     }
+  }
+
+  getItems() {
+    return this.items.map((item) => item.value);
+  }
+
+  setItems(items: T[]) {
+    items.map((item) => this.push_back(item));
+  }
+
+  pop_front() {
+    const item = this.items.shift();
+    return item?.value;
+  }
+
+  push_front(item: T) {
+    this.items.unshift({ value: item, id: crypto.randomUUID() });
   }
 
   setOptions(options: {

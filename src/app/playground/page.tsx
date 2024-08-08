@@ -72,7 +72,6 @@ function main() {
 
     return { frame, wait }
 }`,
-  autoFrameCheckbox = false,
 }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);

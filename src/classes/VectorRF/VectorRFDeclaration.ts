@@ -95,6 +95,15 @@ declare class VectorRF<T> {
     getReactFlowElements(): Promise<{ nodes: any[]; edges: any[] }>;
 
     clone<T>(instance: T): T ;
-}
+
+    getItems(): T[];
+    
+    setItems(items: T[]): void;
+
+    pop_front(): T | undefined;
+
+    push_front(item: T): void;
+
+    }
 `;
 export default VectorRFDeclaration;
