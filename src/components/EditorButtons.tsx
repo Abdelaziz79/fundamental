@@ -58,7 +58,7 @@ export default function EditorButtons({
       <div className="flex ">
         <div className="bg-zinc-700 hover:bg-zinc-600 rounded-none text-white">
           <Select onValueChange={setTheme} value={theme}>
-            <SelectTrigger className="w-[150px]  border-none">
+            <SelectTrigger className="w-[150px]  border-none h-5">
               <SelectValue placeholder="theme" />
             </SelectTrigger>
             <SelectContent>

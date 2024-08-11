@@ -85,7 +85,10 @@ function main() {
   const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
   const [codePanelOpen, setCodePanelOpen] = useState(true);
   const [consolePanelOpen, setConsolePanelOpen] = useState(true);
-
+  const [files, setFiles] = useState([
+    { name: "index.tsx", content: codeString },
+  ]);
+  const [currentFile, setCurrentFile] = useState("index.tsx");
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   useEffect(() => {
@@ -115,11 +118,18 @@ function main() {
     editorRef.current = editor;
   }
 
-  function handleEditorChange(
-    value: string | undefined,
-    event: monaco.editor.IModelContentChangedEvent
-  ) {
-    setCode(value || "");
+  function handleEditorChange(fileName: string, value: string | undefined) {
+    setFiles((prevFiles) =>
+      prevFiles.map((file) =>
+        file.name === fileName ? { ...file, content: value || "" } : file
+      )
+    );
+  }
+
+  function addNewFile() {
+    const newFileName = `file${files.length + 1}.tsx`;
+    setFiles((prevFiles) => [...prevFiles, { name: newFileName, content: "" }]);
+    setCurrentFile(newFileName);
   }
 
   function setElements(nodes: any[], edges: any[]) {
@@ -169,7 +179,7 @@ function main() {
   async function handleRun() {
     setRunning(true);
     try {
-      // handle console.log to use it in console panel
+      // Handle console.log to use it in console panel
       const originalConsole = { ...console };
       const capturedLogs: { type: string; message: string }[] = [];
 
@@ -185,26 +195,30 @@ function main() {
       console.debug = (...args: any[]) =>
         captureLog("debug", originalConsole, capturedLogs, args);
 
-      let runCode = code;
+      let compiledCode = "";
 
-      // Convert typescript code to JavaScript
-      const result = typescript.transpileModule(runCode, {
-        compilerOptions: {
-          module: typescript.ModuleKind.ESNext,
-          target: typescript.ScriptTarget.ESNext,
-          jsx: typescript.JsxEmit.React,
-          jsxFactory: `React.createElement`,
-          jsxFragmentFactory: `React.Fragment`,
-          // Add this line
-        },
-      });
+      // Compile all files
+      for (const file of files) {
+        // Convert typescript code to JavaScript
+        const result = typescript.transpileModule(file.content, {
+          compilerOptions: {
+            module: typescript.ModuleKind.ESNext,
+            target: typescript.ScriptTarget.ESNext,
+            jsx: typescript.JsxEmit.React,
+            jsxFactory: `React.createElement`,
+            jsxFragmentFactory: `React.Fragment`,
+          },
+        });
+
+        compiledCode += result.outputText + "\n";
+      }
 
       // Run the compiled JavaScript code
-      const res = await compile(result.outputText);
+      const res = await compile(compiledCode);
       setNewNodes(Util.getAllNodeTypes());
       setNewEdges(Util.getAllEdgeTypes());
 
-      // Restore the original console.log
+      // Restore the original console
       console = originalConsole;
       setLogs(capturedLogs);
       await wait(0.2);
@@ -274,15 +288,21 @@ function main() {
             setTheme={setTheme}
             handleShare={handleShare}
           />
+          <FileTabs
+            files={files}
+            currentFile={currentFile}
+            setCurrentFile={setCurrentFile}
+            addNewFile={addNewFile}
+          />
           <Editor
             className="w-full h-full"
             height={"100%"}
             defaultLanguage="typescript"
             onMount={handleEditorDidMount}
-            onChange={handleEditorChange}
             defaultPath={"index.tsx"}
-            path="index.tsx"
-            value={code}
+            value={files.find((f) => f.name === currentFile)?.content || ""}
+            path={currentFile}
+            onChange={(value) => handleEditorChange(currentFile, value)}
             theme={theme ?? "vs-dark"}
           />
         </ResizablePanel>
@@ -323,6 +343,39 @@ function ExpandComp({ handleExpand }: { handleExpand: () => void }) {
     <div className="z-50 absolute top-4 right-4">
       <Button size={"icon"} variant={"outline"} onClick={handleExpand}>
         <LuExpand size={24} />
+      </Button>
+    </div>
+  );
+}
+function FileTabs({
+  files,
+  currentFile,
+  setCurrentFile,
+  addNewFile,
+}: {
+  files: { name: string; content: string }[];
+  currentFile: string;
+  setCurrentFile: (file: string) => void;
+  addNewFile: () => void;
+}) {
+  return (
+    <div className="w-full flex items-center h-5 bg-zinc-800">
+      {files.map((file) => (
+        <Button
+          key={file.name}
+          className={` hover:bg-zinc-600 h-5 rounded-none ${
+            currentFile === file.name ? "bg-blue-500 text-white" : "bg-zinc-700"
+          }`}
+          onClick={() => setCurrentFile(file.name)}
+        >
+          {file.name}
+        </Button>
+      ))}
+      <Button
+        className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
+        onClick={addNewFile}
+      >
+        + New File
       </Button>
     </div>
   );
