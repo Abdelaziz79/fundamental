@@ -84,7 +84,17 @@ export default function MarkDownDrawer({
           )}
         </DrawerHeader>
         <DrawerDescription className="mt-4 text-gray-700">
-          <ReactMarkdown className="mx-auto max-h-[50vh] w-full max-w-5xl p-4 overflow-y-auto  ">
+          <ReactMarkdown
+            className="mx-auto max-h-[50vh] w-full max-w-5xl p-4 overflow-y-auto"
+            components={{
+              code: ({ node, ...props }) => (
+                <code
+                  className=" text-red-500 font-extrabold bg-gray-100 p-[2px] rounded-md"
+                  {...props}
+                />
+              ),
+            }}
+          >
             {formattedDescription}
           </ReactMarkdown>
         </DrawerDescription>
