@@ -14,6 +14,7 @@ import Util from "@/main/Util";
 import { wait } from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
+import pako from "pako";
 import { useEffect, useRef, useState } from "react";
 import { LuExpand } from "react-icons/lu";
 import ReactFlow, {
@@ -27,16 +28,38 @@ import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
 
-function formateTSX(code: string) {
-  const sharedCode = code.replace("code=", "");
-  const decoded = decodeURIComponent(sharedCode);
-  return decoded;
+function compressAndEncode(data: any): string {
+  const jsonString = JSON.stringify(data);
+  const compressed = pako.deflate(jsonString);
+  return btoa(
+    Array.from(compressed, (byte) => String.fromCharCode(byte)).join("")
+  )
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 }
 
-type Props = {
-  codeString?: string;
-  autoFrameCheckbox?: boolean;
-};
+function decodeAndDecompress(encoded: string): any {
+  try {
+    // Restore base64 padding
+    encoded = encoded.replace(/-/g, "+").replace(/_/g, "/");
+    const pad = encoded.length % 4;
+    if (pad) {
+      encoded += "=".repeat(4 - pad);
+    }
+
+    const binary = atob(encoded);
+    const compressed = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      compressed[i] = binary.charCodeAt(i);
+    }
+    const decompressed = pako.inflate(compressed, { to: "string" });
+    return JSON.parse(decompressed);
+  } catch (error) {
+    console.error("Decompression error:", error);
+    throw new Error("Failed to decode or decompress shared data");
+  }
+}
 
 // Helper function to stringify any value
 function stringifyValue(value: any): string {
@@ -62,6 +85,11 @@ function captureLog(
   capturedLogs.push({ type, message: logMessage });
   originalConsole[type](...args);
 }
+
+type Props = {
+  codeString?: string;
+  autoFrameCheckbox?: boolean;
+};
 
 export default function Playground({
   codeString = `let frame = [];
@@ -92,22 +120,48 @@ function main() {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   useEffect(() => {
-    let sharedCode = window.location.href.split("?")[1];
-    if (!sharedCode || !sharedCode.startsWith("code=")) return;
-    setCode(formateTSX(sharedCode));
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedData = urlParams.get("shared");
+
+    if (sharedData) {
+      try {
+        const decodedFiles = decodeAndDecompress(sharedData);
+        if (Array.isArray(decodedFiles) && decodedFiles.length > 0) {
+          setFiles(decodedFiles);
+          setCurrentFile(decodedFiles[0].name);
+        } else {
+          throw new Error("Invalid file data structure");
+        }
+      } catch (error: any) {
+        console.error("Error parsing shared files:", error);
+        toast({
+          title: "Error",
+          description: `Failed to load shared files: ${error.message}`,
+          variant: "destructive",
+        });
+      }
+    }
   }, []);
 
   function handleShare() {
-    navigator.clipboard.writeText(
-      `https://fundamental-iota.vercel.app/playground?code=${encodeURIComponent(
-        code
-      )}`
-    );
-    toast({
-      title: "shared link copied",
-      description: "link copied to clipboard",
-      className: "bg-green-200 border-green-400 border-2 text-gray-700",
-    });
+    try {
+      const encodedFiles = compressAndEncode(files);
+      const shareUrl = `https://fundamental-iota.vercel.app/playground?shared=${encodedFiles}`;
+
+      navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Shared link copied",
+        description: "Link copied to clipboard",
+        className: "bg-green-200 border-green-400 border-2 text-gray-700",
+      });
+    } catch (error) {
+      console.error("Error sharing files:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate share link",
+        variant: "destructive",
+      });
+    }
   }
 
   async function handleEditorDidMount(
