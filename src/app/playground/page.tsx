@@ -2,7 +2,8 @@
 
 import ConsolePanel from "@/components/ConsolePanel";
 import EditorButtons from "@/components/EditorButtons";
-import { Button } from "@/components/ui/button";
+import ExpandComp from "@/components/ExpandComp";
+import FileTabs from "@/components/FileTabs";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -11,12 +12,15 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import compile, { addLibs } from "@/main/main";
 import Util from "@/main/Util";
-import { wait } from "@/utils/helpers";
+import {
+  captureLog,
+  compressAndEncode,
+  decodeAndDecompress,
+  wait,
+} from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import pako from "pako";
 import { useEffect, useRef, useState } from "react";
-import { LuExpand } from "react-icons/lu";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -28,83 +32,24 @@ import "reactflow/dist/style.css";
 import * as typescript from "typescript";
 import { animate } from "../binary-search-tree/utilsFunctions";
 
-function compressAndEncode(data: any): string {
-  const jsonString = JSON.stringify(data);
-  const compressed = pako.deflate(jsonString);
-  return btoa(
-    Array.from(compressed, (byte) => String.fromCharCode(byte)).join("")
-  )
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-function decodeAndDecompress(encoded: string): any {
-  try {
-    // Restore base64 padding
-    encoded = encoded.replace(/-/g, "+").replace(/_/g, "/");
-    const pad = encoded.length % 4;
-    if (pad) {
-      encoded += "=".repeat(4 - pad);
-    }
-
-    const binary = atob(encoded);
-    const compressed = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      compressed[i] = binary.charCodeAt(i);
-    }
-    const decompressed = pako.inflate(compressed, { to: "string" });
-    return JSON.parse(decompressed);
-  } catch (error) {
-    console.error("Decompression error:", error);
-    throw new Error("Failed to decode or decompress shared data");
-  }
-}
-
-// Helper function to stringify any value
-function stringifyValue(value: any): string {
-  if (typeof value === "object" && value !== null) {
-    try {
-      return JSON.stringify(value, null, 2);
-    } catch (error) {
-      return String(value);
-    }
-  }
-  return String(value);
-}
-
-// Function to capture and format log messages
-function captureLog(
-  type: string,
-  originalConsole: any,
-  capturedLogs: { type: string; message: string }[],
-  args: any[]
-): void {
-  const formattedArgs = args.map(stringifyValue);
-  const logMessage = formattedArgs.join(" ");
-  capturedLogs.push({ type, message: logMessage });
-  originalConsole[type](...args);
-}
-
-type Props = {
-  codeString?: string;
-  autoFrameCheckbox?: boolean;
-};
-
-export default function Playground({
-  codeString = `let frame = [];
+const initCode = `let frame = [];
 let wait = 0.5;
 
 function main() {
     // write your code here
 
     return { frame, wait }
-}`,
-}: Props) {
+}`;
+
+type Props = {
+  codeString?: string;
+  autoFrameCheckbox?: boolean;
+};
+
+export default function Playground({ codeString = initCode }: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [running, setRunning] = useState(false);
-  const [code, setCode] = useState(codeString);
   const [logs, setLogs] = useState<{ type: string; message: string }[] | null>(
     null
   );
@@ -323,7 +268,6 @@ function main() {
   return (
     <div className="h-screen">
       <ExpandComp handleExpand={handleExpand} />
-
       <ResizablePanelGroup
         direction="horizontal"
         className="h-screen w-screen flex"
@@ -360,7 +304,6 @@ function main() {
             theme={theme ?? "vs-dark"}
           />
         </ResizablePanel>
-
         <ResizableHandle withHandle />
         <ResizablePanel>
           <ResizablePanelGroup direction="vertical">
@@ -388,49 +331,6 @@ function main() {
           </ResizablePanelGroup>
         </ResizablePanel>
       </ResizablePanelGroup>
-    </div>
-  );
-}
-
-function ExpandComp({ handleExpand }: { handleExpand: () => void }) {
-  return (
-    <div className="z-50 absolute top-4 right-4">
-      <Button size={"icon"} variant={"outline"} onClick={handleExpand}>
-        <LuExpand size={24} />
-      </Button>
-    </div>
-  );
-}
-function FileTabs({
-  files,
-  currentFile,
-  setCurrentFile,
-  addNewFile,
-}: {
-  files: { name: string; content: string }[];
-  currentFile: string;
-  setCurrentFile: (file: string) => void;
-  addNewFile: () => void;
-}) {
-  return (
-    <div className="w-full flex items-center h-5 bg-zinc-800">
-      {files.map((file) => (
-        <Button
-          key={file.name}
-          className={` hover:bg-zinc-600 h-5 rounded-none ${
-            currentFile === file.name ? "bg-blue-500 text-white" : "bg-zinc-700"
-          }`}
-          onClick={() => setCurrentFile(file.name)}
-        >
-          {file.name}
-        </Button>
-      ))}
-      <Button
-        className="bg-zinc-700 hover:bg-zinc-600 h-5 rounded-none"
-        onClick={addNewFile}
-      >
-        + New File
-      </Button>
     </div>
   );
 }

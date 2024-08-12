@@ -10,7 +10,7 @@ export default async function Algorithm({ params }: Props) {
   const problem = await getProblemById(params.id);
   return problem && problem.length > 0 ? (
     <>
-      <Playground codeString={problem[0]?.code} autoFrameCheckbox={false} />
+      <Playground codeString={problem[0]?.code} />
       <MarkDownDrawer
         problemDescription={problem[0]?.description}
         level={problem[0]?.level}
