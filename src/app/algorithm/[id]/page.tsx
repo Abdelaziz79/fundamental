@@ -1,6 +1,6 @@
 import Playground from "@/app/playground/page";
+import NotFoundComp from "@/components/NotFoundComp";
 import { getAlgorithmById } from "@/services/algorithmsApi";
-import { TbFidgetSpinner } from "react-icons/tb";
 
 type Props = {
   params: { id: string };
@@ -8,5 +8,9 @@ type Props = {
 export default async function Algorithm({ params }: Props) {
   const algo = await getAlgorithmById(params.id);
 
-  return algo ? <Playground codeString={algo[0]?.code} /> : <TbFidgetSpinner />;
+  return algo && algo.length > 0 ? (
+    <Playground codeString={algo[0]?.code} />
+  ) : (
+    <NotFoundComp name="Algorithm" />
+  );
 }

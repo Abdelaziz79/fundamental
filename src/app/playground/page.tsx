@@ -20,10 +20,12 @@ import {
 } from "@/utils/helpers";
 import Editor, { Monaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
+  addEdge,
   Background,
   BackgroundVariant,
+  Connection,
   Controls,
   useEdgesState,
   useNodesState,
@@ -43,10 +45,13 @@ function main() {
 
 type Props = {
   codeString?: string;
-  autoFrameCheckbox?: boolean;
+  codeFiles?: { name: string; content: string }[];
 };
 
-export default function Playground({ codeString = initCode }: Props) {
+export default function Playground({
+  codeString = initCode,
+  codeFiles,
+}: Props) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [running, setRunning] = useState(false);
@@ -58,9 +63,13 @@ export default function Playground({ codeString = initCode }: Props) {
   const [newEdges, setNewEdges] = useState(Util.getAllEdgeTypes());
   const [codePanelOpen, setCodePanelOpen] = useState(true);
   const [consolePanelOpen, setConsolePanelOpen] = useState(true);
-  const [files, setFiles] = useState([
-    { name: "index.tsx", content: codeString },
-  ]);
+  const [files, setFiles] = useState(() => {
+    if (codeFiles && codeFiles.length > 0) {
+      return codeFiles;
+    } else {
+      return [{ name: "index.tsx", content: codeString }];
+    }
+  });
   const [currentFile, setCurrentFile] = useState("index.tsx");
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
@@ -265,6 +274,11 @@ export default function Playground({ codeString = initCode }: Props) {
     setConsolePanelOpen(!consolePanelOpen);
   }
 
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
+
   return (
     <div className="h-screen">
       <ExpandComp handleExpand={handleExpand} />
@@ -315,6 +329,8 @@ export default function Playground({ codeString = initCode }: Props) {
                 onEdgesChange={onEdgesChange}
                 nodeTypes={newNodes}
                 edgeTypes={newEdges}
+                onConnect={onConnect}
+                fitView
               >
                 <Controls />
                 <Background variant={BackgroundVariant.Dots} />
