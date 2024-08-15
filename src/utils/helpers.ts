@@ -130,7 +130,10 @@ export function createNodesAndEdgesForMainPage({
         headerColor: "bg-gradient-to-r from-purple-500 to-indigo-600",
         stats: {
           "Total Examples":
-            algorithms.length + dataStructures.length + problems.length,
+            algorithms.length +
+            dataStructures.length +
+            problems.length +
+            applications.length,
           Categories: 4,
           "Difficulty Range": "Easy to Expert",
         },
@@ -208,7 +211,7 @@ export function createNodesAndEdgesForMainPage({
         items: applications,
         label: "Web Applications",
         description:
-          "Explore and build interactive web applications. Learn about frontend frameworks, backend technologies, and full-stack development.",
+          "Explore and build interactive web applications. Learn about frontend frameworks (React)",
         headerColor: "bg-gradient-to-r from-blue-500 to-purple-500",
         difficulty: "Intermediate",
         difficultyColor: "bg-blue-200 text-blue-800",
