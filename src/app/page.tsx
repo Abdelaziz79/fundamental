@@ -3,6 +3,7 @@ import { getAllAlgorithms } from "@/services/algorithmsApi";
 import { getAllApplications } from "@/services/applicationsApi";
 import { getAllDataStructures } from "@/services/dataStructuresApi";
 import { getAllProblems } from "@/services/problemsApi";
+import { increaseView } from "@/services/viewApi";
 import { createNodesAndEdgesForMainPage } from "@/utils/helpers";
 import MainRF from "./MainRF";
 
@@ -13,6 +14,7 @@ export default async function App({}: Props) {
   const algorithms = await getAllAlgorithms();
   const dataStructures = await getAllDataStructures();
   const applications = await getAllApplications();
+  const views = await increaseView();
   let nodes: any[] = [];
   let edges: any[] = [];
   if (problems && algorithms && dataStructures) {
